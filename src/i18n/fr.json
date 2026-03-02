@@ -169,6 +169,10 @@
       "culturalGuide": "Guide culturel",
       "associations": "Associations",
       "languageLearning": "Apprentissage des langues"
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "Gestion et statistiques"
     }
   },
   "subscription": {
