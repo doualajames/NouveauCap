@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { requireAuth } from '@/lib/auth-jwt'
 
 const prisma = new PrismaClient()
 
@@ -850,28 +851,16 @@ const taskTemplates = {
 // Save onboarding data
 export async function POST(request: NextRequest) {
   try {
+    // Verify authentication
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
+    }
+    
+    const user = authResult
     const body = await request.json()
-    const { userId, onboardingData } = body
-
-    // Validate required fields
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, error: 'ID utilisateur manquant' },
-        { status: 400 }
-      )
-    }
-
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId }
-    })
-
-    if (!existingUser) {
-      return NextResponse.json(
-        { success: false, error: 'Utilisateur non trouvé' },
-        { status: 404 }
-      )
-    }
+    const onboardingData = body
 
     // Validate immigration status
     const validStatuses = ['PERMANENT_RESIDENT', 'FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT']
@@ -904,8 +893,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Update user with onboarding data
-    const user = await prisma.user.update({
-      where: { id: userId },
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
       data: {
         immigrationStatus: onboardingData.immigrationStatus,
         province: onboardingData.province,
@@ -932,7 +921,7 @@ export async function POST(request: NextRequest) {
     for (const task of allTasks) {
       await prisma.task.create({
         data: {
-          userId,
+          userId: user.id,
           title: task.title,
           titleEn: task.titleEn,
           description: task.description,
@@ -979,7 +968,7 @@ export async function POST(request: NextRequest) {
 
         await prisma.alert.create({
           data: {
-            userId,
+            userId: user.id,
             type: 'STUDY_PERMIT_EXPIRY',
             title: onboardingData.preferredLanguage === 'fr' ? '📅 Permis d\'études à renouveler' : '📅 Study Permit Renewal',
             message: onboardingData.preferredLanguage === 'fr' ? messageFr : messageEn,
@@ -996,7 +985,7 @@ export async function POST(request: NextRequest) {
       
       await prisma.task.create({
         data: {
-          userId,
+          userId: user.id,
           title: renewalTaskTitle,
           titleEn: renewalTaskTitleEn,
           description: onboardingData.preferredLanguage === 'fr' 
@@ -1033,7 +1022,7 @@ export async function POST(request: NextRequest) {
 
         await prisma.alert.create({
           data: {
-            userId,
+            userId: user.id,
             type: 'WORK_PERMIT_EXPIRY',
             title: onboardingData.preferredLanguage === 'fr' ? '📅 Permis de travail à renouveler' : '📅 Work Permit Renewal',
             message: onboardingData.preferredLanguage === 'fr' ? messageFr : messageEn,
@@ -1049,7 +1038,7 @@ export async function POST(request: NextRequest) {
       
       await prisma.task.create({
         data: {
-          userId,
+          userId: user.id,
           title: renewalTaskTitle,
           titleEn: `Renew your work permit (expires ${expiryDate.toLocaleDateString('en-CA')})`,
           description: onboardingData.preferredLanguage === 'fr' 
@@ -1082,7 +1071,7 @@ export async function POST(request: NextRequest) {
 
         await prisma.alert.create({
           data: {
-            userId,
+            userId: user.id,
             type: 'PASSPORT_EXPIRY',
             title: onboardingData.preferredLanguage === 'fr' ? '🛂 Passeport à renouveler' : '🛂 Passport Renewal',
             message: onboardingData.preferredLanguage === 'fr' ? messageFr : messageEn,

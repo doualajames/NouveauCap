@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
+import { requireAuth } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
 
     const body = await request.json()

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { compare } from 'bcryptjs'
+import { createSessionToken } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,11 +21,7 @@ export async function POST(request: NextRequest) {
       include: {
         profile: true,
         onboarding: true,
-        subscriptions: {
-          where: { status: 'ACTIVE' },
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
+        subscription: true,
       },
     })
 
@@ -45,18 +42,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Return user data
-    return NextResponse.json({
+    // Create JWT session token
+    const token = await createSessionToken({
+      id: user.id,
+      email: user.email,
+      name: user.name
+    })
+
+    // Create response with user data
+    const response = NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
-        image: user.image,
+        avatar: user.avatar,
       },
       profile: user.profile,
       onboarding: user.onboarding,
-      subscription: user.subscriptions[0] || null,
+      subscription: user.subscription,
     })
+
+    // Set session cookie
+    response.cookies.set('session', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/'
+    })
+
+    return response
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(

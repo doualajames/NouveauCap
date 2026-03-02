@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/auth-jwt'
 
 // UPDATE task
 export async function PUT(
@@ -7,21 +8,20 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
+    
+    const user = authResult
 
     const { id } = await params
     const body = await request.json()
 
     // Verify task belongs to user
     const existingTask = await db.task.findFirst({
-      where: { id, userId },
+      where: { id, userId: user.id },
     })
 
     if (!existingTask) {
@@ -60,20 +60,19 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
+    
+    const user = authResult
 
     const { id } = await params
 
     // Verify task belongs to user
     const existingTask = await db.task.findFirst({
-      where: { id, userId },
+      where: { id, userId: user.id },
     })
 
     if (!existingTask) {

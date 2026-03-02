@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/auth-jwt'
 
 // GET all tasks for user
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
+    
+    const user = authResult
 
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const category = searchParams.get('category')
 
-    const where: Record<string, unknown> = { userId }
+    const where: Record<string, unknown> = { userId: user.id }
     if (status) where.status = status
     if (category) where.category = category
 
@@ -42,20 +42,19 @@ export async function GET(request: NextRequest) {
 // CREATE new task
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
+    
+    const user = authResult
 
     const body = await request.json()
     
     const task = await db.task.create({
       data: {
-        userId,
+        userId: user.id,
         title: body.title,
         titleEn: body.titleEn,
         description: body.description,
@@ -64,10 +63,6 @@ export async function POST(request: NextRequest) {
         priority: body.priority || 'MEDIUM',
         status: body.status || 'PENDING',
         dueDate: body.dueDate ? new Date(body.dueDate) : null,
-        province: body.province,
-        immigrationStatus: body.immigrationStatus,
-        estimatedDays: body.estimatedDays,
-        resourceUrl: body.resourceUrl,
       },
     })
 

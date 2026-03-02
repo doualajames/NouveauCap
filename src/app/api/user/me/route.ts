@@ -1,28 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/auth-jwt'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get user ID from header (simple auth approach for MVP)
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = await requireAuth(request)
+    
+    if (authResult instanceof Response) {
+      return authResult
     }
-
-    const user = await db.user.findUnique({
-      where: { id: userId },
+    
+    const user = authResult
+    
+    const fullUser = await db.user.findUnique({
+      where: { id: user.id },
       include: {
         profile: true,
         onboarding: true,
-        subscriptions: {
-          where: { status: 'ACTIVE' },
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
+        subscription: true,
         tasks: {
           orderBy: { createdAt: 'desc' },
           take: 50,
@@ -30,7 +25,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    if (!user) {
+    if (!fullUser) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -39,15 +34,15 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
+        id: fullUser.id,
+        email: fullUser.email,
+        name: fullUser.name,
+        avatar: fullUser.avatar,
       },
-      profile: user.profile,
-      onboarding: user.onboarding,
-      subscription: user.subscriptions[0] || null,
-      tasks: user.tasks,
+      profile: fullUser.profile,
+      onboarding: fullUser.onboarding,
+      subscription: fullUser.subscription,
+      tasks: fullUser.tasks,
     })
   } catch (error) {
     console.error('Get user error:', error)

@@ -145,11 +145,11 @@ export function OnboardingFlow() {
     
     try {
       const response = await fetch('/api/onboarding', {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': user.id,
         },
+        credentials: 'include',
         body: JSON.stringify({
           ...localData,
           completed: true,
