@@ -1,0 +1,16 @@
+# Exemple de configuration Caddy
+# Remplacez votre-domaine.com par votre vrai domaine
+
+votre-domaine.com {
+    reverse_proxy localhost:3000
+    encode gzip
+    header {
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+    }
+}
+
+# Redirection www vers non-www
+www.votre-domaine.com {
+    redir https://votre-domaine.com{uri}
+}
