@@ -1,0 +1,249 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "Votre compagnon pour une nouvelle vie au Canada",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "continue": "Continuer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "viewAll": "Voir tout",
+    "free": "Gratuit",
+    "month": "/mois"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se déconnecter",
+    "email": "Courriel",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "noAccount": "Pas encore de compte?",
+    "hasAccount": "Déjà un compte?",
+    "createAccount": "Créer un compte",
+    "signInWith": "Se connecter avec",
+    "welcomeBack": "Bon retour parmi nous",
+    "joinUs": "Rejoignez NouveauCap"
+  },
+  "onboarding": {
+    "title": "Personnalisons votre expérience",
+    "subtitle": "Quelques questions pour créer votre plan d'action personnalisé",
+    "step": "Étape",
+    "of": "sur",
+    "status": {
+      "title": "Quel est votre statut d'immigration?",
+      "permanentResident": "Résident Permanent",
+      "permanentResidentDesc": "Vous avez obtenu le statut de résident permanent",
+      "foreignStudent": "Étudiant Étranger",
+      "foreignStudentDesc": "Vous étudiez au Canada avec un permis d'études",
+      "openWorkPermit": "Permis de Travail Ouvert",
+      "openWorkPermitDesc": "Vous pouvez travailler pour n'importe quel employeur",
+      "closedWorkPermit": "Permis de Travail Fermé",
+      "closedWorkPermitDesc": "Vous êtes lié à un employeur spécifique"
+    },
+    "province": {
+      "title": "Dans quelle province résidez-vous?",
+      "selectProvince": "Sélectionnez votre province"
+    },
+    "arrival": {
+      "title": "Quand êtes-vous arrivé(e) au Canada?",
+      "placeholder": "Sélectionnez une date"
+    },
+    "sector": {
+      "title": "Quel est votre secteur professionnel?",
+      "selectSector": "Sélectionnez votre secteur",
+      "technology": "Technologie / TI",
+      "finance": "Finance / Comptabilité",
+      "health": "Santé / Médical",
+      "education": "Éducation",
+      "engineering": "Ingénierie",
+      "trades": "Métiers spécialisés",
+      "retail": "Commerce de détail",
+      "hospitality": "Hôtellerie / Restauration",
+      "other": "Autre"
+    },
+    "language": {
+      "title": "Quelle langue préférez-vous?",
+      "french": "Français",
+      "english": "Anglais"
+    },
+    "family": {
+      "title": "Quelle est votre situation familiale?",
+      "single": "Célibataire",
+      "couple": "En couple",
+      "familyWithChildren": "Famille avec enfants"
+    },
+    "origin": {
+      "title": "Quel est votre pays d'origine?",
+      "placeholder": "Sélectionnez votre pays"
+    },
+    "complete": {
+      "title": "Votre profil est prêt!",
+      "subtitle": "Voici votre plan d'action personnalisé",
+      "startExploring": "Commencer à explorer"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "progress": "Progression",
+    "tasksCompleted": "tâches complétées",
+    "priorityActions": "Actions prioritaires",
+    "upcomingDeadlines": "Échéances à venir",
+    "quickLinks": "Accès rapide",
+    "noTasks": "Aucune tâche pour le moment",
+    "completeOnboarding": "Complétez votre profil pour voir vos tâches personnalisées"
+  },
+  "modules": {
+    "province": {
+      "title": "Province",
+      "description": "Politiques d'accueil et d'intégration provinciales"
+    },
+    "immigration": {
+      "title": "Immigration & Statut Légal",
+      "description": "Gérez votre statut et comprenez vos droits",
+      "permanentResident": "Résident Permanent",
+      "studyPermit": "Permis d'études",
+      "workPermit": "Permis de travail",
+      "citizenship": "Citoyenneté",
+      "crsSimulator": "Simulateur CRS",
+      "expressEntry": "Entrée Express",
+      "pgwpEligibility": "Éligibilité PGWP",
+      "permitTracking": "Suivi de permis",
+      "rightsGuide": "Guide des droits"
+    },
+    "employment": {
+      "title": "Emploi & Carrière",
+      "description": "Trouvez l'emploi de vos rêves au Canada",
+      "cvOptimizer": "Optimisation CV avec IA",
+      "jobSearch": "Recherche d'emploi",
+      "interviewPrep": "Préparation entretien",
+      "diplomaRecognition": "Reconnaissance des diplômes",
+      "coverLetter": "Lettre de motivation",
+      "salaryGuide": "Guide salarial",
+      "applications": "Mes candidatures"
+    },
+    "housing": {
+      "title": "Logement",
+      "description": "Trouvez votre chez-vous au Canada",
+      "rentalGuide": "Guide locatif",
+      "budgetCalculator": "Calculateur budget",
+      "tenantRights": "Droits des locataires",
+      "letterTemplates": "Modèles de lettres",
+      "neighborhoods": "Quartiers"
+    },
+    "finance": {
+      "title": "Finances & Crédit",
+      "description": "Construisez votre vie financière canadienne",
+      "bankComparator": "Comparateur bancaire",
+      "creditGuide": "Guide du crédit",
+      "taxGuide": "Guide fiscal",
+      "taxSimulator": "Simulateur d'impôts",
+      "moneyTransfer": "Transferts d'argent",
+      "insurance": "Assurances"
+    },
+    "health": {
+      "title": "Santé & Bien-être",
+      "description": "Accédez au système de santé canadien",
+      "provincialInsurance": "Assurance maladie provinciale",
+      "waitingPeriod": "Délai de carence",
+      "privateInsurance": "Assurance privée",
+      "clinicDirectory": "Annuaire des cliniques",
+      "mentalHealth": "Santé mentale",
+      "familyHealth": "Santé familiale"
+    },
+    "community": {
+      "title": "Communauté",
+      "description": "Connectez-vous avec d'autres immigrants",
+      "forum": "Forum",
+      "events": "Événements",
+      "mentorship": "Mentorat",
+      "culturalGuide": "Guide culturel",
+      "associations": "Associations",
+      "languageLearning": "Apprentissage des langues"
+    }
+  },
+  "subscription": {
+    "title": "Nos forfaits",
+    "choosePlan": "Choisir ce forfait",
+    "current": "Actuel",
+    "free": {
+      "name": "Gratuit",
+      "price": "0",
+      "features": [
+        "Onboarding personnalisé",
+        "Checklist de base",
+        "Forum communautaire",
+        "Guides généraux",
+        "3 alertes par mois"
+      ]
+    },
+    "essentiel": {
+      "name": "Essentiel",
+      "price": "9,99",
+      "features": [
+        "Tout le plan Gratuit",
+        "Alertes illimitées",
+        "Tous les simulateurs",
+        "Modules Logement & Finances complets",
+        "Support prioritaire"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "19,99",
+      "features": [
+        "Tout le plan Essentiel",
+        "IA pour l'emploi (CV, entretiens)",
+        "Mentorat 1:1 (2h/mois)",
+        "Documents personnalisés",
+        "Communautés exclusives"
+      ]
+    },
+    "famille": {
+      "name": "Famille",
+      "price": "29,99",
+      "features": [
+        "Premium pour 2 adultes + enfants",
+        "Guide scolarisation",
+        "Ressources parentales",
+        "Conseils famille"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "Ontario",
+    "QC": "Québec",
+    "BC": "Colombie-Britannique",
+    "AB": "Alberta",
+    "MB": "Manitoba",
+    "SK": "Saskatchewan",
+    "NS": "Nouvelle-Écosse",
+    "NB": "Nouveau-Brunswick",
+    "PE": "Île-du-Prince-Édouard",
+    "NL": "Terre-Neuve-et-Labrador",
+    "NT": "Territoires du Nord-Ouest",
+    "YT": "Yukon",
+    "NU": "Nunavut"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "Résident Permanent",
+    "FOREIGN_STUDENT": "Étudiant Étranger",
+    "OPEN_WORK_PERMIT": "Permis de Travail Ouvert",
+    "CLOSED_WORK_PERMIT": "Permis de Travail Fermé"
+  },
+  "alerts": {
+    "permitExpiry": "Expiration de permis",
+    "taxDeadline": "Date limite fiscale",
+    "healthCard": "Carte de santé",
+    "reminder": "Rappel"
+  }
+}
