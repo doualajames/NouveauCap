@@ -28,7 +28,8 @@ import {
   Clock, DollarSign, Users2, Award, Target, ListChecks,
   FileCheck, Download, ExternalLink, Plus, Trash2, Edit,
   TrendingUp, PiggyBank, Landmark, Receipt, Percent,
-  Activity, ClipboardList, UserCheck, FileWarning, Eye, Search, RefreshCw, PieChart
+  Activity, ClipboardList, UserCheck, FileWarning, Eye, Search, RefreshCw, PieChart,
+  AlertTriangle, Link, Key, Zap, DoorOpen, Bath, Bed, Sofa, AlertOctagon, HelpCircle, Lightbulb
 } from 'lucide-react'
 
 // ==================== CITIZENSHIP TEST QUESTIONS ====================
@@ -5770,10 +5771,48 @@ function HousingModule({ language, user }: {
   const [utilities, setUtilities] = useState(150)
   const [insurance, setInsurance] = useState(30)
   const [transport, setTransport] = useState(200)
+  
+  // Interactive Checklist State
+  const [checkedItems, setCheckedItems] = useState<string[]>([])
+  
+  // Toggle checklist item
+  const toggleChecklistItem = (id: string) => {
+    setCheckedItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    )
+  }
 
   const totalHousingCost = rent + utilities + insurance
   const disposableIncome = monthlyIncome - totalHousingCost - transport
   const housingRatio = (totalHousingCost / monthlyIncome) * 100
+  
+  // Provincial average ratios for comparison
+  const provincialAverages: Record<string, { avgRatio: number; avgRent: number }> = {
+    'ON': { avgRatio: 32, avgRent: 2300 },
+    'QC': { avgRatio: 28, avgRent: 1500 },
+    'BC': { avgRatio: 35, avgRent: 2500 },
+    'AB': { avgRatio: 26, avgRent: 1400 },
+    'MB': { avgRatio: 25, avgRent: 1200 },
+    'SK': { avgRatio: 24, avgRent: 1100 },
+    'NS': { avgRatio: 27, avgRent: 1300 },
+    'NB': { avgRatio: 24, avgRent: 1000 },
+    'PE': { avgRatio: 26, avgRent: 1100 },
+    'NL': { avgRatio: 25, avgRent: 1000 },
+  }
+  
+  const userProvince = user?.province || 'ON'
+  const provincialData = provincialAverages[userProvince] || provincialAverages['ON']
+  
+  // Expense breakdown for chart
+  const expenseData = [
+    { name: language === 'fr' ? 'Loyer' : 'Rent', value: rent, color: 'bg-purple-500' },
+    { name: language === 'fr' ? 'Services' : 'Utilities', value: utilities, color: 'bg-blue-500' },
+    { name: language === 'fr' ? 'Assurance' : 'Insurance', value: insurance, color: 'bg-green-500' },
+    { name: language === 'fr' ? 'Transport' : 'Transport', value: transport, color: 'bg-amber-500' },
+  ]
+  const maxExpense = Math.max(...expenseData.map(d => d.value))
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-white dark:from-purple-950/20 dark:to-gray-900">
@@ -6377,6 +6416,795 @@ function HousingModule({ language, user }: {
             </Card>
           ))}
         </div>
+
+        {/* ==================== NEW SECTIONS ==================== */}
+
+        {/* Section 1: Housing Search Resources */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <Search className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              {language === 'fr' ? 'Recherche de Logement' : 'Housing Search'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Sites de recherche et conseils pour éviter les arnaques'
+                : 'Search sites and tips to avoid scams'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Rental Websites */}
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-blue-500" />
+                {language === 'fr' ? 'Sites de recherche de logement' : 'Rental Search Websites'}
+              </h4>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[
+                  { name: 'Kijiji', url: 'https://www.kijiji.ca', desc: language === 'fr' ? 'Plus populaire au Canada' : 'Most popular in Canada', region: 'Canada' },
+                  { name: 'Facebook Marketplace', url: 'https://www.facebook.com/marketplace', desc: language === 'fr' ? 'Large sélection locale' : 'Large local selection', region: 'Canada' },
+                  { name: 'Rentals.ca', url: 'https://www.rentals.ca', desc: language === 'fr' ? 'Listings professionnels' : 'Professional listings', region: 'Canada' },
+                  { name: 'Zumper', url: 'https://www.zumper.com', desc: language === 'fr' ? 'Appartements et maisons' : 'Apartments and houses', region: 'Canada' },
+                  { name: 'Centris.ca', url: 'https://www.centris.ca', desc: language === 'fr' ? 'Spécialisé Québec' : 'Quebec specialized', region: 'QC' },
+                  { name: 'Zillow', url: 'https://www.zillow.com', desc: language === 'fr' ? 'Maisons et condos' : 'Houses and condos', region: 'Canada' },
+                  { name: 'PadMapper', url: 'https://www.padmapper.com', desc: language === 'fr' ? 'Carte interactive' : 'Interactive map', region: 'Canada' },
+                  { name: 'Craigslist', url: 'https://www.craigslist.org', desc: language === 'fr' ? 'Classiques locaux' : 'Local classifieds', region: 'Canada' },
+                  { name: 'ViewIt.ca', url: 'https://www.viewit.ca', desc: language === 'fr' ? 'Photos et vidéos' : 'Photos and videos', region: 'Canada' },
+                ].map((site, i) => (
+                  <a 
+                    key={i}
+                    href={site.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {site.name}
+                      </span>
+                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">{site.desc}</p>
+                    {site.region === 'QC' && (
+                      <Badge variant="outline" className="mt-2 text-xs">Québec</Badge>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Scam Prevention Tips */}
+            <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-200 dark:border-red-800">
+              <h4 className="font-semibold mb-3 flex items-center gap-2 text-red-700 dark:text-red-400">
+                <AlertTriangle className="w-5 h-5" />
+                {language === 'fr' ? 'Signaux d\'alerte - Arnaques courantes' : 'Red Flags - Common Scams'}
+              </h4>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {[
+                  { icon: DollarSign, text: language === 'fr' ? 'Demande d\'argent avant visite' : 'Money request before viewing' },
+                  { icon: AlertOctagon, text: language === 'fr' ? 'Prix trop bas pour le quartier' : 'Price too low for the area' },
+                  { icon: Users, text: language === 'fr' ? '"Propriétaire à l\'étranger"' : '"Landlord abroad"' },
+                  { icon: FileWarning, text: language === 'fr' ? 'Pas de bail officiel proposé' : 'No official lease offered' },
+                  { icon: Eye, text: language === 'fr' ? 'Photos incohérentes ou volées' : 'Inconsistent or stolen photos' },
+                  { icon: Key, text: language === 'fr' ? 'Demande de clé de dépôt' : 'Key deposit request' },
+                  { icon: CreditCard, text: language === 'fr' ? 'Transfert Western Union exigé' : 'Western Union transfer required' },
+                  { icon: Zap, text: language === 'fr' ? 'Pression pour décision immédiate' : 'Pressure for immediate decision' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-red-700 dark:text-red-300">
+                    <item.icon className="w-4 h-4 flex-shrink-0" />
+                    <span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Apartment Visit Checklist */}
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <ListChecks className="w-4 h-4 text-purple-500" />
+                {language === 'fr' ? 'Checklist de visite d\'appartement' : 'Apartment Visit Checklist'}
+              </h4>
+              <div className="grid sm:grid-cols-2 gap-3 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl">
+                {[
+                  { category: language === 'fr' ? 'État général' : 'General Condition', items: language === 'fr' ? ['Fissures dans les murs', 'Traces d\'humidité/moisissure', 'État des sols', 'Peinture et finitions'] : ['Wall cracks', 'Moisture/mold signs', 'Floor condition', 'Paint and finish'] },
+                  { category: language === 'fr' ? 'Plomberie' : 'Plumbing', items: language === 'fr' ? ['Pression d\'eau', 'Eau chaude', 'Fuites sous l\'évier', 'Toilettes fonctionnelles'] : ['Water pressure', 'Hot water', 'Under-sink leaks', 'Functional toilets'] },
+                  { category: language === 'fr' ? 'Électricité' : 'Electricity', items: language === 'fr' ? ['Prises fonctionnelles', 'Éclairage', 'Disjoncteur accessible', 'Internet/câble disponible'] : ['Working outlets', 'Lighting', 'Accessible breaker', 'Internet/cable available'] },
+                  { category: language === 'fr' ? 'Sécurité' : 'Safety', items: language === 'fr' ? ['Détecteurs de fumée', 'Serrures portes/fenêtres', 'Issues de secours', 'Éclairage couloirs'] : ['Smoke detectors', 'Door/window locks', 'Emergency exits', 'Hallway lighting'] },
+                ].map((section, i) => (
+                  <div key={i} className="space-y-2">
+                    <p className="font-medium text-sm text-purple-700 dark:text-purple-300">{section.category}</p>
+                    <ul className="space-y-1">
+                      {section.items.map((item, j) => (
+                        <li key={j} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                          <Circle className="w-2 h-2 text-purple-400" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 2: New Tenant Guide */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              {language === 'fr' ? 'Guide du Nouveau Locataire' : 'New Tenant Guide'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Tout ce qu\'il faut savoir pour louer au Canada'
+                : 'Everything you need to know to rent in Canada'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Rental Process Steps */}
+            <div>
+              <h4 className="font-semibold mb-4 flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-green-500" />
+                {language === 'fr' ? 'Étapes pour louer un logement' : 'Steps to Rent a Place'}
+              </h4>
+              <div className="space-y-3">
+                {[
+                  { step: 1, title: language === 'fr' ? 'Préparer vos documents' : 'Prepare Your Documents', desc: language === 'fr' ? 'Preuve de revenu (3 derniers bulletins), lettre d\'emploi, références, pièce d\'identité' : 'Proof of income (3 recent pay stubs), employment letter, references, ID' },
+                  { step: 2, title: language === 'fr' ? 'Visiter des logements' : 'View Apartments', desc: language === 'fr' ? 'Prenez des photos, posez des questions sur les charges, vérifiez l\'état' : 'Take photos, ask about utilities, check condition' },
+                  { step: 3, title: language === 'fr' ? 'Soumettre une candidature' : 'Submit an Application', desc: language === 'fr' ? 'Formulaire de location, frais de vérification de crédit (20-50$), références' : 'Rental application, credit check fee ($20-50), references' },
+                  { step: 4, title: language === 'fr' ? 'Signer le bail' : 'Sign the Lease', desc: language === 'fr' ? 'Lisez attentivement, vérifiez les dates, clauses spéciales, et règles de l\'immeuble' : 'Read carefully, check dates, special clauses, and building rules' },
+                  { step: 5, title: language === 'fr' ? 'Paiements initiaux' : 'Initial Payments', desc: language === 'fr' ? 'Premier mois + dépôt de garantie (selon province) + frais de clé' : 'First month + security deposit (varies by province) + key fee' },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+                      {item.step}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">{item.title}</p>
+                      <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Required Documents */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-2 flex items-center gap-2">
+                  <FileCheck className="w-4 h-4" />
+                  {language === 'fr' ? 'Documents requis' : 'Required Documents'}
+                </h5>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Pièce d\'identité valide' : 'Valid government ID'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Preuve de revenu/salaire' : 'Proof of income/salary'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Lettre d\'emploi' : 'Employment letter'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Références de locataires précédents' : 'Previous landlord references'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Relevé bancaire (parfois)' : 'Bank statement (sometimes)'}</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-xl">
+                <h5 className="font-semibold text-amber-700 dark:text-amber-300 mb-2 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {language === 'fr' ? 'Sans historique de crédit?' : 'No Credit History?'}
+                </h5>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                  <li className="flex items-center gap-2"><Plus className="w-4 h-4 text-amber-500" /> {language === 'fr' ? 'Lettre de garant (parents/ami)' : 'Guarantor letter (parents/friend)'}</li>
+                  <li className="flex items-center gap-2"><Plus className="w-4 h-4 text-amber-500" /> {language === 'fr' ? 'Preuve d\'épargne' : 'Proof of savings'}</li>
+                  <li className="flex items-center gap-2"><Plus className="w-4 h-4 text-amber-500" /> {language === 'fr' ? 'Paiement de plusieurs mois à l\'avance' : 'Multiple months upfront payment'}</li>
+                  <li className="flex items-center gap-2"><Plus className="w-4 h-4 text-amber-500" /> {language === 'fr' ? 'Lettre de l\'employeur' : 'Employer letter'}</li>
+                  <li className="flex items-center gap-2"><Plus className="w-4 h-4 text-amber-500" /> {language === 'fr' ? 'Offre d\'emploi ferme' : 'Firm job offer'}</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Understanding the Lease */}
+            <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl">
+              <h5 className="font-semibold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                {language === 'fr' ? 'Comprendre le bail canadien' : 'Understanding the Canadian Lease'}
+              </h5>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-medium text-gray-700 dark:text-gray-300">{language === 'fr' ? 'Types de bail courants:' : 'Common lease types:'}</p>
+                  <ul className="mt-2 space-y-1 text-gray-600 dark:text-gray-400">
+                    <li>• <strong>1 an</strong> - {language === 'fr' ? 'Plus courant, renouvelable' : 'Most common, renewable'}</li>
+                    <li>• <strong>6 mois</strong> - {language === 'fr' ? 'Flexible, plus rare' : 'Flexible, less common'}</li>
+                    <li>• <strong>Mois au mois</strong> - {language === 'fr' ? 'Flexible mais préavis court' : 'Flexible but short notice'}</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700 dark:text-gray-300">{language === 'fr' ? 'Clauses importantes à vérifier:' : 'Important clauses to check:'}</p>
+                  <ul className="mt-2 space-y-1 text-gray-600 dark:text-gray-400">
+                    <li>• {language === 'fr' ? 'Politique d\'animaux' : 'Pet policy'}</li>
+                    <li>• {language === 'fr' ? 'Règles de sous-location' : 'Subletting rules'}</li>
+                    <li>• {language === 'fr' ? 'Responsabilité des réparations' : 'Repair responsibility'}</li>
+                    <li>• {language === 'fr' ? 'Inclusions (stationnement, rangement)' : 'Inclusions (parking, storage)'}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* First Month Checklist */}
+            <div className="p-4 bg-teal-50 dark:bg-teal-950/30 rounded-xl">
+              <h5 className="font-semibold text-teal-700 dark:text-teal-300 mb-3 flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                {language === 'fr' ? 'Premier mois: ce qu\'il faut faire' : 'First Month: What to Do'}
+              </h5>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="w-5 h-5 text-yellow-500" />
+                    <span className="font-medium">{language === 'fr' ? 'Électricité' : 'Electricity'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Hydro-Québec, Hydro One, BC Hydro...' : 'Hydro-Québec, Hydro One, BC Hydro...'}</p>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-5 h-5 text-blue-500" />
+                    <span className="font-medium">{language === 'fr' ? 'Internet' : 'Internet'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Bell, Rogers, Videotron, TekSavvy...' : 'Bell, Rogers, Videotron, TekSavvy...'}</p>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    <span className="font-medium">{language === 'fr' ? 'Assurance' : 'Insurance'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Obligatoire dans certaines provinces' : 'Required in some provinces'}</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 3: Housing Types in Canada */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                <Building className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              {language === 'fr' ? 'Types de Logement au Canada' : 'Housing Types in Canada'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Comprendre les différentes options de logement'
+                : 'Understanding the different housing options'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Quebec System */}
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+              <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                {language === 'fr' ? 'Système québécois (½, 3½, 4½...)' : 'Quebec System (½, 3½, 4½...)'}
+              </h5>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {language === 'fr' 
+                  ? 'Au Québec, les logements sont classés par demi-pièces. La cuisine compte pour une demi-pièce.'
+                  : 'In Quebec, apartments are classified by half-rooms. The kitchen counts as a half-room.'}
+              </p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                  { type: '1½', name: language === 'fr' ? 'Studio' : 'Studio', desc: language === 'fr' ? '1 pièce + cuisine' : '1 room + kitchen' },
+                  { type: '2½', name: language === 'fr' ? '1 chambre' : '1 Bedroom', desc: language === 'fr' ? 'Chambre + salon combiné' : 'Bedroom + combined living' },
+                  { type: '3½', name: language === 'fr' ? '1 chambre' : '1 Bedroom', desc: language === 'fr' ? '1 chambre + salon + cuisine' : '1 bed + living + kitchen' },
+                  { type: '4½', name: language === 'fr' ? '2 chambres' : '2 Bedrooms', desc: language === 'fr' ? '2 chambres + salon + cuisine' : '2 beds + living + kitchen' },
+                  { type: '5½', name: language === 'fr' ? '3 chambres' : '3 Bedrooms', desc: language === 'fr' ? '3 chambres + salon + cuisine' : '3 beds + living + kitchen' },
+                  { type: '6½+', name: language === 'fr' ? 'Grande famille' : 'Large Family', desc: language === 'fr' ? '4+ chambres' : '4+ bedrooms' },
+                ].map((item, i) => (
+                  <div key={i} className="p-3 bg-white dark:bg-gray-800 rounded-lg text-center">
+                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{item.type}</span>
+                    <p className="font-medium text-sm mt-1">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Housing Types Comparison */}
+            <div>
+              <h5 className="font-semibold mb-3 flex items-center gap-2">
+                <Home className="w-4 h-4 text-purple-500" />
+                {language === 'fr' ? 'Types de propriété' : 'Property Types'}
+              </h5>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="p-4 border rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building className="w-6 h-6 text-purple-500" />
+                    <span className="font-semibold">{language === 'fr' ? 'Appartement' : 'Apartment'}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {language === 'fr' 
+                      ? 'Immeuble à logements multiples. Propriétaire gère l\'entretien.'
+                      : 'Multi-unit building. Landlord handles maintenance.'}
+                  </p>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Moins d\'entretien' : 'Less maintenance'}</div>
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Services inclus souvent' : 'Utilities often included'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Moins d\'espace' : 'Less space'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Règles strictes' : 'Strict rules'}</div>
+                  </div>
+                </div>
+                <div className="p-4 border rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building2 className="w-6 h-6 text-blue-500" />
+                    <span className="font-semibold">{language === 'fr' ? 'Condo' : 'Condo'}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {language === 'fr' 
+                      ? 'Propriété privée dans un immeuble. Frais de condo mensuels.'
+                      : 'Private unit in a building. Monthly condo fees.'}
+                  </p>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Plus moderne' : 'More modern'}</div>
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Équipements premium' : 'Premium amenities'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Frais de condo' : 'Condo fees'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Règles de l\'association' : 'Association rules'}</div>
+                  </div>
+                </div>
+                <div className="p-4 border rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Home className="w-6 h-6 text-green-500" />
+                    <span className="font-semibold">{language === 'fr' ? 'Maison' : 'House'}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {language === 'fr' 
+                      ? 'Bâtiment individuel avec terrain. Plus d\'espace et d\'intimité.'
+                      : 'Detached building with yard. More space and privacy.'}
+                  </p>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Plus d\'espace' : 'More space'}</div>
+                    <div className="flex items-center gap-1 text-green-600"><CheckCircle2 className="w-3 h-3" /> {language === 'fr' ? 'Cour privée' : 'Private yard'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Entretien requis' : 'Maintenance required'}</div>
+                    <div className="flex items-center gap-1 text-red-500"><X className="w-3 h-3" /> {language === 'fr' ? 'Plus cher' : 'More expensive'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Roommates / Shared Housing */}
+            <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl">
+              <h5 className="font-semibold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                {language === 'fr' ? 'Colocation et Roommates' : 'Roommates and Shared Housing'}
+              </h5>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="font-medium text-sm mb-2">{language === 'fr' ? 'Avantages:' : 'Pros:'}</p>
+                  <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Réduction des coûts' : 'Cost reduction'}</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Partage des tâches' : 'Shared chores'}</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Réseau social' : 'Social network'}</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {language === 'fr' ? 'Meilleur quartier' : 'Better neighborhood'}</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-sm mb-2">{language === 'fr' ? 'Sites de recherche:' : 'Search sites:'}</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><a href="https://www.spareroom.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1"><ExternalLink className="w-3 h-3" /> SpareRoom</a></li>
+                    <li><a href="https://www.roomies.ca" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1"><ExternalLink className="w-3 h-3" /> Roomies.ca</a></li>
+                    <li><a href="https://www.kijiji.ca" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1"><ExternalLink className="w-3 h-3" /> Kijiji (colocation)</a></li>
+                    <li><a href="https://www.facebook.com/groups" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1"><ExternalLink className="w-3 h-3" /> Facebook Groups</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 4: Housing Assistance */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-teal-100 dark:bg-teal-900 rounded-lg flex items-center justify-center">
+                <HeartHandshake className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              </div>
+              {language === 'fr' ? 'Aide au Logement' : 'Housing Assistance'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Programmes gouvernementaux et subventions'
+                : 'Government programs and subsidies'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Federal Programs */}
+            <div className="p-4 bg-gradient-to-r from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 rounded-xl">
+              <h5 className="font-semibold text-red-700 dark:text-red-300 mb-3 flex items-center gap-2">
+                <Landmark className="w-4 h-4" />
+                {language === 'fr' ? 'Programmes fédéraux' : 'Federal Programs'}
+              </h5>
+              <div className="space-y-3">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="font-medium">{language === 'fr' ? 'Allocation canadienne pour le logement (ACL)' : 'Canada Housing Benefit (CHB)'}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {language === 'fr' 
+                      ? 'Aide financière pour les travailleurs à faible revenu et les locataires.'
+                      : 'Financial assistance for low-income workers and renters.'}
+                  </p>
+                  <a href="https://www.canada.ca/fr/agence-revenu/services/prestations-enfants-familles/allocation-canadienne-logement.html" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
+                    <ExternalLink className="w-3 h-3" /> {language === 'fr' ? 'En savoir plus' : 'Learn more'}
+                  </a>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="font-medium">{language === 'fr' ? 'Programme de subvention pour les nouveaux arrivants' : 'Newcomer Subsidy Program'}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {language === 'fr' 
+                      ? 'Certaines provinces offrent des programmes spéciaux pour les nouveaux immigrants.'
+                      : 'Some provinces offer special programs for new immigrants.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Provincial Programs */}
+            <div>
+              <h5 className="font-semibold mb-3 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-teal-500" />
+                {language === 'fr' ? 'Programmes provinciaux' : 'Provincial Programs'}
+              </h5>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { province: 'QC', name: language === 'fr' ? 'Programme Shelter Allowance' : 'Shelter Allowance Program', desc: language === 'fr' ? 'Allocation logement pour familles à faible revenu' : 'Housing allowance for low-income families', url: 'https://www.mamh.gouv.qc.ca/aide-logement/' },
+                  { province: 'ON', name: language === 'fr' ? 'Ontario Housing Benefit' : 'Ontario Housing Benefit', desc: language === 'fr' ? 'Aide mensuelle pour le logement' : 'Monthly housing assistance', url: 'https://www.ontario.ca/page/ontario-housing-benefit' },
+                  { province: 'BC', name: 'BC Housing Rental Assistance', desc: language === 'fr' ? 'Aide pour familles travailleuses' : 'Assistance for working families', url: 'https://www.bchousing.org/housing-assistance' },
+                  { province: 'AB', name: 'Alberta Rent Supplement', desc: language === 'fr' ? 'Supplément de loyer' : 'Rent supplement program', url: 'https://www.alberta.ca/rent-assistance.aspx' },
+                  { province: 'MB', name: 'Manitoba Rent Assist', desc: language === 'fr' ? 'Aide au loyer mensuelle' : 'Monthly rent assistance', url: 'https://www.gov.mb.ca/fs/eia/rentassist.html' },
+                  { province: 'NS', name: 'NS Housing Allowance', desc: language === 'fr' ? 'Allocation logement provinciale' : 'Provincial housing allowance', url: 'https://nslegislature.ca/' },
+                ].map((program, i) => (
+                  <Card key={i} className={`p-4 ${userProvince === program.province ? 'ring-2 ring-teal-500' : ''}`}>
+                    <div className="flex items-start justify-between">
+                      <Badge variant="outline">{program.province}</Badge>
+                    </div>
+                    <p className="font-medium mt-2">{program.name}</p>
+                    <p className="text-sm text-gray-500 mt-1">{program.desc}</p>
+                    <a href={program.url} target="_blank" rel="noopener noreferrer" className="text-sm text-teal-600 hover:underline mt-2 inline-flex items-center gap-1">
+                      <ExternalLink className="w-3 h-3" /> {language === 'fr' ? 'Site officiel' : 'Official site'}
+                    </a>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Eligibility Calculator */}
+            <div className="p-4 bg-gradient-to-r from-teal-50 to-teal-100/50 dark:from-teal-950/30 dark:to-teal-900/20 rounded-xl">
+              <h5 className="font-semibold text-teal-700 dark:text-teal-300 mb-3 flex items-center gap-2">
+                <Calculator className="w-4 h-4" />
+                {language === 'fr' ? 'Critères d\'éligibilité courants' : 'Common Eligibility Criteria'}
+              </h5>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Résident canadien/PR' : 'Canadian resident/PR'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Revenu sous le seuil établi' : 'Income below threshold'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Locataire (non-propriétaire)' : 'Renter (non-owner)'}</li>
+                </ul>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Âge minimum (18+)' : 'Minimum age (18+)'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Citoyenneté ou statut d\'immigrant' : 'Citizenship or immigrant status'}</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-500" /> {language === 'fr' ? 'Bail en règle' : 'Valid lease'}</li>
+                </ul>
+              </div>
+              <p className="text-xs text-gray-500 mt-3 italic">
+                {language === 'fr' 
+                  ? '* Les critères varient selon le programme. Consultez les sites officiels pour plus de détails.'
+                  : '* Criteria vary by program. Check official websites for details.'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 5: Enhanced Budget Calculator */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                <PieChart className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              {language === 'fr' ? 'Analyse de Budget Détaillée' : 'Detailed Budget Analysis'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Graphique de répartition et comparaison provinciale'
+                : 'Expense breakdown chart and provincial comparison'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Expense Breakdown Chart */}
+            <div>
+              <h5 className="font-semibold mb-4">{language === 'fr' ? 'Répartition des dépenses' : 'Expense Breakdown'}</h5>
+              <div className="space-y-3">
+                {expenseData.map((item, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">{item.name}</span>
+                      <span className="text-sm text-gray-600">${item.value}</span>
+                    </div>
+                    <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${item.color} rounded-full transition-all duration-500`}
+                        style={{ width: `${(item.value / maxExpense) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Total Bar */}
+              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{language === 'fr' ? 'Total mensuel' : 'Monthly Total'}</span>
+                  <span className="text-xl font-bold text-purple-600">${totalHousingCost + transport}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Provincial Comparison */}
+            <div className="p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 rounded-xl">
+              <h5 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                {language === 'fr' ? `Comparaison avec ${userProvince}` : `Comparison with ${userProvince}`}
+              </h5>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm text-gray-500">{language === 'fr' ? 'Votre ratio logement/revenu' : 'Your housing/income ratio'}</p>
+                  <p className={`text-2xl font-bold ${housingRatio > 30 ? 'text-red-600' : housingRatio > 25 ? 'text-amber-600' : 'text-green-600'}`}>
+                    {housingRatio.toFixed(1)}%
+                  </p>
+                </div>
+                <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm text-gray-500">{language === 'fr' ? `Moyenne ${userProvince}` : `${userProvince} Average`}</p>
+                  <p className="text-2xl font-bold text-indigo-600">{provincialData.avgRatio}%</p>
+                </div>
+              </div>
+              <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm">{language === 'fr' ? 'Votre loyer vs moyenne' : 'Your rent vs average'}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-purple-500 rounded-full" style={{ width: `${Math.min((rent / provincialData.avgRent) * 50, 100)}%` }} />
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium">
+                    {rent < provincialData.avgRent 
+                      ? `${language === 'fr' ? 'Sous la moyenne' : 'Below average'} (-$${provincialData.avgRent - rent})`
+                      : `${language === 'fr' ? 'Au-dessus' : 'Above'} (+$${rent - provincialData.avgRent})`}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Personalized Advice */}
+            <div className={`p-4 rounded-xl ${
+              housingRatio > 30 
+                ? 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800' 
+                : housingRatio > 25 
+                ? 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800'
+                : 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800'
+            }`}>
+              <h5 className={`font-semibold mb-2 flex items-center gap-2 ${
+                housingRatio > 30 ? 'text-red-700 dark:text-red-300' 
+                : housingRatio > 25 ? 'text-amber-700 dark:text-amber-300' 
+                : 'text-green-700 dark:text-green-300'
+              }`}>
+                <Lightbulb className="w-4 h-4" />
+                {language === 'fr' ? 'Conseils personnalisés' : 'Personalized Advice'}
+              </h5>
+              {housingRatio > 30 ? (
+                <ul className="space-y-2 text-sm text-red-700 dark:text-red-300">
+                  <li>• {language === 'fr' ? 'Votre ratio dépasse 30% - considéré comme un fardeau financier' : 'Your ratio exceeds 30% - considered a financial burden'}</li>
+                  <li>• {language === 'fr' ? 'Envisagez la colocation pour réduire les coûts' : 'Consider roommates to reduce costs'}</li>
+                  <li>• {language === 'fr' ? 'Cherchez dans des quartiers plus abordables' : 'Look in more affordable neighborhoods'}</li>
+                  <li>• {language === 'fr' ? 'Vérifiez votre admissibilité aux programmes d\'aide au logement' : 'Check your eligibility for housing assistance programs'}</li>
+                </ul>
+              ) : housingRatio > 25 ? (
+                <ul className="space-y-2 text-sm text-amber-700 dark:text-amber-300">
+                  <li>• {language === 'fr' ? 'Votre ratio est acceptable mais proche de la limite' : 'Your ratio is acceptable but near the limit'}</li>
+                  <li>• {language === 'fr' ? 'Constituez un fonds d\'urgence de 3-6 mois de dépenses' : 'Build an emergency fund of 3-6 months expenses'}</li>
+                  <li>• {language === 'fr' ? 'Surveillez les augmentations de loyer à renouvellement' : 'Watch for rent increases at renewal'}</li>
+                </ul>
+              ) : (
+                <ul className="space-y-2 text-sm text-green-700 dark:text-green-300">
+                  <li>• {language === 'fr' ? 'Excellent ratio! Votre logement est abordable' : 'Excellent ratio! Your housing is affordable'}</li>
+                  <li>• {language === 'fr' ? 'Profitez-en pour épargner pour l\'avenir' : 'Take advantage to save for the future'}</li>
+                  <li>• {language === 'fr' ? 'Considérez investir dans un REER ou CELI' : 'Consider investing in RRSP or TFSA'}</li>
+                </ul>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 6: Interactive Rental Checklist */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-rose-100 dark:bg-rose-900 rounded-lg flex items-center justify-center">
+                <ListChecks className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+              </div>
+              {language === 'fr' ? 'Checklist Interactive de Location' : 'Interactive Rental Checklist'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Suivez votre progression tout au long du processus'
+                : 'Track your progress throughout the process'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium">{language === 'fr' ? 'Progression' : 'Progress'}</span>
+                <span className="text-sm text-gray-500">
+                  {checkedItems.length} / {[
+                    // Before Search
+                    { id: 'budget', category: 'before' },
+                    { id: 'docs', category: 'before' },
+                    { id: 'credit', category: 'before' },
+                    { id: 'references', category: 'before' },
+                    // Search
+                    { id: 'websites', category: 'search' },
+                    { id: 'visits', category: 'search' },
+                    { id: 'questions', category: 'search' },
+                    // Application
+                    { id: 'application', category: 'apply' },
+                    { id: 'credit_check', category: 'apply' },
+                    { id: 'deposit', category: 'apply' },
+                    // Move In
+                    { id: 'lease', category: 'move' },
+                    { id: 'inspection', category: 'move' },
+                    { id: 'hydro', category: 'move' },
+                    { id: 'internet', category: 'move' },
+                    { id: 'insurance', category: 'move' },
+                    { id: 'address', category: 'move' },
+                  ].length}
+                </span>
+              </div>
+              <Progress value={(checkedItems.length / 16) * 100} className="h-2" />
+            </div>
+
+            {/* Checklist Categories */}
+            <div className="space-y-4">
+              {/* Before Search */}
+              <div>
+                <h5 className="font-semibold mb-2 text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  {language === 'fr' ? 'Avant la recherche' : 'Before Searching'}
+                </h5>
+                <div className="space-y-2">
+                  {[
+                    { id: 'budget', label: language === 'fr' ? 'Déterminer mon budget mensuel' : 'Determine my monthly budget' },
+                    { id: 'docs', label: language === 'fr' ? 'Préparer mes documents (buletins, lettre emploi)' : 'Prepare my documents (pay stubs, employment letter)' },
+                    { id: 'credit', label: language === 'fr' ? 'Vérifier mon score de crédit' : 'Check my credit score' },
+                    { id: 'references', label: language === 'fr' ? 'Obtenir des références de locataires/employeurs' : 'Get landlord/employer references' },
+                  ].map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => toggleChecklistItem(item.id)}
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                        checkedItems.includes(item.id) 
+                          ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' 
+                          : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {checkedItems.includes(item.id) ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-400" />
+                      )}
+                      <span className={checkedItems.includes(item.id) ? 'line-through text-gray-500' : ''}>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Search */}
+              <div>
+                <h5 className="font-semibold mb-2 text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                  <Search className="w-4 h-4" />
+                  {language === 'fr' ? 'Recherche' : 'Searching'}
+                </h5>
+                <div className="space-y-2">
+                  {[
+                    { id: 'websites', label: language === 'fr' ? 'Parcourir les sites de recherche' : 'Browse rental websites' },
+                    { id: 'visits', label: language === 'fr' ? 'Visiter au moins 3 logements' : 'Visit at least 3 apartments' },
+                    { id: 'questions', label: language === 'fr' ? 'Poser toutes les questions importantes' : 'Ask all important questions' },
+                  ].map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => toggleChecklistItem(item.id)}
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                        checkedItems.includes(item.id) 
+                          ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' 
+                          : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {checkedItems.includes(item.id) ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-400" />
+                      )}
+                      <span className={checkedItems.includes(item.id) ? 'line-through text-gray-500' : ''}>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Application */}
+              <div>
+                <h5 className="font-semibold mb-2 text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  {language === 'fr' ? 'Candidature' : 'Application'}
+                </h5>
+                <div className="space-y-2">
+                  {[
+                    { id: 'application', label: language === 'fr' ? 'Soumettre la candidature' : 'Submit the application' },
+                    { id: 'credit_check', label: language === 'fr' ? 'Autoriser la vérification de crédit' : 'Authorize credit check' },
+                    { id: 'deposit', label: language === 'fr' ? 'Payer le dépôt de garantie' : 'Pay the security deposit' },
+                  ].map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => toggleChecklistItem(item.id)}
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                        checkedItems.includes(item.id) 
+                          ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' 
+                          : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {checkedItems.includes(item.id) ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-400" />
+                      )}
+                      <span className={checkedItems.includes(item.id) ? 'line-through text-gray-500' : ''}>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Move In */}
+              <div>
+                <h5 className="font-semibold mb-2 text-green-600 dark:text-green-400 flex items-center gap-2">
+                  <Home className="w-4 h-4" />
+                  {language === 'fr' ? 'Emménagement' : 'Move In'}
+                </h5>
+                <div className="space-y-2">
+                  {[
+                    { id: 'lease', label: language === 'fr' ? 'Signer le bail' : 'Sign the lease' },
+                    { id: 'inspection', label: language === 'fr' ? 'Faire l\'inspection d\'entrée' : 'Complete move-in inspection' },
+                    { id: 'hydro', label: language === 'fr' ? 'Ouvrir le compte d\'électricité' : 'Set up electricity account' },
+                    { id: 'internet', label: language === 'fr' ? 'Installer l\'internet' : 'Set up internet' },
+                    { id: 'insurance', label: language === 'fr' ? 'Souscrire l\'assurance locataire' : 'Get tenant insurance' },
+                    { id: 'address', label: language === 'fr' ? 'Changer mon adresse postale' : 'Update my mailing address' },
+                  ].map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => toggleChecklistItem(item.id)}
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                        checkedItems.includes(item.id) 
+                          ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' 
+                          : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {checkedItems.includes(item.id) ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-400" />
+                      )}
+                      <span className={checkedItems.includes(item.id) ? 'line-through text-gray-500' : ''}>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
