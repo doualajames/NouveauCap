@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Audit NouveauCap</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Audit NouveauCap</h1>
+</header>
+<h1 id="audit-complet-des-fonctionnalités-core">AUDIT COMPLET DES
+FONCTIONNALITÉS CORE</h1>
+<h2
+id="saas-nouveaucap---plateforme-pour-nouveaux-immigrants-au-canada">SaaS
+NouveauCap - Plateforme pour nouveaux immigrants au Canada</h2>
+<p><strong>Date de l’audit :</strong> Février 2025<br />
+<strong>Version analysée :</strong> v0.2.0<br />
+<strong>Auditeur :</strong> GLM AI Code Assistant</p>
+<hr />
+<h2 id="résumé-exécutif">1. RÉSUMÉ EXÉCUTIF</h2>
+<h3 id="vision-du-produit">1.1 Vision du produit</h3>
+<p>NouveauCap est une plateforme SaaS B2C ambitieuse visant à
+centraliser l’ensemble des démarches administratives, professionnelles
+et sociales liées à l’installation des nouveaux immigrants au Canada. La
+vision est claire : <em>“Être le compagnon numérique indispensable de
+chaque immigrant au Canada, du premier jour jusqu’à la
+citoyenneté.”</em></p>
+<h3 id="verdict-global">1.2 Verdict global</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 21%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Critère</th>
+<th>Note</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Alignement PRD/Implémentation</strong></td>
+<td>8/10</td>
+<td>Les modules core sont bien implémentés</td>
+</tr>
+<tr class="even">
+<td><strong>Qualité du code</strong></td>
+<td>8/10</td>
+<td>TypeScript strict, composants bien structurés</td>
+</tr>
+<tr class="odd">
+<td><strong>Pertinence marché</strong></td>
+<td>9/10</td>
+<td>Répond à un besoin réel et documenté</td>
+</tr>
+<tr class="even">
+<td><strong>Potentiel de monétisation</strong></td>
+<td>7/10</td>
+<td>Modèle freemium cohérent, B2B à développer</td>
+</tr>
+<tr class="odd">
+<td><strong>Maturité MVP</strong></td>
+<td>6/10</td>
+<td>Fonctionnel mais incomplet sur certains modules</td>
+</tr>
+<tr class="even">
+<td><strong>Prêt pour production</strong></td>
+<td>6/10</td>
+<td>Nécessite tests et polissage UX</td>
+</tr>
+</tbody>
+</table>
+<h3 id="points-forts-majeurs">1.3 Points forts majeurs</h3>
+<ul>
+<li>✅ <strong>Données très complètes et à jour</strong> : CRS 2025,
+PNP, santé provinciale</li>
+<li>✅ <strong>Architecture technique solide</strong> : Next.js 14,
+TypeScript, Prisma, Zustand</li>
+<li>✅ <strong>Simulateur CRS fonctionnel</strong> avec recommandations
+personnalisées</li>
+<li>✅ <strong>Système d’alertes intelligent</strong> pour les échéances
+légales</li>
+<li>✅ <strong>Support multilingue FR/EN</strong> bien implémenté</li>
+<li>✅ <strong>Chatbot IA</strong> avec base de connaissances
+immigration</li>
+</ul>
+<h3 id="points-damélioration-critiques">1.4 Points d’amélioration
+critiques</h3>
+<ul>
+<li>⚠️ <strong>Application mobile non implémentée</strong> (Expo
+scaffold vide)</li>
+<li>⚠️ <strong>Module logement incomplet</strong> (pas de carte
+interactive)</li>
+<li>⚠️ <strong>Forum communautaire</strong> structure en place mais non
+fonctionnel</li>
+<li>⚠️ <strong>Tests automatisés absents</strong></li>
+<li>⚠️ <strong>Gestion d’erreurs à renforcer</strong></li>
+</ul>
+<hr />
+<h2 id="analyse-des-fonctionnalités-par-catégorie">2. ANALYSE DES
+FONCTIONNALITÉS PAR CATÉGORIE</h2>
+<h3 id="module-1-onboarding-profil-adaptatif">Module 1 : Onboarding
+&amp; Profil Adaptatif</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Questionnaire 7 étapes</td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>UX fluide, validation correcte</td>
+</tr>
+<tr class="even">
+<td>Sélection statut immigration</td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>4 statuts couverts (PR, Étudiant, Permis ouvert/fermé)</td>
+</tr>
+<tr class="odd">
+<td>Sélection province</td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>13 provinces/territoires</td>
+</tr>
+<tr class="even">
+<td>Date d’arrivée</td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>Gestion “déjà au Canada” vs “planifié”</td>
+</tr>
+<tr class="odd">
+<td>Profil professionnel</td>
+<td>✅ Complet</td>
+<td>7/10</td>
+<td>Secteurs couverts, optionnel</td>
+</tr>
+<tr class="even">
+<td>Préférences langue</td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>FR/EN, cours de langue</td>
+</tr>
+<tr class="odd">
+<td>Situation familiale</td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>Gestion enfants</td>
+</tr>
+<tr class="even">
+<td>Objectifs</td>
+<td>✅ Complet</td>
+<td>7/10</td>
+<td>4 objectifs prédéfinis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 8.1/10</strong></p>
+<p><strong>Points forts :</strong> - Flow intuitif avec progression
+visuelle - Validation en temps réel - Persistance Zustand avec
+localStorage - API <code>/api/onboarding</code> fonctionnelle</p>
+<p><strong>À améliorer :</strong> - Pas de sauvegarde brouillon
+automatique - Manque données pays d’origine dans le flow principal</p>
+<hr />
+<h3 id="module-2-immigration-statut-légal">Module 2 : Immigration &amp;
+Statut Légal</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Simulateur CRS</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Exceptionnel - données 2025</td>
+</tr>
+<tr class="even">
+<td><strong>Tracker PNP</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>70+ programmes actifs</td>
+</tr>
+<tr class="odd">
+<td><strong>Alertes permis</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Système intelligent multi-niveaux</td>
+</tr>
+<tr class="even">
+<td><strong>Guide résidents permanents</strong></td>
+<td>🟡 Partiel</td>
+<td>6/10</td>
+<td>Citoyenneté test présent, activation RP basique</td>
+</tr>
+<tr class="odd">
+<td><strong>Guide étudiants</strong></td>
+<td>🟡 Partiel</td>
+<td>6/10</td>
+<td>PGWP info présente, renouvellement basique</td>
+</tr>
+<tr class="even">
+<td><strong>Guide travailleurs</strong></td>
+<td>🟡 Partiel</td>
+<td>5/10</td>
+<td>Droits présents, LMIA à détailler</td>
+</tr>
+<tr class="odd">
+<td><strong>Quiz citoyenneté</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>20 questions FR/EN</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 7.3/10</strong></p>
+<p><strong>Points forts exceptionnels :</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Le simulateur CRS est remarquablement complet</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Inclus la mise à jour critique de mars 2025 (suppression points offre d&#39;emploi)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> expressEntryDraws <span class="op">=</span> [</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  { date<span class="op">:</span> <span class="st">&#39;2025-02-19&#39;</span><span class="op">,</span> type<span class="op">:</span> <span class="st">&#39;General&#39;</span><span class="op">,</span> minScore<span class="op">:</span> <span class="dv">450</span><span class="op">,</span> invitations<span class="op">:</span> <span class="dv">2500</span> }<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div>
+<p><strong>Données PNP impressionnantes :</strong> - Tous les programmes
+provinciaux - Streams Tech, Healthcare, Skilled Worker - Liens officiels
+vers sites gouvernementaux - Scores derniers tirages</p>
+<p><strong>À améliorer :</strong> - Intégration API IRCC pour statut
+temps réel - Guides détaillés par statut (content à enrichir)</p>
+<hr />
+<h3 id="module-3-emploi-carrière">Module 3 : Emploi &amp; Carrière</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Optimisation CV avec IA</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>API GPT-4, format canadien</td>
+</tr>
+<tr class="even">
+<td><strong>Extraction texte CV</strong></td>
+<td>✅ Complet</td>
+<td>7/10</td>
+<td>Support PDF/DOCX via mammoth/pdf-parse</td>
+</tr>
+<tr class="odd">
+<td><strong>Reconnaissance diplômes</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>ECA organizations, professions réglementées</td>
+</tr>
+<tr class="even">
+<td><strong>Quiz citoyenneté</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>20 questions avec explications</td>
+</tr>
+<tr class="odd">
+<td><strong>Emplois en demande</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Par province avec salaires et NOC</td>
+</tr>
+<tr class="even">
+<td><strong>Tableau bord candidatures</strong></td>
+<td>🟡 Partiel</td>
+<td>5/10</td>
+<td>Model exists, UI basique</td>
+</tr>
+<tr class="odd">
+<td><strong>Mentorat</strong></td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>Prévu Phase 2</td>
+</tr>
+<tr class="even">
+<td><strong>Préparation entretiens IA</strong></td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>Prévu Phase 2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 7.0/10</strong></p>
+<p><strong>Points forts :</strong> - L’optimisation CV canadien est un
+vrai différenciateur - Base de données ECA complète (WES, IQAS, ICES,
+CES) - Professions réglementées avec timeline et difficulté</p>
+<p><strong>Exemple d’excellence - Emplois en demande :</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Données très riches par province</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{ title<span class="op">:</span> <span class="st">&#39;Infirmier(ère)&#39;</span><span class="op">,</span> avgSalary<span class="op">:</span> <span class="st">&#39;65 000 $ - 95 000 $&#39;</span><span class="op">,</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  demand<span class="op">:</span> <span class="st">&#39;VERY_HIGH&#39;</span><span class="op">,</span> nocCode<span class="op">:</span> <span class="st">&#39;31301&#39;</span><span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  immigrationBonus<span class="op">:</span> <span class="st">&#39;Programme régulier des travailleurs qualifiés&#39;</span> }</span></code></pre></div>
+<hr />
+<h3 id="module-4-logement">Module 4 : Logement</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Guide bail provincial</td>
+<td>🟡 Partiel</td>
+<td>4/10</td>
+<td>Info basique, à enrichir</td>
+</tr>
+<tr class="even">
+<td>Calculateur budget</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Carte interactive quartiers</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>Prévu Phase 2</td>
+</tr>
+<tr class="even">
+<td>Modèles lettres</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Partenariats propriétaires</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 2.0/10</strong> ⚠️
+<strong>Critique</strong></p>
+<p>Ce module est significativement en retard par rapport au PRD. C’est
+un point d’attention majeur car le logement est un besoin immédiat des
+nouveaux arrivants.</p>
+<hr />
+<h3 id="module-5-finances-crédit">Module 5 : Finances &amp; Crédit</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Guide fiscal nouveaux arrivants</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Excellent</td>
+</tr>
+<tr class="even">
+<td><strong>Calculateur impôts</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>Par province</td>
+</tr>
+<tr class="odd">
+<td><strong>Crédits fédéraux/provinciaux</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>GST, CCB, Climate Action</td>
+</tr>
+<tr class="even">
+<td><strong>Documents première déclaration</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>Liste complète FR/EN</td>
+</tr>
+<tr class="odd">
+<td>Comparateur banques</td>
+<td>🟡 Partiel</td>
+<td>5/10</td>
+<td>Model exists, UI à faire</td>
+</tr>
+<tr class="even">
+<td>Guide crédit</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Comparateur transferts</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 6.5/10</strong></p>
+<p><strong>Points forts :</strong> - Module fiscal très complet et à
+jour - Calculateur avec taux marginaux par province - Liens vers CRA et
+ressources officielles</p>
+<hr />
+<h3 id="module-6-santé-bien-être">Module 6 : Santé &amp; Bien-être</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Assurance provinciale</strong></td>
+<td>✅ Complet</td>
+<td>10/10</td>
+<td>Exceptionnel</td>
+</tr>
+<tr class="even">
+<td><strong>Délais de carence</strong></td>
+<td>✅ Complet</td>
+<td>10/10</td>
+<td>Toutes provinces</td>
+</tr>
+<tr class="odd">
+<td><strong>Éligibilité par statut</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Détails par statut</td>
+</tr>
+<tr class="even">
+<td><strong>Assurance privée recommandée</strong></td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>5 options avec prix</td>
+</tr>
+<tr class="odd">
+<td><strong>Cliniques par province</strong></td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>Base de données postaux</td>
+</tr>
+<tr class="even">
+<td>Ressources santé mentale</td>
+<td>🟡 Partiel</td>
+<td>6/10</td>
+<td>Liste basique</td>
+</tr>
+<tr class="odd">
+<td>Sessions virtuelles</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>Prévu Phase 3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 8.7/10</strong> ⭐</p>
+<p><strong>Ce module est le plus abouti du produit.</strong> La
+couverture des 13 provinces/territoires avec: - Délais de carence précis
+(OHIP = 0 jours!) - Éligibilité par statut d’immigration - Étudiants
+étrangers avec accords Québec - Liens directs vers formulaires
+officiels</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Exemple de la qualité des données</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;ON&#39;</span><span class="op">:</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  waitingPeriod<span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="co">// NO waiting period as of 2024</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  studentNote<span class="op">:</span> <span class="st">&#39;Les étudiants internationaux ne sont PAS admissibles à OHIP.&#39;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h3 id="module-7-communauté-intégration">Module 7 : Communauté &amp;
+Intégration</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Forum communautaire</td>
+<td>🟡 Partiel</td>
+<td>4/10</td>
+<td>Models DB, pas d’UI</td>
+</tr>
+<tr class="even">
+<td>Événements</td>
+<td>🟡 Partiel</td>
+<td>5/10</td>
+<td>Model DB, UI basique</td>
+</tr>
+<tr class="odd">
+<td>Mentorat</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>Prévu Phase 2</td>
+</tr>
+<tr class="even">
+<td>Guide culturel</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>Associations ethnoculturelles</td>
+<td>❌ Non implémenté</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 3.0/10</strong> ⚠️</p>
+<p>Le volet communautaire est peu développé, ce qui est problématique
+pour la rétention utilisateur.</p>
+<hr />
+<h3 id="module-8-chatbot-ia">Module 8 : Chatbot IA</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fonctionnalité</th>
+<th>État</th>
+<th>Qualité</th>
+<th>Commentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Chat conversationnel</td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>UI widget flottant</td>
+</tr>
+<tr class="even">
+<td>Base connaissances immigration</td>
+<td>✅ Complet</td>
+<td>8/10</td>
+<td>Express Entry, PNP, santé, taxes</td>
+</tr>
+<tr class="odd">
+<td>Contexte multilingue</td>
+<td>✅ Complet</td>
+<td>9/10</td>
+<td>FR/EN natif</td>
+</tr>
+<tr class="even">
+<td>Historique conversation</td>
+<td>✅ Complet</td>
+<td>7/10</td>
+<td>Limité à la session</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Score module : 8.0/10</strong></p>
+<p>L’assistant IA est un vrai atout différenciateur avec une base de
+connaissances structurée.</p>
+<hr />
+<h2 id="architecture-technique">3. ARCHITECTURE TECHNIQUE</h2>
+<h3 id="stack-technologique">3.1 Stack technologique</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Couche</th>
+<th>Technologie</th>
+<th>Évaluation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frontend</td>
+<td>Next.js 14 + React 19</td>
+<td>✅ Excellent choix</td>
+</tr>
+<tr class="even">
+<td>Styling</td>
+<td>Tailwind CSS + shadcn/ui</td>
+<td>✅ Moderne et maintenable</td>
+</tr>
+<tr class="odd">
+<td>State</td>
+<td>Zustand + persist</td>
+<td>✅ Léger et efficace</td>
+</tr>
+<tr class="even">
+<td>Database</td>
+<td>Prisma + SQLite</td>
+<td>⚠️ SQLite limité pour production</td>
+</tr>
+<tr class="odd">
+<td>Auth</td>
+<td>JWT custom (jose)</td>
+<td>⚠️ Considérer Clerk/Supabase</td>
+</tr>
+<tr class="even">
+<td>IA</td>
+<td>z-ai-web-dev-sdk (GPT-4)</td>
+<td>✅ Bien intégré</td>
+</tr>
+<tr class="odd">
+<td>Payments</td>
+<td>Stripe</td>
+<td>✅ Standard</td>
+</tr>
+<tr class="even">
+<td>Mobile</td>
+<td>Expo (React Native)</td>
+<td>❌ Scaffold vide</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qualité-du-code">3.2 Qualité du code</h3>
+<p><strong>Points forts :</strong> - TypeScript strict activé -
+Composants shadcn/ui cohérents - Store Zustand bien structuré - API
+routes avec authentification</p>
+<p><strong>Points d’amélioration :</strong> - Pas de tests (Jest,
+Testing Library) - Gestion d’erreurs basique - Pas de validation Zod sur
+toutes les API - Commentaires de code insuffisants</p>
+<h3 id="schéma-de-données">3.3 Schéma de données</h3>
+<pre class="prisma"><code>// Modèles principaux bien conçus
+- User (avec profil complet)
+- Task (checklist dynamique)
+- Document (CV, permis)
+- Alert (rappels intelligents)
+- Subscription (Stripe)
+- ForumPost/Comment (non utilisé)
+- Event/EventRegistration (partiel)
+- BankOffer (non utilisé)
+- ProvinceInfo (non utilisé)</code></pre>
+<hr />
+<h2 id="proposition-de-valeur">4. PROPOSITION DE VALEUR</h2>
+<h3 id="analyse-du-marché-cible">4.1 Analyse du marché cible</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Segment</th>
+<th>Taille (CA)</th>
+<th>Couverture</th>
+<th>Potentiel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Résidents permanents</td>
+<td>500K/an</td>
+<td>✅ Bon</td>
+<td>Élevé</td>
+</tr>
+<tr class="even">
+<td>Étudiants étrangers</td>
+<td>1M+ actifs</td>
+<td>✅ Bon</td>
+<td>Élevé</td>
+</tr>
+<tr class="odd">
+<td>Travailleurs ouverts</td>
+<td>400K+</td>
+<td>✅ Bon</td>
+<td>Moyen</td>
+</tr>
+<tr class="even">
+<td>Travailleurs fermés</td>
+<td>200K+</td>
+<td>🟡 Moyen</td>
+<td>Élevé (vulnérables)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="différenciateurs-clés">4.2 Différenciateurs clés</h3>
+<ol type="1">
+<li><strong>Personnalisation par statut</strong> - Unique sur le marché
+québécois/canadien</li>
+<li><strong>Données à jour</strong> - CRS 2025 avec suppression points
+offre d’emploi</li>
+<li><strong>Alertes intelligentes</strong> - Aucun concurrent n’offre ce
+niveau de suivi</li>
+<li><strong>Simulateur CRS avancé</strong> - Avec recommandations
+personnalisées</li>
+<li><strong>Chatbot IA spécialisé</strong> - Base connaissances
+immigration Canada</li>
+</ol>
+<h3 id="analyse-concurrentielle">4.3 Analyse concurrentielle</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 15%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concurrent</th>
+<th>Type</th>
+<th>Avantage NouveauCap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Arrive (IRCC)</td>
+<td>Gouvernemental</td>
+<td>+ Personnalisation, + Alertes, + Communauté</td>
+</tr>
+<tr class="even">
+<td>Settlement.org</td>
+<td>OSBL</td>
+<td>+ Outils interactifs, + UX moderne</td>
+</tr>
+<tr class="odd">
+<td>Facebook Groups</td>
+<td>Informel</td>
+<td>+ Fiabilité, + Structure, + Expertise</td>
+</tr>
+<tr class="even">
+<td>Boundless (US)</td>
+<td>Immigration</td>
+<td>Focus Canada, non couvert</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="analyse-uxui">5. ANALYSE UX/UI</h2>
+<h3 id="points-forts">5.1 Points forts</h3>
+<ul>
+<li>Design moderne avec gradient rouge/rose (branding fort)</li>
+<li>Navigation intuitive par modules</li>
+<li>Responsive design</li>
+<li>Dark mode support</li>
+<li>Feedback utilisateur (toast, progress)</li>
+</ul>
+<h3 id="points-damélioration">5.2 Points d’amélioration</h3>
+<ul>
+<li>Pas de dashboard unifié central</li>
+<li>Manque onboarding tooltips</li>
+<li>Erreurs pas toujours explicites</li>
+<li>Certains écrans denses (trop d’infos)</li>
+</ul>
+<h3 id="accessibilité">5.3 Accessibilité</h3>
+<ul>
+<li>🟡 Contraste globalement bon</li>
+<li>❌ Pas de support lecteur d’écran testé</li>
+<li>❌ Pas de navigation clavier optimisée</li>
+<li>⚠️ WCAG 2.1 AA non validé</li>
+</ul>
+<hr />
+<h2 id="modèle-de-monétisation">6. MODÈLE DE MONÉTISATION</h2>
+<h3 id="analyse-des-plans">6.1 Analyse des plans</h3>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 35%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Plan</th>
+<th>Prix</th>
+<th>Valeur perçue</th>
+<th>Compétitivité</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gratuit</td>
+<td>0$</td>
+<td>Onboarding + CRS basique</td>
+<td>✅ Généreux</td>
+</tr>
+<tr class="even">
+<td>Premium</td>
+<td>19,99<span
+class="math inline">/<em>m</em><em>o</em><em>i</em><em>s</em>|<em>C</em><em>V</em><em>I</em><em>A</em> + <em>A</em><em>l</em><em>e</em><em>r</em><em>t</em><em>e</em><em>s</em><em>i</em><em>l</em><em>l</em><em>i</em><em>m</em><em>i</em><em>t</em><em>é</em><em>e</em><em>s</em>|✅<em>C</em><em>o</em><em>m</em><em>p</em><em>é</em><em>t</em><em>i</em><em>t</em><em>i</em><em>f</em>||<em>F</em><em>a</em><em>m</em><em>i</em><em>l</em><em>l</em><em>e</em>|39, 99</span>/mois</td>
+<td>4 membres + dashboard</td>
+<td>🟡 À valider</td>
+</tr>
+</tbody>
+</table>
+<h3 id="recommandations-pricing">6.2 Recommandations pricing</h3>
+<ol type="1">
+<li><strong>Ajouter un plan “Essentiel” à 9,99$</strong> pour les
+alertes uniquement</li>
+<li><strong>Offrir 1 mois Premium gratuit</strong> à l’inscription</li>
+<li><strong>Partenariats universités</strong> (50-100$/étudiant/an)</li>
+<li><strong>Marketplace services</strong> (10-15% commission)</li>
+</ol>
+<hr />
+<h2 id="recommandations-stratégiques">7. RECOMMANDATIONS
+STRATÉGIQUES</h2>
+<h3 id="court-terme-1-3-mois">7.1 Court terme (1-3 mois)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Priorité</th>
+<th>Action</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>🔴 Critique</td>
+<td>Implémenter l’app mobile (Expo)</td>
+<td>Rétention +40%</td>
+</tr>
+<tr class="even">
+<td>🔴 Critique</td>
+<td>Compléter module logement</td>
+<td>Valeur produit</td>
+</tr>
+<tr class="odd">
+<td>🟡 Important</td>
+<td>Ajouter tests E2E (Playwright)</td>
+<td>Qualité</td>
+</tr>
+<tr class="even">
+<td>🟡 Important</td>
+<td>Enrichir contenu guides</td>
+<td>SEO</td>
+</tr>
+<tr class="odd">
+<td>🟢 Souhaitable</td>
+<td>Activer le forum communautaire</td>
+<td>Engagement</td>
+</tr>
+</tbody>
+</table>
+<h3 id="moyen-terme-3-6-mois">7.2 Moyen terme (3-6 mois)</h3>
+<ol type="1">
+<li><strong>Intégration API IRCC</strong> pour statut temps réel</li>
+<li><strong>Partenariats bancaires</strong> (RBC, Desjardins)</li>
+<li><strong>Programme mentorat</strong> avec immigrants établis</li>
+<li><strong>Application mobile offline</strong> pour travailleurs
+ruraux</li>
+<li><strong>Extension langues</strong> (ES, ZH, HI, AR)</li>
+</ol>
+<h3 id="long-terme-6-18-mois">7.3 Long terme (6-18 mois)</h3>
+<ol type="1">
+<li><strong>API partenaires B2B</strong> (universités, employeurs)</li>
+<li><strong>Marketplace services</strong> (avocats, traducteurs)</li>
+<li><strong>Expansion France/Belgique</strong> (immigration Canada)</li>
+<li><strong>Certification officielle</strong> (IRCC partner)</li>
+</ol>
+<hr />
+<h2 id="verdict-sincère-sur-le-potentiel-du-produit">8. VERDICT SINCÈRE
+SUR LE POTENTIEL DU PRODUIT</h2>
+<h3 id="forces-intrinsèques">8.1 Forces intrinsèques</h3>
+<p>NouveauCap a un <strong>vrai potentiel de succès</strong> pour
+plusieurs raisons :</p>
+<ol type="1">
+<li><strong>Marché validé</strong> : 500K+ nouveaux résidents/an, besoin
+documenté</li>
+<li><strong>Proposition de valeur claire</strong> : Un seul endroit pour
+tout gérer</li>
+<li><strong>Exécution technique solide</strong> : Code de qualité, stack
+moderne</li>
+<li><strong>Différenciation réelle</strong> : Personnalisation par
+statut unique</li>
+<li><strong>Données à jour</strong> : Suivi des changements
+réglementaires (CRS 2025)</li>
+</ol>
+<h3 id="risques-identifiés">8.2 Risques identifiés</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 31%" />
+<col style="width: 19%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Risque</th>
+<th>Probabilité</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Adoption freemium</td>
+<td>Moyen</td>
+<td>Élevé</td>
+<td>Marketing ciblé, partenariats</td>
+</tr>
+<tr class="even">
+<td>Concurrence gouvernementale</td>
+<td>Faible</td>
+<td>Élevé</td>
+<td>Valeur ajoutée communautaire</td>
+</tr>
+<tr class="odd">
+<td>Données obsolètes</td>
+<td>Moyen</td>
+<td>Critique</td>
+<td>Process mise à jour mensuel</td>
+</tr>
+<tr class="even">
+<td>Barrière confiance</td>
+<td>Moyen</td>
+<td>Élevé</td>
+<td>Certifications, partenariats</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verdict-final">8.3 Verdict final</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   POTENTIEL DE SUCCÈS : ⭐⭐⭐⭐☆ (4/5)                        │
+│                                                                 │
+│   NouveauCap est un produit bien conçu qui répond à un          │
+│   besoin réel non satisfait sur le marché canadien.             │
+│                                                                 │
+│   L&#39;implémentation actuelle couvre ~60% du PRD Phase 1,         │
+│   avec des modules clés (CRS, Santé, Alertes) très aboutis.     │
+│                                                                 │
+│   Les défis principaux sont :                                   │
+│   - L&#39;application mobile (critique pour les travailleurs ruraux)│
+│   - Le module logement (besoin immédiat non couvert)            │
+│   - La communauté (clé pour la rétention)                       │
+│                                                                 │
+│   RECOMMANDATION : Continuer le développement avec focus        │
+│   sur ces 3 axes pour atteindre un MVP solide en 2-3 mois.      │
+│                                                                 │
+│   Le produit a le potentiel d&#39;atteindre les objectifs           │
+│   du PRD : 50K MAU et 500K CAD MRR en 18 mois.                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="scores-détaillés-par-module">9. SCORES DÉTAILLÉS PAR MODULE</h2>
+<pre><code>Onboarding &amp; Profil      ████████░░  8.1/10
+Immigration &amp; Statut     ████████░░  7.3/10  
+Emploi &amp; Carrière        ███████░░░  7.0/10
+Logement                 ██░░░░░░░░  2.0/10  ⚠️
+Finances &amp; Crédit        ███████░░░  6.5/10
+Santé &amp; Bien-être        █████████░  8.7/10  ⭐
+Communauté               ███░░░░░░░  3.0/10  ⚠️
+Chatbot IA               ████████░░  8.0/10
+
+SCORE GLOBAL             ███████░░░  6.6/10</code></pre>
+<hr />
+<h2 id="conclusion">10. CONCLUSION</h2>
+<p>NouveauCap est un projet sérieux avec une fondation technique solide
+et une vision produit pertinente. Les modules core (Immigration, Santé,
+Emploi) sont bien implémentés et apportent une vraie valeur aux
+utilisateurs.</p>
+<p><strong>Pour réussir, l’équipe doit prioriser :</strong></p>
+<ol type="1">
+<li>📱 <strong>L’application mobile</strong> - Critique pour 30%+ des
+utilisateurs</li>
+<li>🏠 <strong>Le module logement</strong> - Besoin immédiat à
+l’arrivée</li>
+<li>👥 <strong>La communauté</strong> - Clé pour la rétention et le
+bouche-à-oreille</li>
+</ol>
+<p>Avec ces améliorations et une stratégie go-to-market bien exécutée,
+NouveauCap peut devenir la référence de l’accompagnement des immigrants
+au Canada.</p>
+<hr />
+<p><em>Rapport généré automatiquement par GLM AI Code
+Assistant</em><br />
+<em>Analyse basée sur le code source et le PRD v1.0</em></p>
+</body>
+</html>

@@ -1,0 +1,250 @@
+// NouveauCap - SaaS Platform for New Immigrants to Canada
+// Prisma Schema for PostgreSQL (Supabase/Neon/Railway)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// User model with authentication and profile
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  name          String?
+  avatar        String?
+  
+  // Profile information
+  immigrationStatus  String?
+  province          String?
+  postalCode        String?
+  arrivalDate       DateTime?
+  dateOfBirth       DateTime?
+  professionalSector String?
+  preferredLanguage String?   @default("fr")
+  familyStatus      String?
+  countryOfOrigin   String?
+  
+  // Permit expiry dates
+  studyPermitExpiry    DateTime?
+  workPermitExpiry     DateTime?
+  passportExpiry       DateTime?
+  visaExpiry           DateTime?
+  
+  // Subscription
+  subscriptionTier  String    @default("FREE")
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+  
+  // Metadata
+  onboardingCompleted Boolean @default(false)
+  emailVerified     DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  tasks             Task[]
+  documents         Document[]
+  forumPosts        ForumPost[]
+  forumComments     ForumComment[]
+  events            EventRegistration[]
+  alerts            Alert[]
+  jobApplications   JobApplication[]
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  titleEn     String?
+  description String?
+  descriptionEn String?
+  category    String
+  priority    String   @default("MEDIUM")
+  status      String   @default("PENDING")
+  
+  dueDate     DateTime?
+  completedAt DateTime?
+  
+  order       Int      @default(0)
+  isRequired  Boolean  @default(false)
+  source      String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name        String
+  type        String
+  content     String?
+  aiOptimized Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model ForumPost {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  title       String
+  content     String
+  category    String
+  province    String?
+  
+  likes       Int      @default(0)
+  views       Int      @default(0)
+  isPinned    Boolean  @default(false)
+  
+  comments    ForumComment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([authorId])
+  @@index([category])
+}
+
+model ForumComment {
+  id          String   @id @default(cuid())
+  postId      String
+  post        ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  content     String
+  likes       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([postId])
+  @@index([authorId])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  titleEn     String?
+  description String?
+  descriptionEn String?
+  type        String
+  province    String?
+  city        String?
+  address     String?
+  
+  date        DateTime
+  endDate     DateTime?
+  isVirtual   Boolean  @default(false)
+  virtualLink String?
+  capacity    Int?
+  price       Float    @default(0)
+  
+  registrations EventRegistration[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([province])
+  @@index([date])
+}
+
+model EventRegistration {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  registeredAt DateTime @default(now())
+  
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model Alert {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type        String
+  title       String
+  message     String
+  dueDate     DateTime
+  
+  isRead      Boolean  @default(false)
+  isEmailSent Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([dueDate])
+}
+
+model JobApplication {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  company     String
+  position    String
+  status      String   @default("APPLIED")
+  appliedDate DateTime?
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model BankOffer {
+  id              String   @id @default(cuid())
+  bankName        String
+  bankNameEn      String?
+  accountType     String
+  monthlyFee      Float    @default(0)
+  firstYearFree   Boolean  @default(false)
+  newcomerOffer   String?
+  newcomerOfferEn String?
+  features        String?
+  link            String?
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ProvinceInfo {
+  id              String   @id @default(cuid())
+  provinceCode    String   @unique
+  provinceName    String
+  provinceNameEn  String
+  
+  healthInsurance  String?
+  housingInfo      String?
+  taxInfo          String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

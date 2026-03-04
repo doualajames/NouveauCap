@@ -1,0 +1,253 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "Your companion for a new life in Canada",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "viewAll": "View All",
+    "free": "Free",
+    "month": "/month"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "createAccount": "Create Account",
+    "signInWith": "Sign in with",
+    "welcomeBack": "Welcome Back",
+    "joinUs": "Join NouveauCap"
+  },
+  "onboarding": {
+    "title": "Let's personalize your experience",
+    "subtitle": "A few questions to create your personalized action plan",
+    "step": "Step",
+    "of": "of",
+    "status": {
+      "title": "What is your immigration status?",
+      "permanentResident": "Permanent Resident",
+      "permanentResidentDesc": "You have obtained permanent resident status",
+      "foreignStudent": "Foreign Student",
+      "foreignStudentDesc": "You are studying in Canada with a study permit",
+      "openWorkPermit": "Open Work Permit",
+      "openWorkPermitDesc": "You can work for any employer",
+      "closedWorkPermit": "Closed Work Permit",
+      "closedWorkPermitDesc": "You are tied to a specific employer"
+    },
+    "province": {
+      "title": "Which province do you reside in?",
+      "selectProvince": "Select your province"
+    },
+    "arrival": {
+      "title": "When did you arrive in Canada?",
+      "placeholder": "Select a date"
+    },
+    "sector": {
+      "title": "What is your professional sector?",
+      "selectSector": "Select your sector",
+      "technology": "Technology / IT",
+      "finance": "Finance / Accounting",
+      "health": "Health / Medical",
+      "education": "Education",
+      "engineering": "Engineering",
+      "trades": "Skilled Trades",
+      "retail": "Retail",
+      "hospitality": "Hospitality / Food Service",
+      "other": "Other"
+    },
+    "language": {
+      "title": "Which language do you prefer?",
+      "french": "French",
+      "english": "English"
+    },
+    "family": {
+      "title": "What is your family situation?",
+      "single": "Single",
+      "couple": "In a relationship",
+      "familyWithChildren": "Family with children"
+    },
+    "origin": {
+      "title": "What is your country of origin?",
+      "placeholder": "Select your country"
+    },
+    "complete": {
+      "title": "Your profile is ready!",
+      "subtitle": "Here is your personalized action plan",
+      "startExploring": "Start Exploring"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "progress": "Progress",
+    "tasksCompleted": "tasks completed",
+    "priorityActions": "Priority Actions",
+    "upcomingDeadlines": "Upcoming Deadlines",
+    "quickLinks": "Quick Links",
+    "noTasks": "No tasks at the moment",
+    "completeOnboarding": "Complete your profile to see your personalized tasks"
+  },
+  "modules": {
+    "province": {
+      "title": "Province",
+      "description": "Provincial welcome and integration policies"
+    },
+    "immigration": {
+      "title": "Immigration & Legal Status",
+      "description": "Manage your status and understand your rights",
+      "permanentResident": "Permanent Resident",
+      "studyPermit": "Study Permit",
+      "workPermit": "Work Permit",
+      "citizenship": "Citizenship",
+      "crsSimulator": "CRS Simulator",
+      "expressEntry": "Express Entry",
+      "pgwpEligibility": "PGWP Eligibility",
+      "permitTracking": "Permit Tracking",
+      "rightsGuide": "Rights Guide"
+    },
+    "employment": {
+      "title": "Employment & Career",
+      "description": "Find your dream job in Canada",
+      "cvOptimizer": "AI CV Optimization",
+      "jobSearch": "Job Search",
+      "interviewPrep": "Interview Preparation",
+      "diplomaRecognition": "Diploma Recognition",
+      "coverLetter": "Cover Letter",
+      "salaryGuide": "Salary Guide",
+      "applications": "My Applications"
+    },
+    "housing": {
+      "title": "Housing",
+      "description": "Find your home in Canada",
+      "rentalGuide": "Rental Guide",
+      "budgetCalculator": "Budget Calculator",
+      "tenantRights": "Tenant Rights",
+      "letterTemplates": "Letter Templates",
+      "neighborhoods": "Neighborhoods"
+    },
+    "finance": {
+      "title": "Finance & Credit",
+      "description": "Build your Canadian financial life",
+      "bankComparator": "Bank Comparator",
+      "creditGuide": "Credit Guide",
+      "taxGuide": "Tax Guide",
+      "taxSimulator": "Tax Simulator",
+      "moneyTransfer": "Money Transfer",
+      "insurance": "Insurance"
+    },
+    "health": {
+      "title": "Health & Wellness",
+      "description": "Access the Canadian healthcare system",
+      "provincialInsurance": "Provincial Health Insurance",
+      "waitingPeriod": "Waiting Period",
+      "privateInsurance": "Private Insurance",
+      "clinicDirectory": "Clinic Directory",
+      "mentalHealth": "Mental Health",
+      "familyHealth": "Family Health"
+    },
+    "community": {
+      "title": "Community",
+      "description": "Connect with other immigrants",
+      "forum": "Forum",
+      "events": "Events",
+      "mentorship": "Mentorship",
+      "culturalGuide": "Cultural Guide",
+      "associations": "Associations",
+      "languageLearning": "Language Learning"
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "Management and statistics"
+    }
+  },
+  "subscription": {
+    "title": "Our Plans",
+    "choosePlan": "Choose This Plan",
+    "current": "Current",
+    "free": {
+      "name": "Free",
+      "price": "0",
+      "features": [
+        "Personalized onboarding",
+        "Basic checklist",
+        "Community forum",
+        "General guides",
+        "3 alerts per month"
+      ]
+    },
+    "essentiel": {
+      "name": "Essential",
+      "price": "9.99",
+      "features": [
+        "Everything in Free",
+        "Unlimited alerts",
+        "All simulators",
+        "Complete Housing & Finance modules",
+        "Priority support"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "19.99",
+      "features": [
+        "Everything in Essential",
+        "AI for employment (CV, interviews)",
+        "1:1 Mentorship (2h/month)",
+        "Personalized documents",
+        "Exclusive communities"
+      ]
+    },
+    "famille": {
+      "name": "Family",
+      "price": "29.99",
+      "features": [
+        "Premium for 2 adults + children",
+        "Schooling guide",
+        "Parental resources",
+        "Family advice"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "Ontario",
+    "QC": "Quebec",
+    "BC": "British Columbia",
+    "AB": "Alberta",
+    "MB": "Manitoba",
+    "SK": "Saskatchewan",
+    "NS": "Nova Scotia",
+    "NB": "New Brunswick",
+    "PE": "Prince Edward Island",
+    "NL": "Newfoundland and Labrador",
+    "NT": "Northwest Territories",
+    "YT": "Yukon",
+    "NU": "Nunavut"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "Permanent Resident",
+    "FOREIGN_STUDENT": "Foreign Student",
+    "OPEN_WORK_PERMIT": "Open Work Permit",
+    "CLOSED_WORK_PERMIT": "Closed Work Permit"
+  },
+  "alerts": {
+    "permitExpiry": "Permit Expiry",
+    "taxDeadline": "Tax Deadline",
+    "healthCard": "Health Card",
+    "reminder": "Reminder"
+  }
+}
