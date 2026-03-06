@@ -5044,7 +5044,47 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
 
           {/* PSTQ Simulator - For Quebec Temporary Residents - Two Blocks */}
           {isTemporaryResident && user?.province === 'QC' && (
-            <div className={`lg:col-span-3 space-y-6 ${activeTab !== 'pstq' ? 'hidden lg:block' : ''}`}>
+            <div className={`lg:col-span-3 space-y-0 ${activeTab !== 'pstq' ? 'hidden lg:block' : ''}`}>
+              
+              {/* BANDEAU TITRE PRINCIPAL */}
+              <div className="relative -mb-1">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-t-2xl" />
+                <div className="relative px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
+                      <MapPin className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        🇶🇦 {language === 'fr' ? 'Simulateur PSTQ 2025' : 'PSTQ Simulator 2025'}
+                      </h2>
+                      <p className="text-blue-100 text-sm">
+                        {language === 'fr' 
+                          ? 'Programme de sélection permanente du Québec' 
+                          : 'Quebec Permanent Selection Program'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-1.5">
+                      {language === 'fr' ? 'Max 100 points' : 'Max 100 points'}
+                    </Badge>
+                    <Badge className="bg-green-500 text-white border-0 px-4 py-1.5">
+                      {language === 'fr' ? 'Seuil: 50-60 pts' : 'Cutoff: 50-60 pts'}
+                    </Badge>
+                  </div>
+                </div>
+                {/* Connecteur visuel vers le bas */}
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="w-6 h-6 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center shadow-lg border-2 border-indigo-200 dark:border-indigo-800">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full" />
+                  </div>
+                </div>
+              </div>
+
+              {/* CONTENU DES BLOCS - avec bordure unifiée */}
+              <div className="bg-white dark:bg-gray-900 rounded-b-2xl shadow-xl border border-t-0 border-gray-200 dark:border-gray-800 overflow-hidden">
+                <div className="p-6 space-y-6">
               
               {/* BLOC 1: Profil Personnel & Formation */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50/80 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-950/20">
@@ -5639,6 +5679,8 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   </div>
                 </CardContent>
               </Card>
+                </div>
+              </div>
             </div>
           )}
 
