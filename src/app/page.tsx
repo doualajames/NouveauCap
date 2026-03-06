@@ -21,7 +21,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   Home, User, FileText, Building2, Wallet, Heart, Users, 
   Plane, GraduationCap, Briefcase, Shield, Calendar,
-  CheckCircle2, Circle, AlertCircle, ChevronRight, ChevronLeft,
+  CheckCircle2, Circle, AlertCircle, ChevronRight, ChevronLeft, ChevronDown,
   Menu, X, Globe, Bell, Settings, LogOut, Crown, Star,
   MessageSquare, CalendarDays, BookOpen, HeartHandshake,
   CreditCard, Calculator, FileSearch, Building, Stethoscope,
@@ -463,6 +463,529 @@ function getClinicsByPostalCode(province: Province, postalCode: string, limit: n
     .sort((a, b) => a.distance - b.distance)
     .slice(0, limit)
 }
+
+// ==================== ADVERTISING SYSTEM ====================
+// Strategic ad placements for partner monetization
+
+interface Advertisement {
+  id: string
+  partner: string
+  category: 'banking' | 'insurance' | 'telecom' | 'employment' | 'education' | 'travel' | 'services' | 'money_transfer'
+  title: string
+  titleEn: string
+  description: string
+  descriptionEn: string
+  cta: string
+  ctaEn: string
+  url: string
+  logo?: string
+  badge?: string
+  badgeEn?: string
+  highlight?: boolean
+  provinces?: Province[] // Target specific provinces
+  immigrationStatus?: ImmigrationStatus[] // Target specific immigration statuses
+}
+
+// Advertisements Database
+const advertisements: Advertisement[] = [
+  // BANKING PARTNERS
+  {
+    id: 'rbc-newcomer',
+    partner: 'RBC Royal Bank',
+    category: 'banking',
+    title: 'Compte Nouveaux Arrivants',
+    titleEn: 'Newcomer Account',
+    description: 'Ouvrez un compte bancaire sans frais pendant 1 an. Obtenez une carte de crédit sans historique canadien.',
+    descriptionEn: 'Open a bank account with no fees for 1 year. Get a credit card without Canadian history.',
+    cta: 'Obtenir l\'offre',
+    ctaEn: 'Get Offer',
+    url: 'https://www.rbc.com/newcomers',
+    badge: '🎁 1 an sans frais',
+    badgeEn: '🎁 1 year free',
+    highlight: true
+  },
+  {
+    id: 'desjardins-quebec',
+    partner: 'Desjardins',
+    category: 'banking',
+    title: 'Offre Accueil Québec',
+    titleEn: 'Quebec Welcome Offer',
+    description: 'Forfait bancaire complet pour nouveaux québécois. Accompagnement en français.',
+    descriptionEn: 'Complete banking package for new Quebecers. French support.',
+    cta: 'Découvrir',
+    ctaEn: 'Discover',
+    url: 'https://www.desjardins.com/quebec',
+    badge: '🇶🇦 Spécial Québec',
+    badgeEn: '🇶🇦 Quebec Special',
+    provinces: ['QC'],
+    highlight: true
+  },
+  {
+    id: 'scotiabank-start',
+    partner: 'Scotiabank',
+    category: 'banking',
+    title: 'StartRight Program',
+    titleEn: 'StartRight Program',
+    description: 'Programme exclusif pour nouveaux immigrants. Jusqu\'à 300$ en bonus.',
+    descriptionEn: 'Exclusive program for new immigrants. Up to $300 in bonuses.',
+    cta: 'En savoir plus',
+    ctaEn: 'Learn More',
+    url: 'https://www.scotiabank.com/startright',
+    badge: '💰 Bonus 300$',
+    badgeEn: '💰 $300 Bonus'
+  },
+  
+  // MONEY TRANSFER PARTNERS
+  {
+    id: 'wise-transfer',
+    partner: 'Wise',
+    category: 'money_transfer',
+    title: 'Transfert d\'argent international',
+    titleEn: 'International Money Transfer',
+    description: 'Envoyez de l\'argent vers 80+ pays. Taux de change réels, frais minimes.',
+    descriptionEn: 'Send money to 80+ countries. Real exchange rates, minimal fees.',
+    cta: 'Transférer maintenant',
+    ctaEn: 'Transfer Now',
+    url: 'https://wise.com',
+    badge: '💱 Frais réduits',
+    badgeEn: '💱 Low fees',
+    highlight: true
+  },
+  {
+    id: 'remitly',
+    partner: 'Remitly',
+    category: 'money_transfer',
+    title: 'Envoyez de l\'argent à la famille',
+    titleEn: 'Send Money to Family',
+    description: 'Transferts rapides vers l\'Afrique, l\'Asie et l\'Amérique Latine.',
+    descriptionEn: 'Fast transfers to Africa, Asia, and Latin America.',
+    cta: 'Premier envoi gratuit',
+    ctaEn: 'First transfer free',
+    url: 'https://www.remitly.com',
+    badge: '🚀 Rapide',
+    badgeEn: '🚀 Fast'
+  },
+
+  // INSURANCE PARTNERS
+  {
+    id: 'td-insurance-home',
+    partner: 'TD Insurance',
+    category: 'insurance',
+    title: 'Assurance Habitation',
+    titleEn: 'Home Insurance',
+    description: 'Protection complète pour votre logement. 15% de réduction en ligne.',
+    descriptionEn: 'Complete protection for your home. 15% online discount.',
+    cta: 'Obtenir un devis',
+    ctaEn: 'Get Quote',
+    url: 'https://www.tdinsurance.com',
+    badge: '🏠 15% de réduction',
+    badgeEn: '🏠 15% off'
+  },
+  {
+    id: 'desjardins-travel',
+    partner: 'Desjardins Assurances',
+    category: 'insurance',
+    title: 'Assurance Voyage Visitors',
+    titleEn: 'Visitors Travel Insurance',
+    description: 'Couverture santé pour visiteurs et résidents temporaires. Urgences médicales incluses.',
+    descriptionEn: 'Health coverage for visitors and temporary residents. Medical emergencies included.',
+    cta: 'Souscrire',
+    ctaEn: 'Subscribe',
+    url: 'https://www.desjardins.com/travel',
+    badge: '✈️ Visa requis',
+    badgeEn: '✈️ Visa required',
+    immigrationStatus: ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'],
+    highlight: true
+  },
+
+  // TELECOM PARTNERS
+  {
+    id: 'fizz-mobile',
+    partner: 'Fizz',
+    category: 'telecom',
+    title: 'Mobile & Internet à prix mini',
+    titleEn: 'Mobile & Internet at mini price',
+    description: 'Forfaits mobiles et internet sans contrat. Jusqu\'à 25$/mois.',
+    descriptionEn: 'Mobile and internet plans without contract. From $25/mo.',
+    cta: 'Voir les forfaits',
+    ctaEn: 'View Plans',
+    url: 'https://fizz.ca',
+    badge: '📱 Sans contrat',
+    badgeEn: '📱 No contract',
+    provinces: ['QC', 'ON'],
+    highlight: true
+  },
+  {
+    id: 'videotron-quebec',
+    partner: 'Vidéotron',
+    category: 'telecom',
+    title: 'Forfaits Québec',
+    titleEn: 'Quebec Plans',
+    description: 'Internet haute vitesse et mobile. Service client en français.',
+    descriptionEn: 'High-speed internet and mobile. French customer service.',
+    cta: 'Découvrir',
+    ctaEn: 'Discover',
+    url: 'https://videotron.com',
+    badge: '🇶🇦 Service FR',
+    badgeEn: '🇶🇦 FR Service',
+    provinces: ['QC']
+  },
+
+  // EMPLOYMENT PARTNERS
+  {
+    id: 'indeed-jobs',
+    partner: 'Indeed',
+    category: 'employment',
+    title: 'Trouvez votre emploi au Canada',
+    titleEn: 'Find your Canadian job',
+    description: 'Des milliers d\'offres d\'emploi pour nouveaux arrivants.',
+    descriptionEn: 'Thousands of job offers for newcomers.',
+    cta: 'Rechercher',
+    ctaEn: 'Search',
+    url: 'https://ca.indeed.com',
+    badge: '💼 50,000+ offres',
+    badgeEn: '💼 50,000+ jobs'
+  },
+  {
+    id: 'linkedin-jobs',
+    partner: 'LinkedIn',
+    category: 'employment',
+    title: 'LinkedIn Career',
+    titleEn: 'LinkedIn Career',
+    description: 'Créez votre réseau professionnel canadien.',
+    descriptionEn: 'Build your Canadian professional network.',
+    cta: 'Créer mon profil',
+    ctaEn: 'Create Profile',
+    url: 'https://www.linkedin.com/jobs'
+  },
+
+  // EDUCATION PARTNERS
+  {
+    id: 'francais-quebec',
+    partner: 'Francisation Québec',
+    category: 'education',
+    title: 'Cours de français gratuits',
+    titleEn: 'Free French courses',
+    description: 'Apprenez le français gratuitement. Cours en ligne et en présentiel au Québec.',
+    descriptionEn: 'Learn French for free. Online and in-person courses in Quebec.',
+    cta: 'S\'inscrire',
+    ctaEn: 'Register',
+    url: 'https://www.quebec.ca/education/francisation',
+    badge: '🆓 Gratuit',
+    badgeEn: '🆓 Free',
+    provinces: ['QC'],
+    highlight: true
+  },
+  {
+    id: 'duolingo',
+    partner: 'Duolingo',
+    category: 'education',
+    title: 'Apprenez l\'anglais ou le français',
+    titleEn: 'Learn English or French',
+    description: 'Application gratuite pour améliorer votre niveau de langue.',
+    descriptionEn: 'Free app to improve your language level.',
+    cta: 'Commencer',
+    ctaEn: 'Start',
+    url: 'https://www.duolingo.com'
+  },
+
+  // TRAVEL PARTNERS
+  {
+    id: 'air-canada',
+    partner: 'Air Canada',
+    category: 'travel',
+    title: 'Vols vers votre pays d\'origine',
+    titleEn: 'Flights to your home country',
+    description: 'Réservez votre billet pour visiter votre famille. Programme fidélité.',
+    descriptionEn: 'Book your ticket to visit family. Loyalty program.',
+    cta: 'Réserver',
+    ctaEn: 'Book',
+    url: 'https://www.aircanada.com',
+    badge: '✈️ Nouveaux tarifs',
+    badgeEn: '✈️ New fares'
+  },
+
+  // SERVICES PARTNERS
+  {
+    id: 'immigration-lawyer',
+    partner: 'Immigration Canada',
+    category: 'services',
+    title: 'Consultation Immigration',
+    titleEn: 'Immigration Consultation',
+    description: 'Consultants réglementés en immigration. Aide pour RP, permis, citoyenneté.',
+    descriptionEn: 'Regulated immigration consultants. Help for PR, permits, citizenship.',
+    cta: 'Prendre RDV',
+    ctaEn: 'Book Now',
+    url: '#',
+    badge: '📋 Experts RCIR',
+    badgeEn: '📋 RCIC Experts',
+    highlight: true
+  }
+]
+
+// Get targeted ads based on user profile
+function getTargetedAds(user: any, category?: Advertisement['category'], limit: number = 3): Advertisement[] {
+  let filteredAds = advertisements
+  
+  // Filter by category if specified
+  if (category) {
+    filteredAds = filteredAds.filter(ad => ad.category === category)
+  }
+  
+  // Filter by province if user has one
+  if (user?.province) {
+    filteredAds = filteredAds.filter(ad => !ad.provinces || ad.provinces.includes(user.province))
+  }
+  
+  // Filter by immigration status if user has one
+  if (user?.immigrationStatus) {
+    filteredAds = filteredAds.filter(ad => !ad.immigrationStatus || ad.immigrationStatus.includes(user.immigrationStatus))
+  }
+  
+  // Prioritize highlighted ads
+  const highlighted = filteredAds.filter(ad => ad.highlight)
+  const regular = filteredAds.filter(ad => !ad.highlight)
+  
+  // Shuffle and combine
+  const shuffled = [...highlighted.sort(() => Math.random() - 0.5), ...regular.sort(() => Math.random() - 0.5)]
+  
+  return shuffled.slice(0, limit)
+}
+
+// Professional gradient backgrounds for ad banners
+const AdBannerImages: Record<string, { gradient: string; accentColor: string; iconBg: string }> = {
+  banking: {
+    gradient: 'from-blue-600 via-blue-700 to-indigo-800',
+    accentColor: '#fbbf24',
+    iconBg: 'bg-gradient-to-br from-yellow-400 to-amber-500'
+  },
+  money_transfer: {
+    gradient: 'from-emerald-500 via-teal-600 to-cyan-700',
+    accentColor: '#34d399',
+    iconBg: 'bg-gradient-to-br from-green-400 to-emerald-500'
+  },
+  telecom: {
+    gradient: 'from-purple-600 via-violet-600 to-indigo-700',
+    accentColor: '#e879f9',
+    iconBg: 'bg-gradient-to-br from-pink-400 to-purple-500'
+  },
+  employment: {
+    gradient: 'from-orange-500 via-amber-600 to-yellow-600',
+    accentColor: '#fbbf24',
+    iconBg: 'bg-gradient-to-br from-orange-400 to-amber-500'
+  },
+  education: {
+    gradient: 'from-cyan-600 via-blue-600 to-indigo-700',
+    accentColor: '#22d3ee',
+    iconBg: 'bg-gradient-to-br from-cyan-400 to-blue-500'
+  },
+  travel: {
+    gradient: 'from-sky-500 via-blue-600 to-indigo-700',
+    accentColor: '#38bdf8',
+    iconBg: 'bg-gradient-to-br from-sky-400 to-blue-500'
+  },
+  insurance: {
+    gradient: 'from-green-600 via-emerald-600 to-teal-700',
+    accentColor: '#4ade80',
+    iconBg: 'bg-gradient-to-br from-green-400 to-emerald-500'
+  },
+  services: {
+    gradient: 'from-rose-600 via-pink-600 to-red-700',
+    accentColor: '#fb7185',
+    iconBg: 'bg-gradient-to-br from-rose-400 to-pink-500'
+  }
+}
+
+// Category icons as simple components
+const CategoryIcon = ({ category, size = 24 }: { category: string; size?: number }) => {
+  const icons: Record<string, React.ReactNode> = {
+    banking: <Landmark className="w-full h-full" />,
+    money_transfer: <DollarSign className="w-full h-full" />,
+    telecom: <Smartphone className="w-full h-full" />,
+    employment: <Briefcase className="w-full h-full" />,
+    education: <GraduationCap className="w-full h-full" />,
+    travel: <Plane className="w-full h-full" />,
+    insurance: <Shield className="w-full h-full" />,
+    services: <FileText className="w-full h-full" />
+  }
+  return <div style={{ width: size, height: size }}>{icons[category] || <Star className="w-full h-full" />}</div>
+}
+
+// Ad Banner Component with Professional Images
+function AdBanner({ ad, language, variant = 'default' }: { 
+  ad: Advertisement
+  language: Language
+  variant?: 'default' | 'compact' | 'sidebar' | 'featured'
+}) {
+  const imageData = AdBannerImages[ad.category] || AdBannerImages['banking']
+
+  if (variant === 'compact') {
+    return (
+      <a 
+        href={ad.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`block relative overflow-hidden rounded-xl bg-gradient-to-r ${imageData.gradient} hover:shadow-lg hover:scale-[1.02] transition-all group`}
+      >
+        {/* Decorative shapes */}
+        <div className="absolute -top-6 -right-6 w-20 h-20 bg-white/10 rounded-full blur-xl" />
+        <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-white/5 rounded-full blur-lg" />
+        {/* Content */}
+        <div className="relative p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`w-9 h-9 rounded-xl ${imageData.iconBg} flex items-center justify-center text-white shadow-lg`}>
+                <CategoryIcon category={ad.category} size={18} />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-white">
+                  {language === 'fr' ? ad.title : ad.titleEn}
+                </p>
+                <p className="text-xs text-white/70">{ad.partner}</p>
+              </div>
+            </div>
+            {ad.badge && (
+              <Badge className="text-xs border-0 bg-white/20 text-white backdrop-blur-sm">
+                {language === 'fr' ? ad.badge : ad.badgeEn}
+              </Badge>
+            )}
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  if (variant === 'sidebar') {
+    return (
+      <a 
+        href={ad.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`block relative overflow-hidden rounded-2xl bg-gradient-to-br ${imageData.gradient} hover:shadow-xl hover:scale-[1.02] transition-all group h-44`}
+      >
+        {/* Decorative shapes */}
+        <div className="absolute top-4 right-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-xl" />
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`w-8 h-8 rounded-lg ${imageData.iconBg} flex items-center justify-center text-white shadow-md`}>
+              <CategoryIcon category={ad.category} size={16} />
+            </div>
+            <span className="text-xs text-white/80 font-medium">{ad.partner}</span>
+          </div>
+          <p className="font-semibold text-white mb-1 text-lg">
+            {language === 'fr' ? ad.title : ad.titleEn}
+          </p>
+          <p className="text-xs text-white/70 line-clamp-2">
+            {language === 'fr' ? ad.description : ad.descriptionEn}
+          </p>
+          {ad.badge && (
+            <Badge className="mt-2 text-xs border-0 bg-white/20 text-white backdrop-blur-sm">
+              {language === 'fr' ? ad.badge : ad.badgeEn}
+            </Badge>
+          )}
+        </div>
+      </a>
+    )
+  }
+
+  if (variant === 'featured') {
+    return (
+      <a 
+        href={ad.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`block relative overflow-hidden rounded-2xl bg-gradient-to-r ${imageData.gradient} hover:shadow-2xl hover:scale-[1.01] transition-all group`}
+      >
+        {/* Decorative shapes */}
+        <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute top-1/2 right-10 w-2 h-2 bg-white/30 rounded-full" />
+        <div className="absolute top-1/3 right-20 w-1 h-1 bg-white/20 rounded-full" />
+        {/* Content */}
+        <div className="relative p-6 md:p-8">
+          <div className="flex items-start gap-5">
+            <div className={`w-16 h-16 rounded-2xl ${imageData.iconBg} flex items-center justify-center text-white shadow-xl shrink-0`}>
+              <CategoryIcon category={ad.category} size={32} />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-sm font-semibold text-white/90">{ad.partner}</span>
+                {ad.highlight && (
+                  <Badge className="border-0 text-xs bg-white/25 text-white backdrop-blur-sm">
+                    ⭐ {language === 'fr' ? 'Recommandé' : 'Recommended'}
+                  </Badge>
+                )}
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                {language === 'fr' ? ad.title : ad.titleEn}
+              </h3>
+              <p className="text-sm text-white/80 max-w-lg mb-4">
+                {language === 'fr' ? ad.description : ad.descriptionEn}
+              </p>
+              <div className="flex items-center gap-4">
+                {ad.badge && (
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                    {language === 'fr' ? ad.badge : ad.badgeEn}
+                  </Badge>
+                )}
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-white group-hover:translate-x-1 transition-transform">
+                  {language === 'fr' ? ad.cta : ad.ctaEn}
+                  <ChevronRight className="w-4 h-4" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  // Default variant
+  return (
+    <a 
+      href={ad.url} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className={`block relative overflow-hidden rounded-xl bg-gradient-to-r ${imageData.gradient} hover:shadow-xl hover:scale-[1.02] transition-all group`}
+    >
+      {/* Decorative shapes */}
+      <div className="absolute -top-8 -right-8 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+      <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-white/5 rounded-full blur-lg" />
+      {/* Content */}
+      <div className="relative p-4">
+        <div className="flex items-center gap-4">
+          <div className={`w-14 h-14 rounded-xl ${imageData.iconBg} flex items-center justify-center text-white shadow-lg shrink-0`}>
+            <CategoryIcon category={ad.category} size={26} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold text-white/80">{ad.partner}</span>
+              {ad.badge && (
+                <Badge className="text-xs border-0 bg-white/20 text-white backdrop-blur-sm">
+                  {language === 'fr' ? ad.badge : ad.badgeEn}
+                </Badge>
+              )}
+            </div>
+            <p className="font-semibold text-white text-lg truncate">
+              {language === 'fr' ? ad.title : ad.titleEn}
+            </p>
+          </div>
+          <ChevronRight className="w-6 h-6 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0" />
+        </div>
+      </div>
+    </a>
+  )
+}
+
+// ArrowRight icon import helper
+const ArrowRight = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14"/>
+    <path d="m12 5 7 7-7 7"/>
+  </svg>
+)
 
 // In-Demand Jobs Database by Province
 // Based on Canadian job market data and provincial nominee programs
@@ -1941,7 +2464,7 @@ export default function NouveauCapApp() {
 
         {/* Task Detail Modal */}
         <Dialog open={taskModalOpen} onOpenChange={setTaskModalOpen}>
-          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-900">
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -2069,7 +2592,7 @@ export default function NouveauCapApp() {
 
         {/* Mobile Preview Dialog */}
         <Dialog open={mobilePreviewOpen} onOpenChange={setMobilePreviewOpen}>
-          <DialogContent className="max-w-5xl w-[90vw] h-[90vh] p-0 overflow-hidden bg-gray-100">
+          <DialogContent className="max-w-5xl w-[90vw] h-[90vh] p-0 overflow-hidden bg-white dark:bg-gray-900">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-3 bg-white border-b" style={{ borderColor: '#E5E7EB' }}>
               <div className="flex items-center gap-3">
@@ -2274,6 +2797,18 @@ function DashboardHome({ language, user, tasks, progress, completedTasks, onTask
           )
         })}
       </div>
+
+      {/* Featured Partner Banner */}
+      {getTargetedAds(user, undefined, 1)[0] && (
+        <div className="relative">
+          <div className="absolute -top-2 right-2 z-10">
+            <Badge variant="outline" className="text-xs bg-white dark:bg-gray-900">
+              {language === 'fr' ? 'Partenaire' : 'Partner'}
+            </Badge>
+          </div>
+          <AdBanner ad={getTargetedAds(user, undefined, 1)[0]} language={language} variant="featured" />
+        </div>
+      )}
 
       <div>
         <h2 className="text-lg font-semibold mb-4">{t('dashboard.priorityActions', language)}</h2>
@@ -4423,6 +4958,35 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
   const immigrationTasks = tasks.filter(t => t.category === 'IMMIGRATION')
   const completedCount = immigrationTasks.filter(t => t.status === 'COMPLETED').length
 
+  // Reset CRS Simulator
+  const resetCRS = () => {
+    setAge(30)
+    setEducation('bachelors')
+    setClbLevel(7)
+    setCanadaExperience(0)
+    setOutsideCanadaExperience(3)
+    setCalculatedScore(null)
+  }
+
+  // Reset PSTQ Simulator
+  const resetPSTQ = () => {
+    setPstqAge(30)
+    setPstqEducation('baccalaureat')
+    setPstqFrenchOral('intermediate')
+    setPstqFrenchWritten('intermediate')
+    setPstqEnglishLevel('intermediate')
+    setPstqQuebecExperience(0)
+    setPstqOutsideExperience(3)
+    setPstqInDemandJob(false)
+    setPstqJobOffer(false)
+    setPstqMontrealArea(true)
+    setPstqChildren(0)
+    setPstqMarried(false)
+    setPstqSpouseFrench('beginner')
+    setPstqTrainingArea('standard')
+    setPstqScore(null)
+  }
+
   const calculateCRS = () => {
     let score = 0
     const calculatedAge = displayAge
@@ -4699,8 +5263,64 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/20 dark:to-gray-900">
-      <div className="p-4 lg:p-8 space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/20 dark:to-gray-900 relative overflow-hidden">
+      {/* Maple Leaf Background Decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large maple leaf - top right */}
+        <svg 
+          className="absolute -top-20 -right-20 w-[500px] h-[500px] opacity-[0.06] dark:opacity-[0.08]"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+          style={{ color: '#dc2626', transform: 'rotate(15deg)' }}
+        >
+          <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+          <rect x="47" y="58" width="6" height="35" rx="2" />
+          <ellipse cx="50" cy="98" rx="15" ry="3" opacity="0.3" />
+        </svg>
+        
+        {/* Medium maple leaf - bottom left */}
+        <svg 
+          className="absolute -bottom-10 -left-10 w-[400px] h-[400px] opacity-[0.05] dark:opacity-[0.07]"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+          style={{ color: '#dc2626', transform: 'rotate(-20deg)' }}
+        >
+          <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+          <rect x="47" y="58" width="6" height="35" rx="2" />
+        </svg>
+        
+        {/* Small maple leaf - center right */}
+        <svg 
+          className="absolute top-1/3 right-10 w-[200px] h-[200px] opacity-[0.04] dark:opacity-[0.06]"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+          style={{ color: '#dc2626', transform: 'rotate(45deg)' }}
+        >
+          <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+          <rect x="47" y="58" width="6" height="35" rx="2" />
+        </svg>
+        
+        {/* Tiny decorative leaves */}
+        <svg 
+          className="absolute top-20 left-1/4 w-[80px] h-[80px] opacity-[0.03] dark:opacity-[0.05]"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+          style={{ color: '#dc2626', transform: 'rotate(80deg)' }}
+        >
+          <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+        </svg>
+        
+        <svg 
+          className="absolute bottom-1/4 right-1/3 w-[120px] h-[120px] opacity-[0.03] dark:opacity-[0.05]"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+          style={{ color: '#dc2626', transform: 'rotate(-45deg)' }}
+        >
+          <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+        </svg>
+      </div>
+      
+      <div className="p-4 lg:p-8 space-y-6 relative z-10">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -4985,13 +5605,23 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                 </div>
 
                 {/* Calculate Button */}
-                <Button 
-                  onClick={calculateCRS} 
-                  className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-200 dark:shadow-green-900/30 transition-all duration-300"
-                >
-                  <Calculator className="w-5 h-5 mr-2" />
-                  {language === 'fr' ? 'Calculer mon score CRS' : 'Calculate my CRS score'}
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={calculateCRS} 
+                    className="flex-1 py-6 text-lg font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-200 dark:shadow-green-900/30 transition-all duration-300"
+                  >
+                    <Calculator className="w-5 h-5 mr-2" />
+                    {language === 'fr' ? 'Calculer mon score CRS' : 'Calculate my CRS score'}
+                  </Button>
+                  <Button 
+                    onClick={resetCRS} 
+                    variant="outline"
+                    className="py-6 px-6 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
+                    title={language === 'fr' ? 'Réinitialiser le simulateur' : 'Reset simulator'}
+                  >
+                    <RefreshCw className="w-5 h-5" />
+                  </Button>
+                </div>
 
                 {/* Score Result */}
                 {calculatedScore !== null && (
@@ -5230,7 +5860,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                             <TooltipTrigger asChild>
                               <Info className="w-4 h-4 text-gray-400 cursor-help ml-1" />
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="max-w-sm p-3 z-50">
+                            <TooltipContent side="right" className="max-w-sm p-3 z-50 bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
                               <div className="text-xs space-y-2">
                                 <div className="font-semibold text-green-600 flex items-center gap-1">
                                   ⭐ {language === 'fr' ? 'PRIORITAIRE (12 pts)' : 'PRIORITY (12 pts)'}
@@ -5402,7 +6032,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                             />
                           </div>
                         </TooltipTrigger>
-                        <TooltipContent side="top" className="max-w-lg p-3 z-50">
+                        <TooltipContent side="top" className="max-w-lg p-3 z-50 bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
                           <div className="text-xs space-y-2">
                             <div className="font-semibold text-green-600 flex items-center gap-1">
                               🏥 {language === 'fr' ? 'SANTÉ (pénurie critique)' : 'HEALTH (critical shortage)'}
@@ -5528,13 +6158,23 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   </div>
 
                   {/* Calculate Button */}
-                  <Button
-                    onClick={calculatePSTQ}
-                    className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    {language === 'fr' ? '🇶🇦 Calculer mon score PSTQ 2025' : '🇶🇦 Calculate my PSTQ 2025 score'}
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={calculatePSTQ}
+                      className="flex-1 py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+                    >
+                      <Calculator className="w-5 h-5 mr-2" />
+                      {language === 'fr' ? '🇶🇦 Calculer mon score PSTQ 2025' : '🇶🇦 Calculate my PSTQ 2025 score'}
+                    </Button>
+                    <Button 
+                      onClick={resetPSTQ} 
+                      variant="outline"
+                      className="py-6 px-6 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
+                      title={language === 'fr' ? 'Réinitialiser le simulateur' : 'Reset simulator'}
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                    </Button>
+                  </div>
 
                   {/* Score Result */}
                   {pstqScore && (
@@ -5997,6 +6637,57 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <p className="text-xs text-gray-500">{language === 'fr' ? 'Tâches en attente' : 'Pending tasks'}</p>
                   <p className="font-semibold text-sm">{immigrationTasks.filter(t => t.status === 'PENDING').length}</p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Immigration & Education Partner Offers */}
+        <div className="grid lg:grid-cols-2 gap-4">
+          {/* Immigration Services */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <div className="w-8 h-8 bg-rose-100 dark:bg-rose-900 rounded-lg flex items-center justify-center">
+                    <FileSearch className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  {language === 'fr' ? '📋 Services Immigration' : '📋 Immigration Services'}
+                </CardTitle>
+                <Badge variant="outline" className="text-xs">
+                  {language === 'fr' ? 'Partenaires' : 'Partners'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {getTargetedAds(user, 'services', 2).map((ad) => (
+                  <AdBanner key={ad.id} ad={ad} language={language} variant="compact" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Language Courses */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <div className="w-8 h-8 bg-cyan-100 dark:bg-cyan-900 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                  </div>
+                  {language === 'fr' ? '🎓 Cours de Langues' : '🎓 Language Courses'}
+                </CardTitle>
+                <Badge variant="outline" className="text-xs">
+                  {language === 'fr' ? 'Partenaires' : 'Partners'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {getTargetedAds(user, 'education', 2).map((ad) => (
+                  <AdBanner key={ad.id} ad={ad} language={language} variant="compact" />
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -6512,7 +7203,7 @@ function EmploymentModule({ language, user }: {
 
         {/* Add Application Dialog */}
         <Dialog open={showAddApplication} onOpenChange={setShowAddApplication}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md bg-white dark:bg-gray-900">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Plus className="w-5 h-5 text-blue-500" />
@@ -6714,6 +7405,9 @@ function HousingModule({ language, user }: {
   // Interactive Checklist State
   const [checkedItems, setCheckedItems] = useState<string[]>([])
   
+  // Collapsible Section State
+  const [tenantRightsExpanded, setTenantRightsExpanded] = useState(false)
+  
   // Toggle checklist item
   const toggleChecklistItem = (id: string) => {
     setCheckedItems(prev => 
@@ -6886,21 +7580,41 @@ function HousingModule({ language, user }: {
         </Card>
 
         {/* Tenant Rights by Province - Comprehensive */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
+          <CardHeader 
+            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors select-none"
+            onClick={() => setTenantRightsExpanded(!tenantRightsExpanded)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">
+                    {language === 'fr' ? 'Droits des locataires par province' : 'Tenant Rights by Province'}
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    {language === 'fr' 
+                      ? 'Informations essentielles avec sources officielles canadiennes'
+                      : 'Essential information with official Canadian sources'}
+                  </CardDescription>
+                </div>
               </div>
-              {language === 'fr' ? 'Droits des locataires par province' : 'Tenant Rights by Province'}
-            </CardTitle>
-            <CardDescription>
-              {language === 'fr' 
-                ? 'Informations essentielles avec sources officielles canadiennes'
-                : 'Essential information with official Canadian sources'}
-            </CardDescription>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs hidden sm:inline-flex">
+                  10 {language === 'fr' ? 'provinces' : 'provinces'}
+                </Badge>
+                <div className={`w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center transition-transform duration-300 ${tenantRightsExpanded ? 'rotate-180' : ''}`}>
+                  <ChevronDown className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </div>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
+          
+          {/* Collapsible Content */}
+          <div className={`transition-all duration-300 ease-in-out ${tenantRightsExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+            <CardContent>
             <div className="space-y-4">
               {/* Ontario */}
               <Card className={`overflow-hidden ${user?.province === 'ON' ? 'ring-2 ring-blue-500' : ''}`}>
@@ -7322,6 +8036,7 @@ function HousingModule({ language, user }: {
               </p>
             </div>
           </CardContent>
+          </div>
         </Card>
 
         {/* Letter Templates */}
@@ -8144,6 +8859,35 @@ function HousingModule({ language, user }: {
             </div>
           </CardContent>
         </Card>
+
+        {/* Insurance Partner Offers */}
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/30 dark:to-teal-950/30">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+                </div>
+                {language === 'fr' ? '🛡️ Assurances Habitation & Voyage' : '🛡️ Home & Travel Insurance'}
+              </CardTitle>
+              <Badge variant="outline" className="text-xs">
+                {language === 'fr' ? 'Partenaires' : 'Partners'}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {getTargetedAds(user, 'insurance', 2).map((ad) => (
+                <AdBanner key={ad.id} ad={ad} language={language} variant="default" />
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-4 text-center">
+              {language === 'fr' 
+                ? '💡 L\'assurance locataire est souvent obligatoire au Canada. Protégez vos biens et votre responsabilité.'
+                : '💡 Tenant insurance is often mandatory in Canada. Protect your belongings and liability.'}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
@@ -8851,6 +9595,30 @@ function FinanceModule({ language, user }: {
                     <p className="text-xs mt-2">{service.rating}</p>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Banking Partner Offers */}
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                {language === 'fr' ? '🏦 Offres Partenaires Bancaires' : '🏦 Banking Partner Offers'}
+              </CardTitle>
+              <Badge variant="outline" className="text-xs">
+                {language === 'fr' ? 'Partenaires' : 'Partners'}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {getTargetedAds(user, 'banking', 2).map((ad) => (
+                <AdBanner key={ad.id} ad={ad} language={language} variant="default" />
               ))}
             </div>
           </CardContent>
@@ -10761,8 +11529,30 @@ function ProfileModule({ language, user, onUpdate }: {
 
         {/* Immigration Section */}
         {activeSection === 'immigration' && (
-          <div className="space-y-6">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <div className="space-y-6 relative">
+            {/* Maple Leaf Background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+              <svg 
+                className="absolute -top-10 -right-10 w-[300px] h-[300px]"
+                viewBox="0 0 100 100"
+                fill="currentColor"
+                style={{ color: '#dc2626', opacity: 0.08, transform: 'rotate(15deg)' }}
+              >
+                <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+                <rect x="47" y="58" width="6" height="25" rx="2" />
+              </svg>
+              <svg 
+                className="absolute -bottom-5 -left-5 w-[200px] h-[200px]"
+                viewBox="0 0 100 100"
+                fill="currentColor"
+                style={{ color: '#dc2626', opacity: 0.06, transform: 'rotate(-20deg)' }}
+              >
+                <path d="M50 2 L52 15 L60 12 L58 20 L70 18 L65 25 L75 25 L70 32 L82 35 L72 40 L78 45 L68 48 L72 55 L62 52 L60 60 L55 52 L50 58 L45 52 L40 60 L38 52 L28 55 L32 48 L22 45 L28 40 L18 35 L30 32 L25 25 L35 25 L30 18 L42 20 L40 12 L48 15 Z" />
+                <rect x="47" y="58" width="6" height="25" rx="2" />
+              </svg>
+            </div>
+            
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm relative z-10">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
