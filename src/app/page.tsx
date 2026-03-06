@@ -5041,49 +5041,40 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
           </div>
           )}
 
-          {/* PSTQ Simulator - For Quebec Temporary Residents */}
+          {/* PSTQ Simulator - For Quebec Temporary Residents - Two Blocks */}
           {isTemporaryResident && user?.province === 'QC' && (
-            <div className={`lg:col-span-3 ${activeTab !== 'pstq' ? 'hidden lg:block' : ''}`}>
-              <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-blue-50/80 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-950/20">
+            <div className={`lg:col-span-3 space-y-6 ${activeTab !== 'pstq' ? 'hidden lg:block' : ''}`}>
+              
+              {/* BLOC 1: Profil Personnel & Formation */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50/80 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-950/20">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-4 h-4 text-white" />
+                        <User className="w-4 h-4 text-white" />
                       </div>
-                      {language === 'fr' ? '🇶🇦 Simulateur PSTQ 2025' : '🇶🇦 PSTQ Simulator 2025'}
+                      {language === 'fr' ? '🇶🇦 Bloc 1: Profil Personnel & Formation' : '🇶🇦 Block 1: Personal Profile & Training'}
                     </CardTitle>
-                    <Badge className="bg-blue-600 text-white">
-                      {language === 'fr' ? 'Nouveau' : 'New'}
+                    <Badge className="bg-purple-600 text-white">
+                      {language === 'fr' ? 'Max 52 pts' : 'Max 52 pts'}
                     </Badge>
                   </div>
                   <CardDescription className="text-sm">
                     {language === 'fr'
-                      ? 'Programme de sélection permanente du Québec - Estimez votre score de sélection'
-                      : 'Quebec Permanent Selection Program - Estimate your selection score'}
+                      ? 'Votre profil personnel et vos compétences linguistiques'
+                      : 'Your personal profile and language skills'}
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-5">
-                  {/* Info Banner about PSTQ 2025 */}
-                  <div className="p-4 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/50 dark:to-indigo-900/50 rounded-xl border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>📋 {language === 'fr' ? 'Mises à jour PSTQ 2025' : 'PSTQ 2025 Updates'}</strong>
-                      <br />
-                      {language === 'fr'
-                        ? 'Le PSTQ remplace le PEQ depuis 2025. Points clés: priorité au français, expérience québécoise valorisée, nouveaux métiers en demande.'
-                        : 'PSTQ replaced PEQ in 2025. Key points: French language priority, Quebec experience valued, new in-demand occupations.'}
-                    </p>
-                  </div>
-
-                  {/* Input Grid - Part 1: Personal Info */}
+                  {/* Age & Education */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     {/* Age */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <Label className="text-sm font-medium">
                           {language === 'fr' ? 'Âge' : 'Age'}
-                          {profileAge !== null && <span className="ml-2 text-xs text-green-600">({language === 'fr' ? 'depuis profil' : 'from profile'})</span>}
+                          <Badge variant="outline" className="ml-2 text-xs">16 pts max</Badge>
                         </Label>
                         <Badge variant="outline" className="font-mono">{pstqDisplayAge} {language === 'fr' ? 'ans' : 'y.o'}</Badge>
                       </div>
@@ -5100,15 +5091,18 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
                           <CheckCircle2 className="w-4 h-4" />
                           {language === 'fr'
-                            ? `${profileAge} ans (calculé depuis votre date de naissance)`
-                            : `${profileAge} years old (calculated from your date of birth)`}
+                            ? `${profileAge} ans (depuis votre profil)`
+                            : `${profileAge} years old (from your profile)`}
                         </div>
                       )}
                     </div>
 
                     {/* Education Level */}
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'éducation' : 'Education level'}</Label>
+                      <Label className="text-sm font-medium">
+                        {language === 'fr' ? 'Niveau d\'éducation' : 'Education level'}
+                        <Badge variant="outline" className="ml-2 text-xs">14 pts max</Badge>
+                      </Label>
                       <Select value={pstqEducation} onValueChange={(v: any) => setPstqEducation(v)}>
                         <SelectTrigger className="bg-white dark:bg-gray-800">
                           <SelectValue />
@@ -5125,14 +5119,18 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </div>
                   </div>
 
-                  {/* French Language Skills - Most Important */}
-                  <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-xl border border-purple-200 dark:border-purple-800">
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-200 mb-3 flex items-center gap-2">
-                      🇫🇷 {language === 'fr' ? 'Compétences en français (prioritaire)' : 'French Skills (Priority)'}
-                    </h4>
+                  {/* French Language Skills - Priority */}
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-xl border-2 border-purple-200 dark:border-purple-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-200 flex items-center gap-2">
+                        🇫🇷 {language === 'fr' ? 'Compétences en français' : 'French Skills'}
+                        <span className="text-xs bg-purple-200 dark:bg-purple-800 px-2 py-0.5 rounded-full">{language === 'fr' ? 'PRIORITAIRE' : 'PRIORITY'}</span>
+                      </h4>
+                      <Badge className="bg-purple-600 text-white">18 pts max</Badge>
+                    </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-sm">{language === 'fr' ? 'Français oral' : 'Oral French'}</Label>
+                        <Label className="text-sm">{language === 'fr' ? 'Français oral' : 'Oral French'} (10 pts)</Label>
                         <Select value={pstqFrenchOral} onValueChange={(v: any) => setPstqFrenchOral(v)}>
                           <SelectTrigger className="bg-white dark:bg-gray-800">
                             <SelectValue />
@@ -5146,7 +5144,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm">{language === 'fr' ? 'Français écrit' : 'Written French'}</Label>
+                        <Label className="text-sm">{language === 'fr' ? 'Français écrit' : 'Written French'} (8 pts)</Label>
                         <Select value={pstqFrenchWritten} onValueChange={(v: any) => setPstqFrenchWritten(v)}>
                           <SelectTrigger className="bg-white dark:bg-gray-800">
                             <SelectValue />
@@ -5162,10 +5160,13 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </div>
                   </div>
 
-                  {/* English Level */}
+                  {/* English & Training Area */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'anglais' : 'English level'}</Label>
+                      <Label className="text-sm font-medium">
+                        {language === 'fr' ? 'Niveau d\'anglais' : 'English level'}
+                        <Badge variant="outline" className="ml-2 text-xs">6 pts max</Badge>
+                      </Label>
                       <Select value={pstqEnglishLevel} onValueChange={(v: any) => setPstqEnglishLevel(v)}>
                         <SelectTrigger className="bg-white dark:bg-gray-800">
                           <SelectValue />
@@ -5179,9 +5180,11 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       </Select>
                     </div>
 
-                    {/* Training Area */}
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium">{language === 'fr' ? 'Domaine de formation' : 'Training area'}</Label>
+                      <Label className="text-sm font-medium">
+                        {language === 'fr' ? 'Domaine de formation' : 'Training area'}
+                        <Badge variant="outline" className="ml-2 text-xs">12 pts max</Badge>
+                      </Label>
                       <Select value={pstqTrainingArea} onValueChange={(v: any) => setPstqTrainingArea(v)}>
                         <SelectTrigger className="bg-white dark:bg-gray-800">
                           <SelectValue />
@@ -5194,16 +5197,41 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       </Select>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
+              {/* BLOC 2: Expérience Professionnelle & Résultat */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/50 dark:from-emerald-950/30 dark:to-teal-950/20">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
+                        <Briefcase className="w-4 h-4 text-white" />
+                      </div>
+                      {language === 'fr' ? '🇶🇦 Bloc 2: Expérience & Résultat' : '🇶🇦 Block 2: Experience & Result'}
+                    </CardTitle>
+                    <Badge className="bg-emerald-600 text-white">
+                      {language === 'fr' ? 'Max 48 pts' : 'Max 48 pts'}
+                    </Badge>
+                  </div>
+                  <CardDescription className="text-sm">
+                    {language === 'fr'
+                      ? 'Votre expérience professionnelle et situation familiale'
+                      : 'Your professional experience and family situation'}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-5">
                   {/* Work Experience */}
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border">
+                  <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border">
                     <h4 className="font-semibold mb-3 flex items-center gap-2">
                       💼 {language === 'fr' ? 'Expérience de travail' : 'Work Experience'}
+                      <Badge variant="outline" className="text-xs">18 pts max</Badge>
                     </h4>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <Label className="text-sm">{language === 'fr' ? 'Au Québec' : 'In Quebec'}</Label>
+                          <Label className="text-sm">{language === 'fr' ? 'Au Québec' : 'In Quebec'} (10 pts max)</Label>
                           <Badge variant="outline" className="font-mono">{pstqQuebecExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
                         </div>
                         <Slider
@@ -5217,7 +5245,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <Label className="text-sm">{language === 'fr' ? 'Hors Québec' : 'Outside Quebec'}</Label>
+                          <Label className="text-sm">{language === 'fr' ? 'Hors Québec' : 'Outside Quebec'} (8 pts max)</Label>
                           <Badge variant="outline" className="font-mono">{pstqOutsideExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
                         </div>
                         <Slider
@@ -5232,50 +5260,52 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </div>
                   </div>
 
-                  {/* Job Offer & Location */}
+                  {/* Job Offer & In-Demand */}
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                    <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-700">
                       <div>
-                        <p className="text-sm font-medium">{language === 'fr' ? 'Offre d\'emploi validée' : 'Validated job offer'}</p>
-                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Par le MIFI' : 'By MIFI'}</p>
+                        <p className="text-sm font-semibold">{language === 'fr' ? 'Offre d\'emploi validée' : 'Validated job offer'}</p>
+                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Par le MIFI • 10-14 pts' : 'By MIFI • 10-14 pts'}</p>
                       </div>
                       <Checkbox
                         checked={pstqJobOffer}
                         onCheckedChange={(v) => setPstqJobOffer(!!v)}
-                        className="data-[state=checked]:bg-blue-500"
+                        className="data-[state=checked]:bg-blue-500 w-6 h-6"
                       />
                     </div>
 
                     {pstqJobOffer && (
-                      <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-700">
                         <div>
-                          <p className="text-sm font-medium">{language === 'fr' ? 'Région de Montréal' : 'Montreal area'}</p>
-                          <p className="text-xs text-gray-500">{language === 'fr' ? 'Ou hors Montréal' : 'Or outside Montreal'}</p>
+                          <p className="text-sm font-semibold">{language === 'fr' ? 'Région de Montréal?' : 'Montreal area?'}</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{language === 'fr' ? 'Hors MTL = +4 pts' : 'Outside MTL = +4 pts'}</p>
                         </div>
                         <Checkbox
                           checked={pstqMontrealArea}
                           onCheckedChange={(v) => setPstqMontrealArea(!!v)}
+                          className="w-6 h-6"
                         />
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                    <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-green-300 dark:border-green-700">
                       <div>
-                        <p className="text-sm font-medium">{language === 'fr' ? 'Métier en demande' : 'In-demand occupation'}</p>
-                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Liste PSTQ 2025' : 'PSTQ 2025 list'}</p>
+                        <p className="text-sm font-semibold">{language === 'fr' ? 'Métier en demande' : 'In-demand occupation'}</p>
+                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Liste PSTQ 2025 • 8 pts' : 'PSTQ 2025 list • 8 pts'}</p>
                       </div>
                       <Checkbox
                         checked={pstqInDemandJob}
                         onCheckedChange={(v) => setPstqInDemandJob(!!v)}
-                        className="data-[state=checked]:bg-green-500"
+                        className="data-[state=checked]:bg-green-500 w-6 h-6"
                       />
                     </div>
                   </div>
 
                   {/* Family Situation */}
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border">
+                  <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border">
                     <h4 className="font-semibold mb-3 flex items-center gap-2">
                       👨‍👩‍👧‍👦 {language === 'fr' ? 'Situation familiale' : 'Family situation'}
+                      <Badge variant="outline" className="text-xs">16 pts max</Badge>
                     </h4>
                     <div className="grid sm:grid-cols-3 gap-4">
                       <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
@@ -5285,12 +5315,13 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         <Checkbox
                           checked={pstqMarried}
                           onCheckedChange={(v) => setPstqMarried(!!v)}
+                          className="w-5 h-5"
                         />
                       </div>
 
                       {pstqMarried && (
                         <div className="space-y-2 col-span-2">
-                          <Label className="text-sm">{language === 'fr' ? 'Français du conjoint' : 'Spouse\'s French'}</Label>
+                          <Label className="text-sm">{language === 'fr' ? 'Français du conjoint' : 'Spouse\'s French'} (8 pts max)</Label>
                           <Select value={pstqSpouseFrench} onValueChange={(v: any) => setPstqSpouseFrench(v)}>
                             <SelectTrigger className="bg-white dark:bg-gray-800">
                               <SelectValue />
@@ -5306,7 +5337,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       )}
 
                       <div className="space-y-2">
-                        <Label className="text-sm">{language === 'fr' ? 'Enfants à charge' : 'Dependent children'}</Label>
+                        <Label className="text-sm">{language === 'fr' ? 'Enfants à charge' : 'Dependent children'} (8 pts max)</Label>
                         <Select value={pstqChildren.toString()} onValueChange={(v) => setPstqChildren(parseInt(v))}>
                           <SelectTrigger className="bg-white dark:bg-gray-800">
                             <SelectValue />
@@ -5325,10 +5356,10 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   {/* Calculate Button */}
                   <Button
                     onClick={calculatePSTQ}
-                    className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+                    className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
                   >
                     <Calculator className="w-5 h-5 mr-2" />
-                    {language === 'fr' ? 'Calculer mon score PSTQ' : 'Calculate my PSTQ score'}
+                    {language === 'fr' ? '🇶🇦 Calculer mon score PSTQ 2025' : '🇶🇦 Calculate my PSTQ 2025 score'}
                   </Button>
 
                   {/* Score Result */}
@@ -5341,14 +5372,14 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30" />
 
                       {/* Score Display */}
-                      <div className="flex items-center justify-center gap-4 mb-4">
+                      <div className="flex items-center justify-center gap-6 mb-4">
                         <div className="text-center">
-                          <span className={`text-6xl font-black tracking-tight ${pstqScore.eligible ? 'text-green-600' : 'text-amber-600'}`}>
+                          <span className={`text-7xl font-black tracking-tight ${pstqScore.eligible ? 'text-green-600' : 'text-amber-600'}`}>
                             {pstqScore.total}
                           </span>
                           <span className="block text-gray-500 text-lg">{language === 'fr' ? 'points' : 'points'}</span>
                         </div>
-                        <div className="w-px h-16 bg-gray-300 dark:bg-gray-600" />
+                        <div className="text-4xl text-gray-300">/</div>
                         <div className="text-center">
                           <span className="text-3xl font-bold text-gray-600">{pstqScore.cutoff}</span>
                           <span className="block text-gray-500 text-sm">{language === 'fr' ? 'seuil requis' : 'cutoff'}</span>
@@ -5356,7 +5387,7 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       </div>
 
                       {/* Eligibility Badge */}
-                      <div className={`text-center mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium w-full justify-center ${
+                      <div className={`text-center mb-4 px-4 py-2 rounded-full text-sm font-medium ${
                         pstqScore.eligible
                           ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200'
                           : 'bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200'
@@ -5367,39 +5398,42 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         }
                       </div>
 
-                      {/* Breakdown */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                      {/* Breakdown Grid */}
+                      <div className="grid grid-cols-4 gap-2 text-xs mb-4">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Âge' : 'Age'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['age']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['age']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Éducation' : 'Education'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['education']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['education']}</p>
                         </div>
-                        <div className="bg-purple-100/50 dark:bg-purple-900/30 rounded-lg p-2 text-center">
+                        <div className="bg-purple-100/70 dark:bg-purple-900/50 rounded-lg p-2 text-center">
                           <p className="text-purple-600">🇫🇷 {language === 'fr' ? 'Français' : 'French'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['french_oral'] + pstqScore.breakdown['french_written']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['french_oral'] + pstqScore.breakdown['french_written']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Anglais' : 'English'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['english']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['english']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                      </div>
+                      
+                      <div className="grid grid-cols-4 gap-2 text-xs">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Exp. QC' : 'QC Exp.'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['quebec_experience']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['quebec_experience']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
-                          <p className="text-gray-500">{language === 'fr' ? 'Exp. Hors QC' : 'Outside QC'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['outside_experience']}</p>
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Exp. Hors' : 'Outside'}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['outside_experience']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Formation' : 'Training'}</p>
-                          <p className="font-bold text-lg">{pstqScore.breakdown['training_area']}</p>
+                          <p className="font-bold text-base">{pstqScore.breakdown['training_area']}</p>
                         </div>
-                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-2 text-center">
                           <p className="text-gray-500">{language === 'fr' ? 'Autres' : 'Other'}</p>
-                          <p className="font-bold text-lg">
+                          <p className="font-bold text-base">
                             {pstqScore.breakdown['job_offer'] + pstqScore.breakdown['in_demand'] + pstqScore.breakdown['children'] + pstqScore.breakdown['spouse']}
                           </p>
                         </div>
@@ -5408,8 +5442,8 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       {/* Tips */}
                       {!pstqScore.eligible && (
                         <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg text-sm">
-                          <p className="text-blue-800 dark:text-blue-200">
-                            💡 <strong>{language === 'fr' ? 'Conseils pour améliorer votre score:' : 'Tips to improve your score:'}</strong>
+                          <p className="text-blue-800 dark:text-blue-200 font-medium">
+                            💡 {language === 'fr' ? 'Conseils pour améliorer votre score:' : 'Tips to improve your score:'}
                           </p>
                           <ul className="mt-2 text-blue-700 dark:text-blue-300 text-xs space-y-1">
                             {pstqScore.breakdown['french_oral'] + pstqScore.breakdown['french_written'] < 15 && (
