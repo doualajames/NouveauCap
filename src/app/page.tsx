@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Slider } from '@/components/ui/slider'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { 
   Home, User, FileText, Building2, Wallet, Heart, Users, 
   Plane, GraduationCap, Briefcase, Shield, Calendar,
@@ -29,7 +30,7 @@ import {
   FileCheck, Download, ExternalLink, Plus, Trash2, Edit,
   TrendingUp, PiggyBank, Landmark, Receipt, Percent,
   Activity, ClipboardList, UserCheck, FileWarning, Eye, Search, RefreshCw, PieChart,
-  AlertTriangle, Link, Key, Zap, DoorOpen, Bath, Bed, Sofa, AlertOctagon, HelpCircle, Lightbulb, Smartphone, QrCode
+  AlertTriangle, Link, Key, Zap, DoorOpen, Bath, Bed, Sofa, AlertOctagon, HelpCircle, Lightbulb, Smartphone, QrCode, Info
 } from 'lucide-react'
 
 // ==================== CITIZENSHIP TEST QUESTIONS ====================
@@ -5181,9 +5182,64 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium">
+                      <Label className="text-sm font-medium flex items-center gap-1">
                         {language === 'fr' ? 'Domaine de formation' : 'Training area'}
-                        <Badge variant="outline" className="ml-2 text-xs">12 pts max</Badge>
+                        <Badge variant="outline" className="text-xs">12 pts max</Badge>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="w-4 h-4 text-gray-400 cursor-help ml-1" />
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="max-w-sm p-3 z-50">
+                              <div className="text-xs space-y-2">
+                                <div className="font-semibold text-green-600 flex items-center gap-1">
+                                  ⭐ {language === 'fr' ? 'PRIORITAIRE (12 pts)' : 'PRIORITY (12 pts)'}
+                                </div>
+                                <div className="text-gray-600 dark:text-gray-300 pl-2">
+                                  <p className="font-medium">{language === 'fr' ? 'Sciences, Technologies, Ingénierie, Mathématiques (STIM):' : 'STEM (Science, Technology, Engineering, Mathematics):'}</p>
+                                  <ul className="list-disc pl-4 mt-1 space-y-0.5">
+                                    <li>{language === 'fr' ? 'Informatique, Génie logiciel, IA' : 'Computer Science, Software Engineering, AI'}</li>
+                                    <li>{language === 'fr' ? 'Génie civil, électrique, mécanique' : 'Civil, electrical, mechanical engineering'}</li>
+                                    <li>{language === 'fr' ? 'Mathématiques, Physique, Chimie' : 'Mathematics, Physics, Chemistry'}</li>
+                                  </ul>
+                                  <p className="font-medium mt-2">{language === 'fr' ? 'Santé:' : 'Health:'}</p>
+                                  <ul className="list-disc pl-4 mt-1 space-y-0.5">
+                                    <li>{language === 'fr' ? 'Médecine, Pharmacie, Soins infirmiers' : 'Medicine, Pharmacy, Nursing'}</li>
+                                    <li>{language === 'fr' ? 'Physiothérapie, Ergothérapie' : 'Physiotherapy, Occupational therapy'}</li>
+                                  </ul>
+                                  <p className="font-medium mt-2">{language === 'fr' ? 'Éducation:' : 'Education:'}</p>
+                                  <ul className="list-disc pl-4 mt-1 space-y-0.5">
+                                    <li>{language === 'fr' ? 'Enseignement préscolaire, primaire, secondaire' : 'Preschool, primary, secondary teaching'}</li>
+                                    <li>{language === 'fr' ? 'Éducation spécialisée' : 'Special education'}</li>
+                                  </ul>
+                                </div>
+                                
+                                <div className="font-semibold text-yellow-600 flex items-center gap-1 mt-3">
+                                  📊 {language === 'fr' ? 'MODÉRÉ (6 pts)' : 'MODERATE (6 pts)'}
+                                </div>
+                                <div className="text-gray-600 dark:text-gray-300 pl-2">
+                                  <ul className="list-disc pl-4 space-y-0.5">
+                                    <li>{language === 'fr' ? 'Administration, Comptabilité, Finance' : 'Administration, Accounting, Finance'}</li>
+                                    <li>{language === 'fr' ? 'Marketing, Communications' : 'Marketing, Communications'}</li>
+                                    <li>{language === 'fr' ? 'Droit, Sciences juridiques' : 'Law, Legal sciences'}</li>
+                                    <li>{language === 'fr' ? 'Arts, Design, Architecture' : 'Arts, Design, Architecture'}</li>
+                                    <li>{language === 'fr' ? 'Sciences humaines, Travail social' : 'Human sciences, Social work'}</li>
+                                  </ul>
+                                </div>
+                                
+                                <div className="font-semibold text-gray-500 flex items-center gap-1 mt-3">
+                                  📋 {language === 'fr' ? 'STANDARD (0 pts)' : 'STANDARD (0 pts)'}
+                                </div>
+                                <div className="text-gray-600 dark:text-gray-300 pl-2">
+                                  <ul className="list-disc pl-4 space-y-0.5">
+                                    <li>{language === 'fr' ? 'Autres domaines non listés' : 'Other fields not listed'}</li>
+                                    <li>{language === 'fr' ? 'Formations générales' : 'General training'}</li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </Label>
                       <Select value={pstqTrainingArea} onValueChange={(v: any) => setPstqTrainingArea(v)}>
                         <SelectTrigger className="bg-white dark:bg-gray-800">
@@ -5288,17 +5344,95 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-green-300 dark:border-green-700">
-                      <div>
-                        <p className="text-sm font-semibold">{language === 'fr' ? 'Métier en demande' : 'In-demand occupation'}</p>
-                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Liste PSTQ 2025 • 8 pts' : 'PSTQ 2025 list • 8 pts'}</p>
-                      </div>
-                      <Checkbox
-                        checked={pstqInDemandJob}
-                        onCheckedChange={(v) => setPstqInDemandJob(!!v)}
-                        className="data-[state=checked]:bg-green-500 w-6 h-6"
-                      />
-                    </div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-green-300 dark:border-green-700 cursor-help">
+                            <div>
+                              <p className="text-sm font-semibold flex items-center gap-1">
+                                {language === 'fr' ? 'Métier en demande' : 'In-demand occupation'}
+                                <Info className="w-3.5 h-3.5 text-green-500" />
+                              </p>
+                              <p className="text-xs text-gray-500">{language === 'fr' ? 'Liste PSTQ 2025 • 8 pts' : 'PSTQ 2025 list • 8 pts'}</p>
+                            </div>
+                            <Checkbox
+                              checked={pstqInDemandJob}
+                              onCheckedChange={(v) => setPstqInDemandJob(!!v)}
+                              className="data-[state=checked]:bg-green-500 w-6 h-6"
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-lg p-3 z-50">
+                          <div className="text-xs space-y-2">
+                            <div className="font-semibold text-green-600 flex items-center gap-1">
+                              🏥 {language === 'fr' ? 'SANTÉ (pénurie critique)' : 'HEALTH (critical shortage)'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Infirmier(ère) autorisé(e)' : 'Registered Nurse'}</li>
+                              <li>{language === 'fr' ? 'Médecin généraliste et spécialiste' : 'General practitioner and specialist'}</li>
+                              <li>{language === 'fr' ? 'Pharmacien(ne)' : 'Pharmacist'}</li>
+                              <li>{language === 'fr' ? 'Aide-soignant(e), Préposé(e) aux bénéficiaires' : 'Nursing assistant, Orderly'}</li>
+                              <li>{language === 'fr' ? 'Technicien(ne) de laboratoire médical' : 'Medical laboratory technician'}</li>
+                            </ul>
+                            
+                            <div className="font-semibold text-blue-600 flex items-center gap-1 mt-3">
+                              💻 {language === 'fr' ? 'TECHNOLOGIE / TI' : 'TECHNOLOGY / IT'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Développeur(euse) logiciel' : 'Software Developer'}</li>
+                              <li>{language === 'fr' ? 'Ingénieur(e) en informatique' : 'Computer Engineer'}</li>
+                              <li>{language === 'fr' ? 'Analyste en cybersécurité' : 'Cybersecurity Analyst'}</li>
+                              <li>{language === 'fr' ? 'Spécialiste en intelligence artificielle' : 'AI Specialist'}</li>
+                              <li>{language === 'fr' ? 'Administrateur(trice) de systèmes' : 'Systems Administrator'}</li>
+                            </ul>
+                            
+                            <div className="font-semibold text-orange-600 flex items-center gap-1 mt-3">
+                              🔧 {language === 'fr' ? 'MÉTIERS SPÉCIALISÉS' : 'SKILLED TRADES'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Électricien(ne) industriel(le)' : 'Industrial Electrician'}</li>
+                              <li>{language === 'fr' ? 'Soudeur(euse)' : 'Welder'}</li>
+                              <li>{language === 'fr' ? 'Plombier(ière)' : 'Plumber'}</li>
+                              <li>{language === 'fr' ? 'Mécanicien(ne) de machines fixes' : 'Stationary Engineer'}</li>
+                              <li>{language === 'fr' ? 'Charpentier(ère)-menuisier(ère)' : 'Carpenter-Joiner'}</li>
+                            </ul>
+                            
+                            <div className="font-semibold text-purple-600 flex items-center gap-1 mt-3">
+                              🚚 {language === 'fr' ? 'TRANSPORT & LOGISTIQUE' : 'TRANSPORT & LOGISTICS'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Camionneur(euse) longue distance' : 'Long-haul Truck Driver'}</li>
+                              <li>{language === 'fr' ? 'Conducteur(trice) d\'équipement lourd' : 'Heavy Equipment Operator'}</li>
+                              <li>{language === 'fr' ? 'Manutentionnaire d\'entrepôt' : 'Warehouse Material Handler'}</li>
+                            </ul>
+                            
+                            <div className="font-semibold text-teal-600 flex items-center gap-1 mt-3">
+                              🏗️ {language === 'fr' ? 'CONSTRUCTION' : 'CONSTRUCTION'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Contremaître/superviseur de chantier' : 'Construction Foreman/Supervisor'}</li>
+                              <li>{language === 'fr' ? 'Opérateur(trice) de grue' : 'Crane Operator'}</li>
+                              <li>{language === 'fr' ? 'Fermailleur(euse)' : 'Ironworker'}</li>
+                            </ul>
+                            
+                            <div className="font-semibold text-pink-600 flex items-center gap-1 mt-3">
+                              👨‍🏫 {language === 'fr' ? 'ÉDUCATION' : 'EDUCATION'}
+                            </div>
+                            <ul className="list-disc pl-4 text-gray-600 dark:text-gray-300 space-y-0.5">
+                              <li>{language === 'fr' ? 'Enseignant(e) au préscolaire/primaire' : 'Preschool/Primary Teacher'}</li>
+                              <li>{language === 'fr' ? 'Enseignant(e) au secondaire (math, sciences)' : 'Secondary Teacher (math, sciences)'}</li>
+                              <li>{language === 'fr' ? 'Éducateur(trice) spécialisé(e)' : 'Specialized Educator'}</li>
+                            </ul>
+                            
+                            <p className="text-[10px] text-gray-400 mt-3 italic">
+                              {language === 'fr' 
+                                ? 'Source: Liste officielle MIFI 2025 - Mettre à jour régulièrement'
+                                : 'Source: Official MIFI list 2025 - Updated regularly'}
+                            </p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
 
                   {/* Family Situation */}
