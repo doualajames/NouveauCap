@@ -4367,7 +4367,24 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
   const [canadaExperience, setCanadaExperience] = useState(0)
   const [outsideCanadaExperience, setOutsideCanadaExperience] = useState(3)
   const [calculatedScore, setCalculatedScore] = useState<number | null>(null)
-  const [activeTab, setActiveTab] = useState<'tasks' | 'simulator' | 'pgwp' | 'citizenship'>('tasks')
+  const [activeTab, setActiveTab] = useState<'tasks' | 'simulator' | 'pgwp' | 'pstq' | 'citizenship'>('tasks')
+
+  // PSTQ Simulator state - Programme de sélection permanente du Québec (2025)
+  const [pstqAge, setPstqAge] = useState(30)
+  const [pstqEducation, setPstqEducation] = useState<'doctorat' | 'maitrise' | 'baccalaureat' | 'diploma_college' | 'diploma_vocational' | 'highschool'>('baccalaureat')
+  const [pstqFrenchOral, setPstqFrenchOral] = useState<'beginner' | 'intermediate' | 'advanced' | 'native'>('intermediate')
+  const [pstqFrenchWritten, setPstqFrenchWritten] = useState<'beginner' | 'intermediate' | 'advanced' | 'native'>('intermediate')
+  const [pstqEnglishLevel, setPstqEnglishLevel] = useState<'none' | 'beginner' | 'intermediate' | 'advanced'>('intermediate')
+  const [pstqQuebecExperience, setPstqQuebecExperience] = useState(0)
+  const [pstqOutsideExperience, setPstqOutsideExperience] = useState(3)
+  const [pstqInDemandJob, setPstqInDemandJob] = useState(false)
+  const [pstqJobOffer, setPstqJobOffer] = useState(false)
+  const [pstqMontrealArea, setPstqMontrealArea] = useState(true)
+  const [pstqChildren, setPstqChildren] = useState(0)
+  const [pstqMarried, setPstqMarried] = useState(false)
+  const [pstqSpouseFrench, setPstqSpouseFrench] = useState<'none' | 'beginner' | 'intermediate' | 'advanced'>('beginner')
+  const [pstqTrainingArea, setPstqTrainingArea] = useState<'priority' | 'moderate' | 'standard'>('standard')
+  const [pstqScore, setPstqScore] = useState<{total: number; cutoff: number; eligible: boolean; breakdown: {[key: string]: number}} | null>(null)
 
   // Determine if user is a temporary resident (needs CRS) or permanent resident (needs citizenship)
   const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus)
@@ -4389,6 +4406,9 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
   // Get age from profile or state
   const profileAge = calculateAgeFromDOB(user?.dateOfBirth)
   const displayAge = profileAge !== null ? profileAge : age
+
+  // PSTQ display age - use profile age if available
+  const pstqDisplayAge = profileAge !== null ? profileAge : pstqAge
 
   // PGWP Calculator state
   const [pgwpProgramDuration, setPgwpProgramDuration] = useState(12)
@@ -4535,6 +4555,148 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
     })
   }
 
+  // PSTQ Calculator - Programme de sélection permanente du Québec (2025)
+  const calculatePSTQ = () => {
+    const breakdown: {[key: string]: number} = {}
+    let total = 0
+
+    // ========== FACTEUR: ÂGE (max 16 points) ==========
+    // Utilise l'âge du profil si disponible
+    const calculatedPstqAge = pstqDisplayAge
+    let agePoints = 0
+    if (calculatedPstqAge >= 18 && calculatedPstqAge <= 35) {
+      agePoints = 16 // Maximum pour 18-35 ans
+    } else if (calculatedPstqAge === 36) agePoints = 14
+    else if (calculatedPstqAge === 37) agePoints = 12
+    else if (calculatedPstqAge === 38) agePoints = 10
+    else if (calculatedPstqAge === 39) agePoints = 8
+    else if (calculatedPstqAge === 40) agePoints = 6
+    else if (calculatedPstqAge === 41) agePoints = 4
+    else if (calculatedPstqAge === 42) agePoints = 2
+    else if (calculatedPstqAge >= 43) agePoints = 0
+    breakdown['age'] = agePoints
+    total += agePoints
+
+    // ========== FACTEUR: Niveau d'éducation (max 14 points) ==========
+    let educationPoints = 0
+    if (pstqEducation === 'doctorat') educationPoints = 14
+    else if (pstqEducation === 'maitrise') educationPoints = 12
+    else if (pstqEducation === 'baccalaureat') educationPoints = 10
+    else if (pstqEducation === 'diploma_college') educationPoints = 8
+    else if (pstqEducation === 'diploma_vocational') educationPoints = 6
+    else educationPoints = 2
+    breakdown['education'] = educationPoints
+    total += educationPoints
+
+    // ========== FACTEUR: Compétences linguistiques en français (max 18 points) ==========
+    // Le français est la langue prioritaire au Québec - 2025 updates
+    let frenchOralPoints = 0
+    let frenchWrittenPoints = 0
+    
+    // Compréhension et expression orale (max 10 points)
+    if (pstqFrenchOral === 'native') frenchOralPoints = 10
+    else if (pstqFrenchOral === 'advanced') frenchOralPoints = 8
+    else if (pstqFrenchOral === 'intermediate') frenchOralPoints = 5
+    else frenchOralPoints = 0
+
+    // Compréhension et expression écrite (max 8 points)
+    if (pstqFrenchWritten === 'native') frenchWrittenPoints = 8
+    else if (pstqFrenchWritten === 'advanced') frenchWrittenPoints = 6
+    else if (pstqFrenchWritten === 'intermediate') frenchWrittenPoints = 3
+    else frenchWrittenPoints = 0
+
+    breakdown['french_oral'] = frenchOralPoints
+    breakdown['french_written'] = frenchWrittenPoints
+    total += frenchOralPoints + frenchWrittenPoints
+
+    // ========== FACTEUR: Anglais (max 6 points) ==========
+    // L'anglais est secondaire mais peut ajouter des points
+    let englishPoints = 0
+    if (pstqEnglishLevel === 'advanced') englishPoints = 6
+    else if (pstqEnglishLevel === 'intermediate') englishPoints = 4
+    else if (pstqEnglishLevel === 'beginner') englishPoints = 2
+    breakdown['english'] = englishPoints
+    total += englishPoints
+
+    // ========== FACTEUR: Expérience de travail au Québec (max 10 points) ==========
+    let quebecExpPoints = 0
+    if (pstqQuebecExperience >= 4) quebecExpPoints = 10
+    else if (pstqQuebecExperience >= 3) quebecExpPoints = 8
+    else if (pstqQuebecExperience >= 2) quebecExpPoints = 6
+    else if (pstqQuebecExperience >= 1) quebecExpPoints = 4
+    else quebecExpPoints = 0
+    breakdown['quebec_experience'] = quebecExpPoints
+    total += quebecExpPoints
+
+    // ========== FACTEUR: Expérience de travail hors Québec (max 8 points) ==========
+    let outsideExpPoints = 0
+    if (pstqOutsideExperience >= 4) outsideExpPoints = 8
+    else if (pstqOutsideExperience >= 3) outsideExpPoints = 6
+    else if (pstqOutsideExperience >= 2) outsideExpPoints = 4
+    else if (pstqOutsideExperience >= 1) outsideExpPoints = 2
+    breakdown['outside_experience'] = outsideExpPoints
+    total += outsideExpPoints
+
+    // ========== FACTEUR: Offre d'emploi validée (max 14 points) ==========
+    let jobOfferPoints = 0
+    if (pstqJobOffer) {
+      if (!pstqMontrealArea) {
+        jobOfferPoints = 14 // Hors Montréal = plus de points
+      } else {
+        jobOfferPoints = 10 // Dans Montréal
+      }
+    }
+    breakdown['job_offer'] = jobOfferPoints
+    total += jobOfferPoints
+
+    // ========== FACTEUR: Métiers en demande (max 8 points) ==========
+    // Nouveau en 2025 - liste des métiers en pénurie
+    let inDemandPoints = pstqInDemandJob ? 8 : 0
+    breakdown['in_demand'] = inDemandPoints
+    total += inDemandPoints
+
+    // ========== FACTEUR: Domaine de formation (max 12 points) ==========
+    let trainingPoints = 0
+    if (pstqTrainingArea === 'priority') {
+      trainingPoints = 12 // Formations prioritaires (STIM, santé, éducation)
+    } else if (pstqTrainingArea === 'moderate') {
+      trainingPoints = 6
+    }
+    breakdown['training_area'] = trainingPoints
+    total += trainingPoints
+
+    // ========== FACTEUR: Enfants (max 8 points) ==========
+    let childrenPoints = 0
+    if (pstqChildren >= 3) childrenPoints = 8
+    else if (pstqChildren === 2) childrenPoints = 6
+    else if (pstqChildren === 1) childrenPoints = 4
+    breakdown['children'] = childrenPoints
+    total += childrenPoints
+
+    // ========== FACTEUR: Conjoint (max 8 points) ==========
+    let spousePoints = 0
+    if (pstqMarried) {
+      // Points pour le français du conjoint
+      if (pstqSpouseFrench === 'advanced') spousePoints = 8
+      else if (pstqSpouseFrench === 'intermediate') spousePoints = 5
+      else if (pstqSpouseFrench === 'beginner') spousePoints = 2
+    }
+    breakdown['spouse'] = spousePoints
+    total += spousePoints
+
+    // ========== SEUIL D'ÉLIGIBILITÉ ==========
+    // Le seuil varie selon le volet - Volet général: 50 points minimum
+    const cutoff = pstqJobOffer ? 50 : 60 // Plus bas avec offre d'emploi
+    const eligible = total >= cutoff
+
+    setPstqScore({
+      total,
+      cutoff,
+      eligible,
+      breakdown
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/20 dark:to-gray-900">
       <div className="p-4 lg:p-8 space-y-6">
@@ -4591,6 +4753,16 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
             >
               <Calculator className="w-4 h-4 inline mr-2" />
               CRS
+            </button>
+          )}
+          {/* PSTQ for temporary residents in Quebec */}
+          {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus) && user?.province === 'QC' && (
+            <button
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'pstq' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setActiveTab('pstq')}
+            >
+              <MapPin className="w-4 h-4 inline mr-2" />
+              PSTQ
             </button>
           )}
           {/* Citizenship for permanent residents */}
@@ -4867,6 +5039,439 @@ function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
               </CardContent>
             </Card>
           </div>
+          )}
+
+          {/* PSTQ Simulator - For Quebec Temporary Residents */}
+          {isTemporaryResident && user?.province === 'QC' && (
+            <div className={`lg:col-span-3 ${activeTab !== 'pstq' ? 'hidden lg:block' : ''}`}>
+              <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-blue-50/80 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-950/20">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <MapPin className="w-4 h-4 text-white" />
+                      </div>
+                      {language === 'fr' ? '🇶🇦 Simulateur PSTQ 2025' : '🇶🇦 PSTQ Simulator 2025'}
+                    </CardTitle>
+                    <Badge className="bg-blue-600 text-white">
+                      {language === 'fr' ? 'Nouveau' : 'New'}
+                    </Badge>
+                  </div>
+                  <CardDescription className="text-sm">
+                    {language === 'fr'
+                      ? 'Programme de sélection permanente du Québec - Estimez votre score de sélection'
+                      : 'Quebec Permanent Selection Program - Estimate your selection score'}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-5">
+                  {/* Info Banner about PSTQ 2025 */}
+                  <div className="p-4 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/50 dark:to-indigo-900/50 rounded-xl border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>📋 {language === 'fr' ? 'Mises à jour PSTQ 2025' : 'PSTQ 2025 Updates'}</strong>
+                      <br />
+                      {language === 'fr'
+                        ? 'Le PSTQ remplace le PEQ depuis 2025. Points clés: priorité au français, expérience québécoise valorisée, nouveaux métiers en demande.'
+                        : 'PSTQ replaced PEQ in 2025. Key points: French language priority, Quebec experience valued, new in-demand occupations.'}
+                    </p>
+                  </div>
+
+                  {/* Input Grid - Part 1: Personal Info */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {/* Age */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-sm font-medium">
+                          {language === 'fr' ? 'Âge' : 'Age'}
+                          {profileAge !== null && <span className="ml-2 text-xs text-green-600">({language === 'fr' ? 'depuis profil' : 'from profile'})</span>}
+                        </Label>
+                        <Badge variant="outline" className="font-mono">{pstqDisplayAge} {language === 'fr' ? 'ans' : 'y.o'}</Badge>
+                      </div>
+                      {profileAge === null ? (
+                        <Slider
+                          value={[pstqAge]}
+                          onValueChange={([v]) => setPstqAge(v)}
+                          min={18}
+                          max={55}
+                          step={1}
+                          className="py-2"
+                        />
+                      ) : (
+                        <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4" />
+                          {language === 'fr'
+                            ? `${profileAge} ans (calculé depuis votre date de naissance)`
+                            : `${profileAge} years old (calculated from your date of birth)`}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Education Level */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'éducation' : 'Education level'}</Label>
+                      <Select value={pstqEducation} onValueChange={(v: any) => setPstqEducation(v)}>
+                        <SelectTrigger className="bg-white dark:bg-gray-800">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="doctorat">🎓 {language === 'fr' ? 'Doctorat' : 'PhD'} (14 pts)</SelectItem>
+                          <SelectItem value="maitrise">📚 {language === 'fr' ? 'Maîtrise' : 'Master\'s'} (12 pts)</SelectItem>
+                          <SelectItem value="baccalaureat">📖 {language === 'fr' ? 'Baccalauréat' : 'Bachelor\'s'} (10 pts)</SelectItem>
+                          <SelectItem value="diploma_college">📋 {language === 'fr' ? 'Diplôme collégial' : 'College Diploma'} (8 pts)</SelectItem>
+                          <SelectItem value="diploma_vocational">🔧 {language === 'fr' ? 'Diplôme professionnel' : 'Vocational Diploma'} (6 pts)</SelectItem>
+                          <SelectItem value="highschool">🏫 {language === 'fr' ? 'Secondaire' : 'High School'} (2 pts)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* French Language Skills - Most Important */}
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-xl border border-purple-200 dark:border-purple-800">
+                    <h4 className="font-semibold text-purple-800 dark:text-purple-200 mb-3 flex items-center gap-2">
+                      🇫🇷 {language === 'fr' ? 'Compétences en français (prioritaire)' : 'French Skills (Priority)'}
+                    </h4>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm">{language === 'fr' ? 'Français oral' : 'Oral French'}</Label>
+                        <Select value={pstqFrenchOral} onValueChange={(v: any) => setPstqFrenchOral(v)}>
+                          <SelectTrigger className="bg-white dark:bg-gray-800">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="native">⭐ {language === 'fr' ? 'Natif/Bilingue' : 'Native/Bilingual'} (10 pts)</SelectItem>
+                            <SelectItem value="advanced">🎯 {language === 'fr' ? 'Avancé (C1-C2)' : 'Advanced (C1-C2)'} (8 pts)</SelectItem>
+                            <SelectItem value="intermediate">📈 {language === 'fr' ? 'Intermédiaire (B1-B2)' : 'Intermediate (B1-B2)'} (5 pts)</SelectItem>
+                            <SelectItem value="beginner">🌱 {language === 'fr' ? 'Débutant' : 'Beginner'} (0 pts)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm">{language === 'fr' ? 'Français écrit' : 'Written French'}</Label>
+                        <Select value={pstqFrenchWritten} onValueChange={(v: any) => setPstqFrenchWritten(v)}>
+                          <SelectTrigger className="bg-white dark:bg-gray-800">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="native">⭐ {language === 'fr' ? 'Natif/Bilingue' : 'Native/Bilingual'} (8 pts)</SelectItem>
+                            <SelectItem value="advanced">🎯 {language === 'fr' ? 'Avancé (C1-C2)' : 'Advanced (C1-C2)'} (6 pts)</SelectItem>
+                            <SelectItem value="intermediate">📈 {language === 'fr' ? 'Intermédiaire (B1-B2)' : 'Intermediate (B1-B2)'} (3 pts)</SelectItem>
+                            <SelectItem value="beginner">🌱 {language === 'fr' ? 'Débutant' : 'Beginner'} (0 pts)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* English Level */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'anglais' : 'English level'}</Label>
+                      <Select value={pstqEnglishLevel} onValueChange={(v: any) => setPstqEnglishLevel(v)}>
+                        <SelectTrigger className="bg-white dark:bg-gray-800">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="advanced">🎯 {language === 'fr' ? 'Avancé' : 'Advanced'} (6 pts)</SelectItem>
+                          <SelectItem value="intermediate">📈 {language === 'fr' ? 'Intermédiaire' : 'Intermediate'} (4 pts)</SelectItem>
+                          <SelectItem value="beginner">🌱 {language === 'fr' ? 'Débutant' : 'Beginner'} (2 pts)</SelectItem>
+                          <SelectItem value="none">❌ {language === 'fr' ? 'Aucun' : 'None'} (0 pts)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Training Area */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">{language === 'fr' ? 'Domaine de formation' : 'Training area'}</Label>
+                      <Select value={pstqTrainingArea} onValueChange={(v: any) => setPstqTrainingArea(v)}>
+                        <SelectTrigger className="bg-white dark:bg-gray-800">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="priority">⭐ {language === 'fr' ? 'Prioritaire (STIM, Santé, Éducation)' : 'Priority (STEM, Health, Education)'} (12 pts)</SelectItem>
+                          <SelectItem value="moderate">📊 {language === 'fr' ? 'Modéré' : 'Moderate'} (6 pts)</SelectItem>
+                          <SelectItem value="standard">📋 {language === 'fr' ? 'Standard' : 'Standard'} (0 pts)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Work Experience */}
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      💼 {language === 'fr' ? 'Expérience de travail' : 'Work Experience'}
+                    </h4>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <Label className="text-sm">{language === 'fr' ? 'Au Québec' : 'In Quebec'}</Label>
+                          <Badge variant="outline" className="font-mono">{pstqQuebecExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
+                        </div>
+                        <Slider
+                          value={[pstqQuebecExperience]}
+                          onValueChange={([v]) => setPstqQuebecExperience(v)}
+                          min={0}
+                          max={5}
+                          step={1}
+                          className="py-2"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <Label className="text-sm">{language === 'fr' ? 'Hors Québec' : 'Outside Quebec'}</Label>
+                          <Badge variant="outline" className="font-mono">{pstqOutsideExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
+                        </div>
+                        <Slider
+                          value={[pstqOutsideExperience]}
+                          onValueChange={([v]) => setPstqOutsideExperience(v)}
+                          min={0}
+                          max={5}
+                          step={1}
+                          className="py-2"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Job Offer & Location */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <div>
+                        <p className="text-sm font-medium">{language === 'fr' ? 'Offre d\'emploi validée' : 'Validated job offer'}</p>
+                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Par le MIFI' : 'By MIFI'}</p>
+                      </div>
+                      <Checkbox
+                        checked={pstqJobOffer}
+                        onCheckedChange={(v) => setPstqJobOffer(!!v)}
+                        className="data-[state=checked]:bg-blue-500"
+                      />
+                    </div>
+
+                    {pstqJobOffer && (
+                      <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                        <div>
+                          <p className="text-sm font-medium">{language === 'fr' ? 'Région de Montréal' : 'Montreal area'}</p>
+                          <p className="text-xs text-gray-500">{language === 'fr' ? 'Ou hors Montréal' : 'Or outside Montreal'}</p>
+                        </div>
+                        <Checkbox
+                          checked={pstqMontrealArea}
+                          onCheckedChange={(v) => setPstqMontrealArea(!!v)}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <div>
+                        <p className="text-sm font-medium">{language === 'fr' ? 'Métier en demande' : 'In-demand occupation'}</p>
+                        <p className="text-xs text-gray-500">{language === 'fr' ? 'Liste PSTQ 2025' : 'PSTQ 2025 list'}</p>
+                      </div>
+                      <Checkbox
+                        checked={pstqInDemandJob}
+                        onCheckedChange={(v) => setPstqInDemandJob(!!v)}
+                        className="data-[state=checked]:bg-green-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Family Situation */}
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      👨‍👩‍👧‍👦 {language === 'fr' ? 'Situation familiale' : 'Family situation'}
+                    </h4>
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                        <div>
+                          <p className="text-sm font-medium">{language === 'fr' ? 'Conjoint' : 'Spouse'}</p>
+                        </div>
+                        <Checkbox
+                          checked={pstqMarried}
+                          onCheckedChange={(v) => setPstqMarried(!!v)}
+                        />
+                      </div>
+
+                      {pstqMarried && (
+                        <div className="space-y-2 col-span-2">
+                          <Label className="text-sm">{language === 'fr' ? 'Français du conjoint' : 'Spouse\'s French'}</Label>
+                          <Select value={pstqSpouseFrench} onValueChange={(v: any) => setPstqSpouseFrench(v)}>
+                            <SelectTrigger className="bg-white dark:bg-gray-800">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="advanced">🎯 {language === 'fr' ? 'Avancé' : 'Advanced'} (8 pts)</SelectItem>
+                              <SelectItem value="intermediate">📈 {language === 'fr' ? 'Intermédiaire' : 'Intermediate'} (5 pts)</SelectItem>
+                              <SelectItem value="beginner">🌱 {language === 'fr' ? 'Débutant' : 'Beginner'} (2 pts)</SelectItem>
+                              <SelectItem value="none">❌ {language === 'fr' ? 'Aucun' : 'None'} (0 pts)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        <Label className="text-sm">{language === 'fr' ? 'Enfants à charge' : 'Dependent children'}</Label>
+                        <Select value={pstqChildren.toString()} onValueChange={(v) => setPstqChildren(parseInt(v))}>
+                          <SelectTrigger className="bg-white dark:bg-gray-800">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">0 (0 pts)</SelectItem>
+                            <SelectItem value="1">1 (4 pts)</SelectItem>
+                            <SelectItem value="2">2 (6 pts)</SelectItem>
+                            <SelectItem value="3">3+ (8 pts)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Calculate Button */}
+                  <Button
+                    onClick={calculatePSTQ}
+                    className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+                  >
+                    <Calculator className="w-5 h-5 mr-2" />
+                    {language === 'fr' ? 'Calculer mon score PSTQ' : 'Calculate my PSTQ score'}
+                  </Button>
+
+                  {/* Score Result */}
+                  {pstqScore && (
+                    <div className={`relative overflow-hidden rounded-2xl p-6 transition-all duration-500 ${
+                      pstqScore.eligible
+                        ? 'bg-gradient-to-br from-green-100 to-emerald-50 dark:from-green-900/30 dark:to-emerald-800/20'
+                        : 'bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/30 dark:to-orange-800/20'
+                    }`}>
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30" />
+
+                      {/* Score Display */}
+                      <div className="flex items-center justify-center gap-4 mb-4">
+                        <div className="text-center">
+                          <span className={`text-6xl font-black tracking-tight ${pstqScore.eligible ? 'text-green-600' : 'text-amber-600'}`}>
+                            {pstqScore.total}
+                          </span>
+                          <span className="block text-gray-500 text-lg">{language === 'fr' ? 'points' : 'points'}</span>
+                        </div>
+                        <div className="w-px h-16 bg-gray-300 dark:bg-gray-600" />
+                        <div className="text-center">
+                          <span className="text-3xl font-bold text-gray-600">{pstqScore.cutoff}</span>
+                          <span className="block text-gray-500 text-sm">{language === 'fr' ? 'seuil requis' : 'cutoff'}</span>
+                        </div>
+                      </div>
+
+                      {/* Eligibility Badge */}
+                      <div className={`text-center mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium w-full justify-center ${
+                        pstqScore.eligible
+                          ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200'
+                          : 'bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200'
+                      }`}>
+                        {pstqScore.eligible
+                          ? (<>✅ {language === 'fr' ? 'Vous atteignez le seuil d\'éligibilité!' : 'You reach the eligibility threshold!'} ✅</>)
+                          : (<>⚠️ {language === 'fr' ? `Il vous manque ${pstqScore.cutoff - pstqScore.total} points` : `You need ${pstqScore.cutoff - pstqScore.total} more points`} ⚠️</>)
+                        }
+                      </div>
+
+                      {/* Breakdown */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Âge' : 'Age'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['age']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Éducation' : 'Education'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['education']}</p>
+                        </div>
+                        <div className="bg-purple-100/50 dark:bg-purple-900/30 rounded-lg p-2 text-center">
+                          <p className="text-purple-600">🇫🇷 {language === 'fr' ? 'Français' : 'French'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['french_oral'] + pstqScore.breakdown['french_written']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Anglais' : 'English'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['english']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Exp. QC' : 'QC Exp.'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['quebec_experience']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Exp. Hors QC' : 'Outside QC'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['outside_experience']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Formation' : 'Training'}</p>
+                          <p className="font-bold text-lg">{pstqScore.breakdown['training_area']}</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 text-center">
+                          <p className="text-gray-500">{language === 'fr' ? 'Autres' : 'Other'}</p>
+                          <p className="font-bold text-lg">
+                            {pstqScore.breakdown['job_offer'] + pstqScore.breakdown['in_demand'] + pstqScore.breakdown['children'] + pstqScore.breakdown['spouse']}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Tips */}
+                      {!pstqScore.eligible && (
+                        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg text-sm">
+                          <p className="text-blue-800 dark:text-blue-200">
+                            💡 <strong>{language === 'fr' ? 'Conseils pour améliorer votre score:' : 'Tips to improve your score:'}</strong>
+                          </p>
+                          <ul className="mt-2 text-blue-700 dark:text-blue-300 text-xs space-y-1">
+                            {pstqScore.breakdown['french_oral'] + pstqScore.breakdown['french_written'] < 15 && (
+                              <li>• {language === 'fr' ? 'Améliorez votre français (maximum 18 points possibles)' : 'Improve your French (max 18 points possible)'}</li>
+                            )}
+                            {pstqScore.breakdown['quebec_experience'] < 10 && (
+                              <li>• {language === 'fr' ? 'Accumulez plus d\'expérience au Québec' : 'Gain more Quebec experience'}</li>
+                            )}
+                            {!pstqJobOffer && (
+                              <li>• {language === 'fr' ? 'Obtenez une offre d\'emploi validée' : 'Get a validated job offer'}</li>
+                            )}
+                            {pstqScore.breakdown['training_area'] < 12 && (
+                              <li>• {language === 'fr' ? 'Formations dans domaines prioritaires valorisées' : 'Training in priority fields is valued'}</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Action Links */}
+                      {pstqScore.eligible && (
+                        <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-800 flex flex-wrap gap-2">
+                          <a
+                            href="https://www.quebec.ca/immigration/immigrer-s-installer/selection-quebec"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            {language === 'fr' ? 'En savoir plus sur le PSTQ' : 'Learn more about PSTQ'}
+                          </a>
+                          <a
+                            href="https://www.quebec.ca/immigration"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          >
+                            <BookOpen className="w-4 h-4" />
+                            {language === 'fr' ? 'Guide officiel Québec' : 'Official Quebec Guide'}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Processing Info */}
+                  <div className="grid sm:grid-cols-3 gap-3 text-center">
+                    <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">6-12</p>
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Mois de traitement' : 'Months processing'}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-2xl font-bold text-green-600">50-60</p>
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Points minimum' : 'Minimum points'}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-2xl font-bold text-purple-600">CSQ</p>
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Certificat de sélection' : 'Selection certificate'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {/* Citizenship Eligibility - For Permanent Residents Only */}
