@@ -1,0 +1,344 @@
+// NouveauCap - SaaS Platform for New Immigrants to Canada
+// Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model with authentication and profile
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  name          String?
+  avatar        String?
+  
+  // Profile information
+  immigrationStatus  String?   // PERMANENT_RESIDENT, FOREIGN_STUDENT, OPEN_WORK_PERMIT, CLOSED_WORK_PERMIT
+  province          String?   // ON, QC, BC, AB, MB, SK, NS, NB, PE, NL, NT, YT, NU
+  postalCode        String?   // Postal code for geolocation services (e.g., H2X 1Y4)
+  arrivalDate       DateTime?
+  dateOfBirth       DateTime? // Date of birth for CRS calculation
+  professionalSector String?
+  preferredLanguage String?   @default("fr")
+  familyStatus      String?   // SINGLE, COUPLE, FAMILY_WITH_CHILDREN
+  countryOfOrigin   String?
+  
+  // Permit expiry dates for temporary residents
+  studyPermitExpiry    DateTime?
+  workPermitExpiry     DateTime?
+  passportExpiry       DateTime?
+  visaExpiry           DateTime?
+  
+  // Subscription
+  subscriptionTier  String    @default("FREE") // FREE, ESSENTIEL, PREMIUM, FAMILLE
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+  
+  // Metadata
+  onboardingCompleted Boolean @default(false)
+  emailVerified     DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  tasks             Task[]
+  documents         Document[]
+  forumPosts        ForumPost[]
+  forumComments     ForumComment[]
+  events            EventRegistration[]
+  alerts            Alert[]
+  jobApplications   JobApplication[]
+  profile           Profile?
+  onboarding        Onboarding?
+  subscription      Subscription?
+  supportTickets    SupportTicket[]
+}
+
+// Task/Checklist model
+model Task {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  titleEn     String?
+  description String?
+  descriptionEn String?
+  category    String   // IMMIGRATION, EMPLOYMENT, HOUSING, FINANCE, HEALTH, COMMUNITY
+  priority    String   @default("MEDIUM") // HIGH, MEDIUM, LOW
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, SKIPPED
+  
+  dueDate     DateTime?
+  completedAt DateTime?
+  
+  order       Int      @default(0)
+  isRequired  Boolean  @default(false)
+  source      String?  // Government source URL
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Document model for user uploads and templates
+model Document {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name        String
+  type        String   // CV, COVER_LETTER, PERMIT, PASSPORT, etc.
+  content     String?  // Text content or file path
+  aiOptimized Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Forum Post model
+model ForumPost {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  title       String
+  content     String
+  category    String   // IMMIGRATION, EMPLOYMENT, HOUSING, GENERAL, etc.
+  province    String?  // Filter by province
+  
+  likes       Int      @default(0)
+  views       Int      @default(0)
+  isPinned    Boolean  @default(false)
+  
+  comments    ForumComment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Forum Comment model
+model ForumComment {
+  id          String   @id @default(cuid())
+  postId      String
+  post        ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  content     String
+  likes       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Event model for community events
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  titleEn     String?
+  description String?
+  descriptionEn String?
+  type        String   // NETWORKING, WORKSHOP, CULTURAL, SUPPORT
+  province    String?
+  city        String?
+  address     String?
+  
+  date        DateTime
+  endDate     DateTime?
+  isVirtual   Boolean  @default(false)
+  virtualLink String?
+  capacity    Int?
+  price       Float    @default(0)
+  
+  registrations EventRegistration[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Event Registration model
+model EventRegistration {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  registeredAt DateTime @default(now())
+}
+
+// Alert model for deadline reminders
+model Alert {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type        String   // PERMIT_EXPIRY, TAX_DEADLINE, HEALTH_CARD, etc.
+  title       String
+  message     String
+  dueDate     DateTime
+  
+  isRead      Boolean  @default(false)
+  isEmailSent Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+}
+
+// Job Application tracker
+model JobApplication {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  company     String
+  position    String
+  status      String   @default("APPLIED") // APPLIED, INTERVIEW, OFFER, REJECTED, WITHDRAWN
+  appliedDate DateTime?
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// User Profile - Extended profile information
+model Profile {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  immigrationStatus   String?   // PERMANENT_RESIDENT, FOREIGN_STUDENT, OPEN_WORK_PERMIT, etc.
+  province            String?   // ON, QC, BC, AB, etc.
+  city                String?
+  arrivalDate         DateTime?
+  plannedArrivalDate  DateTime?
+  alreadyInCanada     Boolean   @default(true)
+
+  professionalSector  String?
+  yearsOfExperience   Int?
+  educationLevel      String?
+
+  preferredLanguage   String    @default("fr")
+  needsFrenchClasses  Boolean   @default(false)
+  needsEnglishClasses Boolean   @default(false)
+
+  familyStatus        String?   // SINGLE, COUPLE, FAMILY_WITH_CHILDREN
+  numberOfChildren    Int?
+  primaryGoal         String?
+
+  onboardingCompleted Boolean   @default(false)
+  profileCompletion   Int       @default(0)
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// Onboarding progress tracking
+model Onboarding {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  immigrationStatus   String?
+  province            String?
+  city                String?
+  arrivalDate         DateTime?
+  plannedArrivalDate  DateTime?
+  alreadyInCanada     Boolean   @default(true)
+
+  professionalSector  String?
+  yearsOfExperience   Int?
+  educationLevel      String?
+
+  preferredLanguage   String    @default("fr")
+  needsFrenchClasses  Boolean   @default(false)
+  needsEnglishClasses Boolean   @default(false)
+
+  familyStatus        String?
+  numberOfChildren    Int?
+  primaryGoal         String?
+
+  currentStep         Int       @default(1)
+  completed           Boolean   @default(false)
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// User Subscription
+model Subscription {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan            String    @default("FREE") // FREE, PREMIUM, FAMILLE
+  status          String    @default("ACTIVE") // ACTIVE, CANCELED, EXPIRED
+
+  startDate       DateTime?
+  endDate         DateTime?
+
+  alertsLimit     Int       @default(3)
+  alertsUsed      Int       @default(0)
+
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Support Tickets for Admin
+model SupportTicket {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  subject         String
+  message         String
+  status          String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  priority        String    @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+
+  response        String?
+  respondedAt     DateTime?
+  respondedBy     String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Bank offers for comparison
+model BankOffer {
+  id              String   @id @default(cuid())
+  bankName        String
+  bankNameEn      String?
+  accountType     String
+  monthlyFee      Float    @default(0)
+  firstYearFree   Boolean  @default(false)
+  newcomerOffer   String?
+  newcomerOfferEn String?
+  features        String?  // JSON string of features
+  link            String?
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Province-specific information
+model ProvinceInfo {
+  id              String   @id @default(cuid())
+  provinceCode    String   @unique
+  provinceName    String
+  provinceNameEn  String
+  
+  healthInsurance  String?  // JSON with health insurance info
+  housingInfo      String?  // JSON with housing info
+  taxInfo          String?  // JSON with tax info
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
