@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+// IMPORTANT: server-polyfills MUST be the first import — it sets up DOMMatrix,
+// ImageData, Path2D before pdfjs-dist (dep of pdf-parse) evaluates them.
+import '@/lib/server-polyfills'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Server-side only - use require for compatibility with Turbopack
-const pdfParse = require('pdf-parse')
-const mammoth = require('mammoth')
-
 export async function POST(request: NextRequest) {
+  // Lazy-require so the polyfills above run first
+  const pdfParse = require('pdf-parse')
+  const mammoth = require('mammoth')
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -18,7 +21,6 @@ export async function POST(request: NextRequest) {
     const fileName = file.name.toLowerCase()
     let text = ''
 
-    // Extract text based on file type
     if (fileName.endsWith('.pdf')) {
       const pdfData = await pdfParse(buffer)
       text = pdfData.text
@@ -28,34 +30,26 @@ export async function POST(request: NextRequest) {
     } else if (fileName.endsWith('.txt')) {
       text = buffer.toString('utf-8')
     } else {
-      return NextResponse.json({ 
-        error: 'Unsupported file format. Please use PDF, DOCX, or TXT.' 
+      return NextResponse.json({
+        error: 'Unsupported file format. Please use PDF, DOCX, or TXT.',
       }, { status: 400 })
     }
 
-    // Clean up the text
-    text = text
-      .replace(/\s+/g, ' ')
-      .replace(/\n\s*\n/g, '\n\n')
-      .trim()
+    text = text.replace(/\s+/g, ' ').replace(/\n\s*\n/g, '\n\n').trim()
 
     if (!text || text.length < 50) {
-      return NextResponse.json({ 
-        error: 'Could not extract enough text from the file. Please try another file or paste the text directly.' 
+      return NextResponse.json({
+        error: 'Could not extract enough text from the file. Please try another file or paste the text directly.',
       }, { status: 400 })
     }
 
-    return NextResponse.json({ 
-      text,
-      length: text.length,
-      fileName: file.name
-    })
+    return NextResponse.json({ text, length: text.length, fileName: file.name })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('File extraction error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to extract text from file',
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error),
     }, { status: 500 })
   }
 }
