@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { hash } from 'bcryptjs'
 import { createSessionToken } from '@/lib/auth-jwt'
+import { sendEmail, welcomeEmailHtml } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,6 +77,13 @@ export async function POST(request: NextRequest) {
         alertsUsed: 0,
       },
     })
+
+    // Send welcome email (fire-and-forget — never blocks registration)
+    sendEmail({
+      to: user.email,
+      subject: 'Bienvenue sur NouveauCap / Welcome to NouveauCap',
+      html: welcomeEmailHtml(user.name || '', 'fr'),
+    }).catch((err) => console.error('[email] Welcome email failed:', err))
 
     // Create JWT session token
     const token = await createSessionToken({

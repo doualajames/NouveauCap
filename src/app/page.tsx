@@ -30,6 +30,7 @@ import {
   TrendingUp, PiggyBank, Landmark, Receipt, Percent,
   Activity, ClipboardList, UserCheck, FileWarning, Eye, Search, RefreshCw, PieChart
 } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from 'recharts'
 
 // ==================== CITIZENSHIP TEST QUESTIONS ====================
 interface CitizenshipQuestion {
@@ -5210,6 +5211,15 @@ function EmploymentModule({ language, user }: {
     }
   }
 
+  const handleDeleteApplication = async (appId: string) => {
+    try {
+      await fetch(`/api/user-data?applicationId=${appId}`, { method: 'DELETE' })
+      setApplications(applications.filter(a => a.id !== appId))
+    } catch (e) {
+      console.error('Error deleting application', e)
+    }
+  }
+
   const statusConfig: Record<string, { bg: string; text: string; icon: string }> = {
     APPLIED: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', icon: '📤' },
     INTERVIEW: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', icon: '🎤' },
@@ -5506,17 +5516,28 @@ function EmploymentModule({ language, user }: {
                                 📅 {language === 'fr' ? 'Ajouté le' : 'Added on'} {new Date(app.createdAt).toLocaleDateString()}
                               </p>
                             </div>
-                            <Select value={app.status} onValueChange={(v) => updateApplicationStatus(app.id, v)}>
-                              <SelectTrigger className={`w-28 h-8 ${config.bg} ${config.text} border-0 font-medium`}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="APPLIED">{language === 'fr' ? '📤 Postulé' : '📤 Applied'}</SelectItem>
-                                <SelectItem value="INTERVIEW">{language === 'fr' ? '🎤 Entretien' : '🎤 Interview'}</SelectItem>
-                                <SelectItem value="OFFER">{language === 'fr' ? '🎉 Offre' : '🎉 Offer'}</SelectItem>
-                                <SelectItem value="REJECTED">{language === 'fr' ? '❌ Refusé' : '❌ Rejected'}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <div className="flex items-center gap-2">
+                              <Select value={app.status} onValueChange={(v) => updateApplicationStatus(app.id, v)}>
+                                <SelectTrigger className={`w-28 h-8 ${config.bg} ${config.text} border-0 font-medium`}>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="APPLIED">{language === 'fr' ? '📤 Postulé' : '📤 Applied'}</SelectItem>
+                                  <SelectItem value="INTERVIEW">{language === 'fr' ? '🎤 Entretien' : '🎤 Interview'}</SelectItem>
+                                  <SelectItem value="OFFER">{language === 'fr' ? '🎉 Offre' : '🎉 Offer'}</SelectItem>
+                                  <SelectItem value="REJECTED">{language === 'fr' ? '❌ Refusé' : '❌ Rejected'}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                                onClick={() => handleDeleteApplication(app.id)}
+                                title={language === 'fr' ? 'Supprimer' : 'Delete'}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       )
@@ -8472,6 +8493,14 @@ function CommunityModule({ language, user }: {
 }) {
   const [events, setEvents] = useState<any[]>([])
   const [registeredEvents, setRegisteredEvents] = useState<string[]>([])
+  const [forumPosts, setForumPosts] = useState<any[]>([])
+  const [selectedPost, setSelectedPost] = useState<any | null>(null)
+  const [postComments, setPostComments] = useState<any[]>([])
+  const [showNewPostForm, setShowNewPostForm] = useState(false)
+  const [newPost, setNewPost] = useState({ title: '', content: '', category: 'GENERAL' })
+  const [newComment, setNewComment] = useState('')
+  const [forumLoading, setForumLoading] = useState(false)
+  const [communityTab, setCommunityTab] = useState<'events' | 'forum'>('events')
 
   useEffect(() => {
     fetch('/api/user-data?action=get-events')
@@ -8480,6 +8509,64 @@ function CommunityModule({ language, user }: {
         if (data.events) setEvents(data.events)
       })
   }, [])
+
+  useEffect(() => {
+    fetch('/api/forum/posts?limit=20')
+      .then(res => res.json())
+      .then(data => { if (data.posts) setForumPosts(data.posts) })
+      .catch(() => {})
+  }, [])
+
+  const handleOpenPost = async (postId: string) => {
+    try {
+      const res = await fetch(`/api/forum/posts/${postId}`)
+      const data = await res.json()
+      if (data.post) {
+        setSelectedPost(data.post)
+        setPostComments(data.post.comments || [])
+      }
+    } catch (e) { console.error('Error loading post', e) }
+  }
+
+  const handleSubmitPost = async () => {
+    if (!newPost.title.trim() || !newPost.content.trim()) return
+    setForumLoading(true)
+    try {
+      const res = await fetch('/api/forum/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPost),
+      })
+      const data = await res.json()
+      if (data.post) {
+        setForumPosts([data.post, ...forumPosts])
+        setNewPost({ title: '', content: '', category: 'GENERAL' })
+        setShowNewPostForm(false)
+      }
+    } catch (e) { console.error('Error creating post', e) }
+    setForumLoading(false)
+  }
+
+  const handleSubmitComment = async () => {
+    if (!selectedPost || !newComment.trim()) return
+    try {
+      const res = await fetch(`/api/forum/posts/${selectedPost.id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newComment }),
+      })
+      const data = await res.json()
+      if (data.comment) {
+        setPostComments([...postComments, data.comment])
+        setNewComment('')
+        setForumPosts(forumPosts.map(p =>
+          p.id === selectedPost.id
+            ? { ...p, _count: { comments: (p._count?.comments || 0) + 1 } }
+            : p
+        ))
+      }
+    } catch (e) { console.error('Error submitting comment', e) }
+  }
 
   const handleRegister = (eventId: string) => {
     if (registeredEvents.includes(eventId)) {
@@ -8592,47 +8679,130 @@ function CommunityModule({ language, user }: {
           </CardContent>
         </Card>
 
-        {/* Forum Preview */}
+        {/* Community Forum */}
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              {language === 'fr' ? '💬 Forum communautaire' : '💬 Community Forum'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {[
-                { title: language === 'fr' ? 'Meilleures banques pour nouveaux arrivants?' : 'Best banks for newcomers?', replies: 24, views: 156, emoji: '🏦' },
-                { title: language === 'fr' ? 'Expérience RAMQ - délai de carence' : 'RAMQ experience - waiting period', replies: 18, views: 89, emoji: '🏥' },
-                { title: language === 'fr' ? 'Conseils recherche emploi IT Montréal' : 'IT job search tips Montreal', replies: 32, views: 203, emoji: '💼' },
-              ].map((post, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{post.emoji}</span>
-                    <p className="font-medium flex-1">{post.title}</p>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <MessageSquare className="w-4 h-4" />
-                      {post.replies}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {post.views}
-                    </span>
-                  </div>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                  <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
-              ))}
+                {language === 'fr' ? '💬 Forum communautaire' : '💬 Community Forum'}
+              </CardTitle>
+              <Button size="sm" onClick={() => setShowNewPostForm(!showNewPostForm)} className="bg-gradient-to-r from-indigo-500 to-indigo-600">
+                <Plus className="w-4 h-4 mr-1" />
+                {language === 'fr' ? 'Nouveau post' : 'New post'}
+              </Button>
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              {language === 'fr' ? 'Voir tout le forum' : 'View full forum'}
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* New post form */}
+            {showNewPostForm && (
+              <div className="p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl border border-indigo-200 dark:border-indigo-800 space-y-3">
+                <Input
+                  placeholder={language === 'fr' ? 'Titre du post...' : 'Post title...'}
+                  value={newPost.title}
+                  onChange={e => setNewPost({ ...newPost, title: e.target.value })}
+                />
+                <Select value={newPost.category} onValueChange={v => setNewPost({ ...newPost, category: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="GENERAL">{language === 'fr' ? 'Général' : 'General'}</SelectItem>
+                    <SelectItem value="IMMIGRATION">Immigration</SelectItem>
+                    <SelectItem value="EMPLOYMENT">{language === 'fr' ? 'Emploi' : 'Employment'}</SelectItem>
+                    <SelectItem value="HOUSING">{language === 'fr' ? 'Logement' : 'Housing'}</SelectItem>
+                    <SelectItem value="FINANCE">Finance</SelectItem>
+                    <SelectItem value="HEALTH">{language === 'fr' ? 'Santé' : 'Health'}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  placeholder={language === 'fr' ? 'Votre message...' : 'Your message...'}
+                  value={newPost.content}
+                  onChange={e => setNewPost({ ...newPost, content: e.target.value })}
+                  rows={3}
+                  className="resize-none"
+                />
+                <div className="flex gap-2">
+                  <Button onClick={handleSubmitPost} disabled={forumLoading || !newPost.title.trim() || !newPost.content.trim()} className="flex-1">
+                    {forumLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                    {language === 'fr' ? 'Publier' : 'Publish'}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowNewPostForm(false)}>{language === 'fr' ? 'Annuler' : 'Cancel'}</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Posts list */}
+            <div className="space-y-3">
+              {forumPosts.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <p>{language === 'fr' ? 'Aucun post pour l\'instant. Soyez le premier !' : 'No posts yet. Be the first!'}</p>
+                </div>
+              ) : (
+                forumPosts.map(post => (
+                  <div
+                    key={post.id}
+                    onClick={() => handleOpenPost(post.id)}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{post.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{post.author?.name || 'Anonyme'} · {post.category}</p>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 ml-3 shrink-0">
+                      <span className="flex items-center gap-1">
+                        <MessageSquare className="w-4 h-4" />
+                        {post._count?.comments ?? 0}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        {post.views ?? 0}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
+
+        {/* Post detail dialog */}
+        {selectedPost && (
+          <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{selectedPost.title}</DialogTitle>
+                <DialogDescription className="text-xs text-gray-500">
+                  {selectedPost.author?.name} · {selectedPost.category} · {new Date(selectedPost.createdAt).toLocaleDateString()}
+                </DialogDescription>
+              </DialogHeader>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{selectedPost.content}</p>
+              <Separator />
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm">{language === 'fr' ? `${postComments.length} réponse(s)` : `${postComments.length} reply(ies)`}</h4>
+                {postComments.map(c => (
+                  <div key={c.id} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <p className="text-xs font-medium text-gray-500 mb-1">{c.author?.name || 'Anonyme'} · {new Date(c.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm">{c.content}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Textarea
+                  placeholder={language === 'fr' ? 'Votre réponse...' : 'Your reply...'}
+                  value={newComment}
+                  onChange={e => setNewComment(e.target.value)}
+                  rows={2}
+                  className="resize-none flex-1"
+                />
+                <Button onClick={handleSubmitComment} disabled={!newComment.trim()} className="self-end">
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
 
         {/* Cultural Guide & Associations */}
         <div className="grid lg:grid-cols-2 gap-6">
@@ -9202,6 +9372,7 @@ function AdminModule({ language }: { language: Language }) {
     taskStats: { completed: 0, pending: 0, inProgress: 0 }
   })
   const [tickets, setTickets] = useState<any[]>([])
+  const [ticketReply, setTicketReply] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -9222,6 +9393,21 @@ function AdminModule({ language }: { language: Language }) {
     RESOLVED: 'bg-green-100 text-green-700', CLOSED: 'bg-gray-100 text-gray-700'
   }
   const openTicketsCount = tickets.filter(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length
+
+  const handleUpdateTicket = async (ticketId: string, status: string, response?: string) => {
+    try {
+      const res = await fetch('/api/admin/tickets', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId, status, response }),
+      })
+      const data = await res.json()
+      if (data.ticket) {
+        setTickets(tickets.map(t => t.id === ticketId ? data.ticket : t))
+        if (response) setTicketReply(prev => ({ ...prev, [ticketId]: '' }))
+      }
+    } catch (e) { console.error('Error updating ticket', e) }
+  }
 
   if (loading) {
     return (
@@ -9262,24 +9448,39 @@ function AdminModule({ language }: { language: Language }) {
               <Card className="border-0 shadow-lg">
                 <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-blue-500" />{language === 'fr' ? 'Inscriptions (7 jours)' : 'Signups (7 days)'}</CardTitle></CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    {stats.signupsPerDay.map((d, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <span className="w-10 text-sm text-gray-500">{d.day}</span>
-                        <div className="flex-1 bg-gray-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.max(5, (d.count / Math.max(...stats.signupsPerDay.map(x => x.count), 1)) * 100)}%` }}></div></div>
-                        <span className="text-sm w-6">{d.count}</span>
-                      </div>
-                    ))}
-                  </div>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={stats.signupsPerDay} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                      <XAxis dataKey="day" tick={{ fontSize: 11 }} />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                      <RechartsTooltip />
+                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} name={language === 'fr' ? 'Inscriptions' : 'Signups'} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-lg">
                 <CardHeader><CardTitle className="flex items-center gap-2"><PieChart className="w-5 h-5 text-purple-500" />{language === 'fr' ? 'Répartition' : 'Distribution'}</CardTitle></CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between p-2 bg-gray-50 rounded"><span>{language === 'fr' ? 'Gratuit' : 'Free'}</span><span className="font-bold">{stats.freeUsers} ({stats.totalUsers > 0 ? Math.round(stats.freeUsers / stats.totalUsers * 100) : 0}%)</span></div>
-                    <div className="flex justify-between p-2 bg-purple-50 rounded"><span>Premium</span><span className="font-bold">{stats.premiumSubscribers} ({stats.totalUsers > 0 ? Math.round(stats.premiumSubscribers / stats.totalUsers * 100) : 0}%)</span></div>
-                  </div>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <RechartsPieChart>
+                      <Pie
+                        data={[
+                          { name: language === 'fr' ? 'Gratuit' : 'Free', value: stats.freeUsers },
+                          { name: 'Premium', value: stats.premiumSubscribers },
+                        ]}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        <Cell fill="#e2e8f0" />
+                        <Cell fill="#8b5cf6" />
+                      </Pie>
+                      <RechartsTooltip />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
@@ -9309,12 +9510,66 @@ function AdminModule({ language }: { language: Language }) {
         )}
 
         {activeTab === 'support' && (
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-8 text-center">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{language === 'fr' ? 'Aucun ticket de support' : 'No support tickets'}</p>
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            {tickets.length === 0 ? (
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                  <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">{language === 'fr' ? 'Aucun ticket de support' : 'No support tickets'}</p>
+                </CardContent>
+              </Card>
+            ) : (
+              tickets.map(ticket => (
+                <Card key={ticket.id} className="border-0 shadow-lg">
+                  <CardContent className="p-5 space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold">{ticket.subject}</p>
+                        <p className="text-sm text-gray-500">{ticket.user?.name || ticket.user?.email}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">{ticket.message}</p>
+                        <p className="text-xs text-gray-400 mt-1">{new Date(ticket.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-2 shrink-0">
+                        <Badge className={statusColors[ticket.status]}>{ticket.status}</Badge>
+                        <Select value={ticket.status} onValueChange={v => handleUpdateTicket(ticket.id, v)}>
+                          <SelectTrigger className="w-36 h-8 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="OPEN">OPEN</SelectItem>
+                            <SelectItem value="IN_PROGRESS">IN_PROGRESS</SelectItem>
+                            <SelectItem value="RESOLVED">RESOLVED</SelectItem>
+                            <SelectItem value="CLOSED">CLOSED</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    {ticket.response && (
+                      <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                        <p className="text-xs font-semibold text-green-700 dark:text-green-300 mb-1">{language === 'fr' ? 'Réponse admin' : 'Admin reply'}</p>
+                        <p className="text-sm text-green-800 dark:text-green-200">{ticket.response}</p>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Textarea
+                        placeholder={language === 'fr' ? 'Répondre au ticket...' : 'Reply to ticket...'}
+                        value={ticketReply[ticket.id] || ''}
+                        onChange={e => setTicketReply(prev => ({ ...prev, [ticket.id]: e.target.value }))}
+                        rows={2}
+                        className="resize-none flex-1 text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        className="self-end"
+                        disabled={!ticketReply[ticket.id]?.trim()}
+                        onClick={() => handleUpdateTicket(ticket.id, 'RESOLVED', ticketReply[ticket.id])}
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         )}
       </div>
     </div>
