@@ -1,0 +1,253 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "Ang iyong kasama para sa bagong buhay sa Canada",
+    "loading": "Naglo-load...",
+    "save": "I-save",
+    "cancel": "Kanselahin",
+    "continue": "Magpatuloy",
+    "back": "Bumalik",
+    "next": "Susunod",
+    "previous": "Nakaraan",
+    "submit": "Isumite",
+    "close": "Isara",
+    "edit": "I-edit",
+    "delete": "Tanggalin",
+    "viewAll": "Tingnan Lahat",
+    "free": "Libre",
+    "month": "/buwan"
+  },
+  "auth": {
+    "signIn": "Mag-sign In",
+    "signUp": "Mag-sign Up",
+    "signOut": "Mag-sign Out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Kumpirmahin ang Password",
+    "forgotPassword": "Nakalimutan ang password?",
+    "resetPassword": "I-reset ang Password",
+    "noAccount": "Wala pang account?",
+    "hasAccount": "May account na?",
+    "createAccount": "Gumawa ng Account",
+    "signInWith": "Mag-sign in gamit ang",
+    "welcomeBack": "Maligayang Pagbabalik",
+    "joinUs": "Sumali sa NouveauCap"
+  },
+  "onboarding": {
+    "title": "I-personalize natin ang iyong karanasan",
+    "subtitle": "Ilang mga tanong para gumawa ng personalized na plano ng aksyon",
+    "step": "Hakbang",
+    "of": "ng",
+    "status": {
+      "title": "Ano ang iyong immigration status?",
+      "permanentResident": "Permanent Resident",
+      "permanentResidentDesc": "Nakuha mo na ang permanent resident status",
+      "foreignStudent": "Dayuhang Estudyante",
+      "foreignStudentDesc": "Nag-aaral ka sa Canada gamit ang study permit",
+      "openWorkPermit": "Open Work Permit",
+      "openWorkPermitDesc": "Maaari kang magtrabaho sa kahit sinong employer",
+      "closedWorkPermit": "Closed Work Permit",
+      "closedWorkPermitDesc": "Nakatali ka sa isang partikular na employer"
+    },
+    "province": {
+      "title": "Saang probinsya ka nakatira?",
+      "selectProvince": "Piliin ang iyong probinsya"
+    },
+    "arrival": {
+      "title": "Kailan ka dumating sa Canada?",
+      "placeholder": "Pumili ng petsa"
+    },
+    "sector": {
+      "title": "Ano ang iyong propesyonal na sektor?",
+      "selectSector": "Piliin ang iyong sektor",
+      "technology": "Teknolohiya / IT",
+      "finance": "Pananalapi / Accounting",
+      "health": "Kalusugan / Medikal",
+      "education": "Edukasyon",
+      "engineering": "Inhinyeriya",
+      "trades": "Skilled Trades",
+      "retail": "Retail",
+      "hospitality": "Hospitality / Food Service",
+      "other": "Iba pa"
+    },
+    "language": {
+      "title": "Anong wika ang gusto mo?",
+      "french": "Pranses",
+      "english": "Ingles"
+    },
+    "family": {
+      "title": "Ano ang iyong family status?",
+      "single": "Single",
+      "couple": "May Karelasyon",
+      "familyWithChildren": "Pamilya na may mga Anak"
+    },
+    "origin": {
+      "title": "Ano ang iyong bansang pinagmulan?",
+      "placeholder": "Piliin ang iyong bansa"
+    },
+    "complete": {
+      "title": "Handa na ang iyong profile!",
+      "subtitle": "Narito ang iyong personalized na plano ng aksyon",
+      "startExploring": "Simulan ang Pag-explore"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Maligayang Pagdating",
+    "progress": "Progreso",
+    "tasksCompleted": "mga gawain na nakumpleto",
+    "priorityActions": "Pangunahing Aksyon",
+    "upcomingDeadlines": "Mga Paparating na Deadline",
+    "quickLinks": "Mabilis na Links",
+    "noTasks": "Walang gawain sa ngayon",
+    "completeOnboarding": "Kumpletuhin ang iyong profile para makita ang mga personalized na gawain"
+  },
+  "modules": {
+    "province": {
+      "title": "Probinsya",
+      "description": "Mga patakarang pang-probinsya sa pagtanggap at integrasyon"
+    },
+    "immigration": {
+      "title": "Imigrasyon at Legal na Status",
+      "description": "Pamahalaan ang iyong status at unawain ang iyong mga karapatan",
+      "permanentResident": "Permanent Resident",
+      "studyPermit": "Study Permit",
+      "workPermit": "Work Permit",
+      "citizenship": "Citizenship",
+      "crsSimulator": "CRS Simulator",
+      "expressEntry": "Express Entry",
+      "pgwpEligibility": "PGWP Eligibility",
+      "permitTracking": "Permit Tracking",
+      "rightsGuide": "Gabay sa mga Karapatan"
+    },
+    "employment": {
+      "title": "Trabaho at Karera",
+      "description": "Hanapin ang iyong pangarap na trabaho sa Canada",
+      "cvOptimizer": "AI CV Optimization",
+      "jobSearch": "Paghahanap ng Trabaho",
+      "interviewPrep": "Paghahanda sa Interview",
+      "diplomaRecognition": "Pagkilala ng Diploma",
+      "coverLetter": "Cover Letter",
+      "salaryGuide": "Gabay sa Sahod",
+      "applications": "Aking mga Application"
+    },
+    "housing": {
+      "title": "Pabahay",
+      "description": "Hanapin ang iyong tahanan sa Canada",
+      "rentalGuide": "Gabay sa Pag-upa",
+      "budgetCalculator": "Budget Calculator",
+      "tenantRights": "Mga Karapatan ng Umuupa",
+      "letterTemplates": "Mga Template ng Sulat",
+      "neighborhoods": "Mga Komunidad"
+    },
+    "finance": {
+      "title": "Pananalapi at Kredito",
+      "description": "Buuin ang iyong Canadian financial life",
+      "bankComparator": "Bank Comparator",
+      "creditGuide": "Gabay sa Kredito",
+      "taxGuide": "Gabay sa Buwis",
+      "taxSimulator": "Tax Simulator",
+      "moneyTransfer": "Pagpapadala ng Pera",
+      "insurance": "Insurance"
+    },
+    "health": {
+      "title": "Kalusugan at Kagalingan",
+      "description": "I-access ang Canadian healthcare system",
+      "provincialInsurance": "Provincial Health Insurance",
+      "waitingPeriod": "Panahon ng Paghihintay",
+      "privateInsurance": "Private Insurance",
+      "clinicDirectory": "Direktoryo ng Klinika",
+      "mentalHealth": "Mental Health",
+      "familyHealth": "Kalusugan ng Pamilya"
+    },
+    "community": {
+      "title": "Komunidad",
+      "description": "Kumonekta sa ibang mga imigrante",
+      "forum": "Forum",
+      "events": "Mga Kaganapan",
+      "mentorship": "Mentorship",
+      "culturalGuide": "Gabay sa Kultura",
+      "associations": "Mga Asosasyon",
+      "languageLearning": "Pag-aaral ng Wika"
+    },
+    "admin": {
+      "title": "Administrasyon",
+      "description": "Pamamahala at estadistika"
+    }
+  },
+  "subscription": {
+    "title": "Ang Aming mga Plano",
+    "choosePlan": "Piliin ang Planong Ito",
+    "current": "Kasalukuyan",
+    "free": {
+      "name": "Libre",
+      "price": "0",
+      "features": [
+        "Personalized onboarding",
+        "Basic checklist",
+        "Community forum",
+        "General guides",
+        "3 alerto bawat buwan"
+      ]
+    },
+    "essentiel": {
+      "name": "Essential",
+      "price": "9.99",
+      "features": [
+        "Lahat sa Libre",
+        "Walang limitasyong alerto",
+        "Lahat ng simulators",
+        "Kumpletong Housing at Finance modules",
+        "Priority support"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "19.99",
+      "features": [
+        "Lahat sa Essential",
+        "AI para sa trabaho (CV, interviews)",
+        "1:1 Mentorship (2h/buwan)",
+        "Personalized na dokumento",
+        "Exclusive communities"
+      ]
+    },
+    "famille": {
+      "name": "Pamilya",
+      "price": "29.99",
+      "features": [
+        "Premium para sa 2 adults + mga anak",
+        "Gabay sa pag-aaral",
+        "Mga parental resources",
+        "Payo para sa pamilya"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "Ontario",
+    "QC": "Quebec",
+    "BC": "British Columbia",
+    "AB": "Alberta",
+    "MB": "Manitoba",
+    "SK": "Saskatchewan",
+    "NS": "Nova Scotia",
+    "NB": "New Brunswick",
+    "PE": "Prince Edward Island",
+    "NL": "Newfoundland and Labrador",
+    "NT": "Northwest Territories",
+    "YT": "Yukon",
+    "NU": "Nunavut"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "Permanent Resident",
+    "FOREIGN_STUDENT": "Dayuhang Estudyante",
+    "OPEN_WORK_PERMIT": "Open Work Permit",
+    "CLOSED_WORK_PERMIT": "Closed Work Permit"
+  },
+  "alerts": {
+    "permitExpiry": "Pag-expire ng Permit",
+    "taxDeadline": "Deadline ng Buwis",
+    "healthCard": "Health Card",
+    "reminder": "Paalala"
+  }
+}

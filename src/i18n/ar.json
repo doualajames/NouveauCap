@@ -1,0 +1,253 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "رفيقك لحياة جديدة في كندا",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "continue": "متابعة",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "viewAll": "عرض الكل",
+    "free": "مجاني",
+    "month": "/شهر"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "createAccount": "إنشاء حساب",
+    "signInWith": "تسجيل الدخول باستخدام",
+    "welcomeBack": "مرحباً بعودتك",
+    "joinUs": "انضم إلى NouveauCap"
+  },
+  "onboarding": {
+    "title": "لنخصص تجربتك",
+    "subtitle": "بعض الأسئلة لإنشاء خطة العمل المخصصة لك",
+    "step": "خطوة",
+    "of": "من",
+    "status": {
+      "title": "ما هو وضعك في الهجرة؟",
+      "permanentResident": "مقيم دائم",
+      "permanentResidentDesc": "حصلت على وضع الإقامة الدائمة",
+      "foreignStudent": "طالب أجنبي",
+      "foreignStudentDesc": "تدرس في كندا بتصريح دراسة",
+      "openWorkPermit": "تصريح عمل مفتوح",
+      "openWorkPermitDesc": "يمكنك العمل لدى أي صاحب عمل",
+      "closedWorkPermit": "تصريح عمل مغلق",
+      "closedWorkPermitDesc": "مرتبط بصاحب عمل محدد"
+    },
+    "province": {
+      "title": "في أي مقاطعة تقيم؟",
+      "selectProvince": "اختر مقاطعتك"
+    },
+    "arrival": {
+      "title": "متى وصلت إلى كندا؟",
+      "placeholder": "اختر تاريخاً"
+    },
+    "sector": {
+      "title": "ما هو قطاعك المهني؟",
+      "selectSector": "اختر قطاعك",
+      "technology": "التكنولوجيا / تكنولوجيا المعلومات",
+      "finance": "المالية / المحاسبة",
+      "health": "الصحة / الطب",
+      "education": "التعليم",
+      "engineering": "الهندسة",
+      "trades": "الحرف المتخصصة",
+      "retail": "التجارة",
+      "hospitality": "الضيافة / المطاعم",
+      "other": "أخرى"
+    },
+    "language": {
+      "title": "ما هي اللغة التي تفضلها؟",
+      "french": "الفرنسية",
+      "english": "الإنجليزية"
+    },
+    "family": {
+      "title": "ما هو وضعك العائلي؟",
+      "single": "أعزب",
+      "couple": "في علاقة",
+      "familyWithChildren": "عائلة مع أطفال"
+    },
+    "origin": {
+      "title": "ما هو بلدك الأصلي؟",
+      "placeholder": "اختر بلدك"
+    },
+    "complete": {
+      "title": "ملفك الشخصي جاهز!",
+      "subtitle": "هذه خطة العمل المخصصة لك",
+      "startExploring": "ابدأ الاستكشاف"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً",
+    "progress": "التقدم",
+    "tasksCompleted": "مهام مكتملة",
+    "priorityActions": "إجراءات ذات أولوية",
+    "upcomingDeadlines": "مواعيد نهائية قادمة",
+    "quickLinks": "روابط سريعة",
+    "noTasks": "لا توجد مهام حالياً",
+    "completeOnboarding": "أكمل ملفك الشخصي لرؤية مهامك المخصصة"
+  },
+  "modules": {
+    "province": {
+      "title": "المقاطعة",
+      "description": "سياسات الاستقبال والاندماج في المقاطعة"
+    },
+    "immigration": {
+      "title": "الهجرة والوضع القانوني",
+      "description": "أدر وضعك وافهم حقوقك",
+      "permanentResident": "مقيم دائم",
+      "studyPermit": "تصريح الدراسة",
+      "workPermit": "تصريح العمل",
+      "citizenship": "الجنسية",
+      "crsSimulator": "محاكي CRS",
+      "expressEntry": "الدخول السريع",
+      "pgwpEligibility": "أهلية PGWP",
+      "permitTracking": "تتبع التصاريح",
+      "rightsGuide": "دليل الحقوق"
+    },
+    "employment": {
+      "title": "التوظيف والمسيرة المهنية",
+      "description": "اعثر على وظيفة أحلامك في كندا",
+      "cvOptimizer": "تحسين السيرة الذاتية بالذكاء الاصطناعي",
+      "jobSearch": "البحث عن عمل",
+      "interviewPrep": "التحضير للمقابلات",
+      "diplomaRecognition": "الاعتراف بالشهادات",
+      "coverLetter": "رسالة التغطية",
+      "salaryGuide": "دليل الرواتب",
+      "applications": "طلباتي"
+    },
+    "housing": {
+      "title": "السكن",
+      "description": "اعثر على منزلك في كندا",
+      "rentalGuide": "دليل الإيجار",
+      "budgetCalculator": "حاسبة الميزانية",
+      "tenantRights": "حقوق المستأجر",
+      "letterTemplates": "نماذج الرسائل",
+      "neighborhoods": "الأحياء"
+    },
+    "finance": {
+      "title": "المالية والائتمان",
+      "description": "ابنِ حياتك المالية في كندا",
+      "bankComparator": "مقارنة البنوك",
+      "creditGuide": "دليل الائتمان",
+      "taxGuide": "دليل الضرائب",
+      "taxSimulator": "محاكي الضرائب",
+      "moneyTransfer": "تحويل الأموال",
+      "insurance": "التأمين"
+    },
+    "health": {
+      "title": "الصحة والرفاهية",
+      "description": "الوصول إلى نظام الرعاية الصحية الكندي",
+      "provincialInsurance": "التأمين الصحي الإقليمي",
+      "waitingPeriod": "فترة الانتظار",
+      "privateInsurance": "التأمين الخاص",
+      "clinicDirectory": "دليل العيادات",
+      "mentalHealth": "الصحة النفسية",
+      "familyHealth": "صحة الأسرة"
+    },
+    "community": {
+      "title": "المجتمع",
+      "description": "تواصل مع مهاجرين آخرين",
+      "forum": "المنتدى",
+      "events": "الفعاليات",
+      "mentorship": "الإرشاد",
+      "culturalGuide": "الدليل الثقافي",
+      "associations": "الجمعيات",
+      "languageLearning": "تعلم اللغات"
+    },
+    "admin": {
+      "title": "الإدارة",
+      "description": "الإدارة والإحصائيات"
+    }
+  },
+  "subscription": {
+    "title": "خططنا",
+    "choosePlan": "اختر هذه الخطة",
+    "current": "الحالية",
+    "free": {
+      "name": "مجاني",
+      "price": "0",
+      "features": [
+        "تهيئة مخصصة",
+        "قائمة مهام أساسية",
+        "منتدى المجتمع",
+        "أدلة عامة",
+        "3 تنبيهات شهرياً"
+      ]
+    },
+    "essentiel": {
+      "name": "أساسي",
+      "price": "9.99",
+      "features": [
+        "كل ما في الخطة المجانية",
+        "تنبيهات غير محدودة",
+        "جميع المحاكيات",
+        "وحدات السكن والمالية الكاملة",
+        "دعم ذو أولوية"
+      ]
+    },
+    "premium": {
+      "name": "متميز",
+      "price": "19.99",
+      "features": [
+        "كل ما في الخطة الأساسية",
+        "ذكاء اصطناعي للتوظيف (سيرة ذاتية، مقابلات)",
+        "إرشاد فردي (ساعتان/شهر)",
+        "مستندات مخصصة",
+        "مجتمعات حصرية"
+      ]
+    },
+    "famille": {
+      "name": "عائلي",
+      "price": "29.99",
+      "features": [
+        "المتميز لشخصين بالغين + أطفال",
+        "دليل التعليم",
+        "موارد الأبوة والأمومة",
+        "نصائح عائلية"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "أونتاريو",
+    "QC": "كيبيك",
+    "BC": "كولومبيا البريطانية",
+    "AB": "ألبرتا",
+    "MB": "مانيتوبا",
+    "SK": "ساسكاتشوان",
+    "NS": "نوفا سكوشا",
+    "NB": "نيو برونزويك",
+    "PE": "جزيرة الأمير إدوارد",
+    "NL": "نيوفاوندلاند ولابرادور",
+    "NT": "الأقاليم الشمالية الغربية",
+    "YT": "يوكون",
+    "NU": "نونافوت"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "مقيم دائم",
+    "FOREIGN_STUDENT": "طالب أجنبي",
+    "OPEN_WORK_PERMIT": "تصريح عمل مفتوح",
+    "CLOSED_WORK_PERMIT": "تصريح عمل مغلق"
+  },
+  "alerts": {
+    "permitExpiry": "انتهاء صلاحية التصريح",
+    "taxDeadline": "الموعد النهائي للضرائب",
+    "healthCard": "البطاقة الصحية",
+    "reminder": "تذكير"
+  }
+}

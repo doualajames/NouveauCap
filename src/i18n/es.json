@@ -1,0 +1,253 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "Tu compañero para una nueva vida en Canadá",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "viewAll": "Ver todo",
+    "free": "Gratis",
+    "month": "/mes"
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "createAccount": "Crear cuenta",
+    "signInWith": "Iniciar sesión con",
+    "welcomeBack": "Bienvenido de nuevo",
+    "joinUs": "Únete a NouveauCap"
+  },
+  "onboarding": {
+    "title": "Personalicemos tu experiencia",
+    "subtitle": "Algunas preguntas para crear tu plan de acción personalizado",
+    "step": "Paso",
+    "of": "de",
+    "status": {
+      "title": "¿Cuál es tu estatus migratorio?",
+      "permanentResident": "Residente Permanente",
+      "permanentResidentDesc": "Has obtenido el estatus de residente permanente",
+      "foreignStudent": "Estudiante Extranjero",
+      "foreignStudentDesc": "Estás estudiando en Canadá con un permiso de estudios",
+      "openWorkPermit": "Permiso de Trabajo Abierto",
+      "openWorkPermitDesc": "Puedes trabajar para cualquier empleador",
+      "closedWorkPermit": "Permiso de Trabajo Cerrado",
+      "closedWorkPermitDesc": "Estás vinculado a un empleador específico"
+    },
+    "province": {
+      "title": "¿En qué provincia resides?",
+      "selectProvince": "Selecciona tu provincia"
+    },
+    "arrival": {
+      "title": "¿Cuándo llegaste a Canadá?",
+      "placeholder": "Selecciona una fecha"
+    },
+    "sector": {
+      "title": "¿Cuál es tu sector profesional?",
+      "selectSector": "Selecciona tu sector",
+      "technology": "Tecnología / TI",
+      "finance": "Finanzas / Contabilidad",
+      "health": "Salud / Medicina",
+      "education": "Educación",
+      "engineering": "Ingeniería",
+      "trades": "Oficios especializados",
+      "retail": "Comercio",
+      "hospitality": "Hostelería / Restauración",
+      "other": "Otro"
+    },
+    "language": {
+      "title": "¿Qué idioma prefieres?",
+      "french": "Francés",
+      "english": "Inglés"
+    },
+    "family": {
+      "title": "¿Cuál es tu situación familiar?",
+      "single": "Soltero/a",
+      "couple": "En pareja",
+      "familyWithChildren": "Familia con hijos"
+    },
+    "origin": {
+      "title": "¿Cuál es tu país de origen?",
+      "placeholder": "Selecciona tu país"
+    },
+    "complete": {
+      "title": "¡Tu perfil está listo!",
+      "subtitle": "Aquí está tu plan de acción personalizado",
+      "startExploring": "Comenzar a explorar"
+    }
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "welcome": "Bienvenido",
+    "progress": "Progreso",
+    "tasksCompleted": "tareas completadas",
+    "priorityActions": "Acciones prioritarias",
+    "upcomingDeadlines": "Próximos vencimientos",
+    "quickLinks": "Acceso rápido",
+    "noTasks": "No hay tareas por el momento",
+    "completeOnboarding": "Completa tu perfil para ver tus tareas personalizadas"
+  },
+  "modules": {
+    "province": {
+      "title": "Provincia",
+      "description": "Políticas provinciales de acogida e integración"
+    },
+    "immigration": {
+      "title": "Inmigración y Estatus Legal",
+      "description": "Gestiona tu estatus y conoce tus derechos",
+      "permanentResident": "Residente Permanente",
+      "studyPermit": "Permiso de estudios",
+      "workPermit": "Permiso de trabajo",
+      "citizenship": "Ciudadanía",
+      "crsSimulator": "Simulador CRS",
+      "expressEntry": "Entrada Exprés",
+      "pgwpEligibility": "Elegibilidad PGWP",
+      "permitTracking": "Seguimiento de permisos",
+      "rightsGuide": "Guía de derechos"
+    },
+    "employment": {
+      "title": "Empleo y Carrera",
+      "description": "Encuentra tu trabajo ideal en Canadá",
+      "cvOptimizer": "Optimización de CV con IA",
+      "jobSearch": "Búsqueda de empleo",
+      "interviewPrep": "Preparación de entrevistas",
+      "diplomaRecognition": "Reconocimiento de diplomas",
+      "coverLetter": "Carta de presentación",
+      "salaryGuide": "Guía salarial",
+      "applications": "Mis solicitudes"
+    },
+    "housing": {
+      "title": "Vivienda",
+      "description": "Encuentra tu hogar en Canadá",
+      "rentalGuide": "Guía de alquiler",
+      "budgetCalculator": "Calculadora de presupuesto",
+      "tenantRights": "Derechos del inquilino",
+      "letterTemplates": "Plantillas de cartas",
+      "neighborhoods": "Barrios"
+    },
+    "finance": {
+      "title": "Finanzas y Crédito",
+      "description": "Construye tu vida financiera en Canadá",
+      "bankComparator": "Comparador bancario",
+      "creditGuide": "Guía de crédito",
+      "taxGuide": "Guía fiscal",
+      "taxSimulator": "Simulador de impuestos",
+      "moneyTransfer": "Transferencias de dinero",
+      "insurance": "Seguros"
+    },
+    "health": {
+      "title": "Salud y Bienestar",
+      "description": "Accede al sistema de salud canadiense",
+      "provincialInsurance": "Seguro de salud provincial",
+      "waitingPeriod": "Período de espera",
+      "privateInsurance": "Seguro privado",
+      "clinicDirectory": "Directorio de clínicas",
+      "mentalHealth": "Salud mental",
+      "familyHealth": "Salud familiar"
+    },
+    "community": {
+      "title": "Comunidad",
+      "description": "Conéctate con otros inmigrantes",
+      "forum": "Foro",
+      "events": "Eventos",
+      "mentorship": "Mentoría",
+      "culturalGuide": "Guía cultural",
+      "associations": "Asociaciones",
+      "languageLearning": "Aprendizaje de idiomas"
+    },
+    "admin": {
+      "title": "Administración",
+      "description": "Gestión y estadísticas"
+    }
+  },
+  "subscription": {
+    "title": "Nuestros planes",
+    "choosePlan": "Elegir este plan",
+    "current": "Actual",
+    "free": {
+      "name": "Gratis",
+      "price": "0",
+      "features": [
+        "Incorporación personalizada",
+        "Lista de verificación básica",
+        "Foro comunitario",
+        "Guías generales",
+        "3 alertas por mes"
+      ]
+    },
+    "essentiel": {
+      "name": "Esencial",
+      "price": "9,99",
+      "features": [
+        "Todo lo del plan Gratis",
+        "Alertas ilimitadas",
+        "Todos los simuladores",
+        "Módulos completos de Vivienda y Finanzas",
+        "Soporte prioritario"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "19,99",
+      "features": [
+        "Todo lo del plan Esencial",
+        "IA para empleo (CV, entrevistas)",
+        "Mentoría 1:1 (2h/mes)",
+        "Documentos personalizados",
+        "Comunidades exclusivas"
+      ]
+    },
+    "famille": {
+      "name": "Familia",
+      "price": "29,99",
+      "features": [
+        "Premium para 2 adultos + hijos",
+        "Guía de escolarización",
+        "Recursos para padres",
+        "Consejos familiares"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "Ontario",
+    "QC": "Quebec",
+    "BC": "Columbia Británica",
+    "AB": "Alberta",
+    "MB": "Manitoba",
+    "SK": "Saskatchewan",
+    "NS": "Nueva Escocia",
+    "NB": "Nuevo Brunswick",
+    "PE": "Isla del Príncipe Eduardo",
+    "NL": "Terranova y Labrador",
+    "NT": "Territorios del Noroeste",
+    "YT": "Yukón",
+    "NU": "Nunavut"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "Residente Permanente",
+    "FOREIGN_STUDENT": "Estudiante Extranjero",
+    "OPEN_WORK_PERMIT": "Permiso de Trabajo Abierto",
+    "CLOSED_WORK_PERMIT": "Permiso de Trabajo Cerrado"
+  },
+  "alerts": {
+    "permitExpiry": "Vencimiento de permiso",
+    "taxDeadline": "Fecha límite fiscal",
+    "healthCard": "Tarjeta de salud",
+    "reminder": "Recordatorio"
+  }
+}

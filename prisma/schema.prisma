@@ -35,6 +35,9 @@ model User {
   passportExpiry       DateTime?
   visaExpiry           DateTime?
   
+  // Role-based access control
+  role              String    @default("USER") // USER, ADMIN, PARTNER, ADVISOR, EMPLOYER
+
   // Subscription
   subscriptionTier  String    @default("FREE") // FREE, ESSENTIEL, PREMIUM, FAMILLE
   subscriptionStart DateTime?

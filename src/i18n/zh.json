@@ -1,0 +1,253 @@
+{
+  "common": {
+    "appName": "NouveauCap",
+    "tagline": "您在加拿大新生活的伴侣",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "continue": "继续",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "close": "关闭",
+    "edit": "编辑",
+    "delete": "删除",
+    "viewAll": "查看全部",
+    "free": "免费",
+    "month": "/月"
+  },
+  "auth": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "signOut": "退出",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "forgotPassword": "忘记密码？",
+    "resetPassword": "重置密码",
+    "noAccount": "还没有账户？",
+    "hasAccount": "已有账户？",
+    "createAccount": "创建账户",
+    "signInWith": "使用以下方式登录",
+    "welcomeBack": "欢迎回来",
+    "joinUs": "加入 NouveauCap"
+  },
+  "onboarding": {
+    "title": "让我们个性化您的体验",
+    "subtitle": "几个问题来创建您的个性化行动计划",
+    "step": "步骤",
+    "of": "/",
+    "status": {
+      "title": "您的移民身份是什么？",
+      "permanentResident": "永久居民",
+      "permanentResidentDesc": "您已获得永久居民身份",
+      "foreignStudent": "外国学生",
+      "foreignStudentDesc": "您持学习许可在加拿大学习",
+      "openWorkPermit": "开放式工作许可",
+      "openWorkPermitDesc": "您可以为任何雇主工作",
+      "closedWorkPermit": "封闭式工作许可",
+      "closedWorkPermitDesc": "您与特定雇主绑定"
+    },
+    "province": {
+      "title": "您居住在哪个省份？",
+      "selectProvince": "选择您的省份"
+    },
+    "arrival": {
+      "title": "您何时抵达加拿大？",
+      "placeholder": "选择日期"
+    },
+    "sector": {
+      "title": "您的专业领域是什么？",
+      "selectSector": "选择您的领域",
+      "technology": "科技 / IT",
+      "finance": "金融 / 会计",
+      "health": "医疗 / 健康",
+      "education": "教育",
+      "engineering": "工程",
+      "trades": "技术工种",
+      "retail": "零售",
+      "hospitality": "酒店 / 餐饮",
+      "other": "其他"
+    },
+    "language": {
+      "title": "您偏好哪种语言？",
+      "french": "法语",
+      "english": "英语"
+    },
+    "family": {
+      "title": "您的家庭状况如何？",
+      "single": "单身",
+      "couple": "有伴侣",
+      "familyWithChildren": "有子女的家庭"
+    },
+    "origin": {
+      "title": "您的原籍国是哪里？",
+      "placeholder": "选择您的国家"
+    },
+    "complete": {
+      "title": "您的个人资料已准备就绪！",
+      "subtitle": "这是您的个性化行动计划",
+      "startExploring": "开始探索"
+    }
+  },
+  "dashboard": {
+    "title": "控制面板",
+    "welcome": "欢迎",
+    "progress": "进度",
+    "tasksCompleted": "已完成任务",
+    "priorityActions": "优先事项",
+    "upcomingDeadlines": "即将到来的截止日期",
+    "quickLinks": "快速链接",
+    "noTasks": "目前没有任务",
+    "completeOnboarding": "完善您的个人资料以查看个性化任务"
+  },
+  "modules": {
+    "province": {
+      "title": "省份",
+      "description": "省级欢迎和融入政策"
+    },
+    "immigration": {
+      "title": "移民与法律身份",
+      "description": "管理您的身份并了解您的权利",
+      "permanentResident": "永久居民",
+      "studyPermit": "学习许可",
+      "workPermit": "工作许可",
+      "citizenship": "公民身份",
+      "crsSimulator": "CRS模拟器",
+      "expressEntry": "快速通道",
+      "pgwpEligibility": "PGWP资格",
+      "permitTracking": "许可跟踪",
+      "rightsGuide": "权利指南"
+    },
+    "employment": {
+      "title": "就业与职业",
+      "description": "在加拿大找到理想工作",
+      "cvOptimizer": "AI简历优化",
+      "jobSearch": "求职",
+      "interviewPrep": "面试准备",
+      "diplomaRecognition": "学历认证",
+      "coverLetter": "求职信",
+      "salaryGuide": "薪资指南",
+      "applications": "我的申请"
+    },
+    "housing": {
+      "title": "住房",
+      "description": "在加拿大找到您的家",
+      "rentalGuide": "租房指南",
+      "budgetCalculator": "预算计算器",
+      "tenantRights": "租户权利",
+      "letterTemplates": "信函模板",
+      "neighborhoods": "社区"
+    },
+    "finance": {
+      "title": "金融与信用",
+      "description": "建立您的加拿大财务生活",
+      "bankComparator": "银行比较",
+      "creditGuide": "信用指南",
+      "taxGuide": "税务指南",
+      "taxSimulator": "税务模拟器",
+      "moneyTransfer": "汇款",
+      "insurance": "保险"
+    },
+    "health": {
+      "title": "健康与福祉",
+      "description": "使用加拿大医疗系统",
+      "provincialInsurance": "省级健康保险",
+      "waitingPeriod": "等待期",
+      "privateInsurance": "私人保险",
+      "clinicDirectory": "诊所目录",
+      "mentalHealth": "心理健康",
+      "familyHealth": "家庭健康"
+    },
+    "community": {
+      "title": "社区",
+      "description": "与其他移民建立联系",
+      "forum": "论坛",
+      "events": "活动",
+      "mentorship": "导师制",
+      "culturalGuide": "文化指南",
+      "associations": "协会",
+      "languageLearning": "语言学习"
+    },
+    "admin": {
+      "title": "管理",
+      "description": "管理和统计"
+    }
+  },
+  "subscription": {
+    "title": "我们的计划",
+    "choosePlan": "选择此计划",
+    "current": "当前",
+    "free": {
+      "name": "免费",
+      "price": "0",
+      "features": [
+        "个性化入门",
+        "基础清单",
+        "社区论坛",
+        "通用指南",
+        "每月3个提醒"
+      ]
+    },
+    "essentiel": {
+      "name": "基础版",
+      "price": "9.99",
+      "features": [
+        "免费版所有功能",
+        "无限提醒",
+        "所有模拟器",
+        "完整住房与金融模块",
+        "优先支持"
+      ]
+    },
+    "premium": {
+      "name": "高级版",
+      "price": "19.99",
+      "features": [
+        "基础版所有功能",
+        "AI就业服务（简历、面试）",
+        "1对1导师（每月2小时）",
+        "个性化文件",
+        "专属社区"
+      ]
+    },
+    "famille": {
+      "name": "家庭版",
+      "price": "29.99",
+      "features": [
+        "高级版适用于2位成人+子女",
+        "入学指南",
+        "育儿资源",
+        "家庭建议"
+      ]
+    }
+  },
+  "provinces": {
+    "ON": "安大略省",
+    "QC": "魁北克省",
+    "BC": "不列颠哥伦比亚省",
+    "AB": "艾伯塔省",
+    "MB": "曼尼托巴省",
+    "SK": "萨斯喀彻温省",
+    "NS": "新斯科舍省",
+    "NB": "新不伦瑞克省",
+    "PE": "爱德华王子岛省",
+    "NL": "纽芬兰与拉布拉多省",
+    "NT": "西北地区",
+    "YT": "育空地区",
+    "NU": "努纳武特地区"
+  },
+  "status": {
+    "PERMANENT_RESIDENT": "永久居民",
+    "FOREIGN_STUDENT": "外国学生",
+    "OPEN_WORK_PERMIT": "开放式工作许可",
+    "CLOSED_WORK_PERMIT": "封闭式工作许可"
+  },
+  "alerts": {
+    "permitExpiry": "许可到期",
+    "taxDeadline": "税务截止日期",
+    "healthCard": "健康卡",
+    "reminder": "提醒"
+  }
+}

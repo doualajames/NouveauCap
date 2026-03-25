@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware'
 export type ImmigrationStatus = 'PERMANENT_RESIDENT' | 'FOREIGN_STUDENT' | 'OPEN_WORK_PERMIT' | 'CLOSED_WORK_PERMIT'
 export type Province = 'ON' | 'QC' | 'BC' | 'AB' | 'MB' | 'SK' | 'NS' | 'NB' | 'PE' | 'NL' | 'NT' | 'YT' | 'NU'
 export type SubscriptionTier = 'FREE' | 'ESSENTIEL' | 'PREMIUM' | 'FAMILLE'
-export type Language = 'fr' | 'en'
+export type Language = 'fr' | 'en' | 'es' | 'zh' | 'ar' | 'tl'
 
 export interface User {
   id: string
@@ -214,8 +214,12 @@ export const useAppStore = create<AppState>()(
 // Translation helper
 import fr from '@/i18n/fr.json'
 import en from '@/i18n/en.json'
+import es from '@/i18n/es.json'
+import zh from '@/i18n/zh.json'
+import ar from '@/i18n/ar.json'
+import tl from '@/i18n/tl.json'
 
-const translations = { fr, en }
+const translations: Record<string, typeof fr> = { fr, en, es, zh, ar, tl }
 
 export function t(key: string, language?: Language): string {
   const lang = language || useAppStore.getState().language

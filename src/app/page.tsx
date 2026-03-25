@@ -638,6 +638,22 @@ export default function NouveauCapApp() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [taskModalOpen, setTaskModalOpen] = useState(false)
 
+  // Notifications
+  const [notifications, setNotifications] = useState<Array<{ id: string; type: string; title: string; message: string; isRead: boolean; createdAt: string }>>([])
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0)
+  const [showNotifPanel, setShowNotifPanel] = useState(false)
+
+  // Language dropdown
+  const [showLangMenu, setShowLangMenu] = useState(false)
+  const LANG_OPTIONS: { code: Language; label: string; flag: string }[] = [
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
+    { code: 'ar', label: 'العربية', flag: '🇸🇦' },
+    { code: 'tl', label: 'Tagalog', flag: '🇵🇭' },
+  ]
+
   // Check for existing session on mount
   useEffect(() => {
     const checkSession = async () => {
@@ -713,6 +729,39 @@ export default function NouveauCapApp() {
       fetchTasks()
     }
   }, [isAuthenticated, user?.id, setTasks])
+
+  // Fetch notifications when authenticated
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch('/api/notifications?limit=10')
+        if (res.ok) {
+          const data = await res.json()
+          setNotifications(data.notifications || [])
+          setUnreadNotifCount(data.unreadCount || 0)
+        }
+      } catch (e) {
+        console.error('Failed to fetch notifications', e)
+      }
+    }
+    if (isAuthenticated) {
+      fetchNotifications()
+      const interval = setInterval(fetchNotifications, 60000)
+      return () => clearInterval(interval)
+    }
+  }, [isAuthenticated])
+
+  const markNotificationsRead = async () => {
+    try {
+      await fetch('/api/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ markAllRead: true }),
+      })
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+      setUnreadNotifCount(0)
+    } catch {}
+  }
 
   // Auth handler
   const handleAuth = async () => {
@@ -873,10 +922,22 @@ export default function NouveauCapApp() {
             </div>
             
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" className="rounded-xl gap-1.5" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
-                <Globe className="w-4 h-4" />
-                {language === 'fr' ? 'EN' : 'FR'}
-              </Button>
+              <div className="relative">
+                <Button variant="ghost" size="sm" className="rounded-xl gap-1.5" onClick={() => setShowLangMenu(!showLangMenu)}>
+                  <Globe className="w-4 h-4" />
+                  {LANG_OPTIONS.find(l => l.code === language)?.flag} {language.toUpperCase()}
+                </Button>
+                {showLangMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-50 min-w-[160px]">
+                    {LANG_OPTIONS.map(l => (
+                      <button key={l.code} className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === l.code ? 'bg-red-50 text-red-700 font-medium' : ''}`}
+                        onClick={() => { setLanguage(l.code); setShowLangMenu(false) }}>
+                        <span>{l.flag}</span> {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Button className="rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/20" onClick={() => { setCurrentView('auth'); setAuthMode('signIn') }}>
                 {t('auth.signIn', language)}
               </Button>
@@ -915,10 +976,22 @@ export default function NouveauCapApp() {
                     {t('auth.createAccount', language)}
                     <ChevronRight className="w-5 h-5" />
                   </Button>
-                  <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2 hover:bg-gray-50 gap-2" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
-                    <Globe className="w-5 h-5" />
-                    {language === 'fr' ? 'Continue in English' : 'Continuer en français'}
-                  </Button>
+                  <div className="relative">
+                    <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2 hover:bg-gray-50 gap-2" onClick={() => setShowLangMenu(!showLangMenu)}>
+                      <Globe className="w-5 h-5" />
+                      {LANG_OPTIONS.find(l => l.code === language)?.flag} {LANG_OPTIONS.find(l => l.code === language)?.label}
+                    </Button>
+                    {showLangMenu && (
+                      <div className="absolute left-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-50 min-w-[180px]">
+                        {LANG_OPTIONS.map(l => (
+                          <button key={l.code} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === l.code ? 'bg-red-50 text-red-700 font-medium' : ''}`}
+                            onClick={() => { setLanguage(l.code); setShowLangMenu(false) }}>
+                            <span>{l.flag}</span> {l.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Trust Indicators */}
@@ -1478,22 +1551,22 @@ export default function NouveauCapApp() {
 
               {/* Language - Dynamic position */}
               {((isForeignStudent && onboardingStep === 6) || (isTemporaryResident && !isForeignStudent && onboardingStep === 5) || (!isTemporaryResident && onboardingStep === 4)) && (
-                <div className="flex gap-4 justify-center">
-                  {['fr', 'en'].map((lang) => {
-                    const isSelected = onboardingData.preferredLanguage === lang
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {LANG_OPTIONS.map((l) => {
+                    const isSelected = onboardingData.preferredLanguage === l.code
                     return (
                       <Card
-                        key={lang}
-                        className={`cursor-pointer transition-all hover:shadow-md flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                        key={l.code}
+                        className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
                         onClick={() => {
-                          setOnboardingData({ preferredLanguage: lang as Language })
-                          setLanguage(lang as Language)
+                          setOnboardingData({ preferredLanguage: l.code as Language })
+                          setLanguage(l.code as Language)
                         }}
                       >
-                        <CardContent className="p-6 text-center">
-                          <Globe className="w-12 h-12 mx-auto mb-3 text-blue-500" />
-                          <p className="font-medium text-lg">{lang === 'fr' ? 'Français' : 'English'}</p>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-500 mt-2 mx-auto" />}
+                        <CardContent className="p-4 text-center">
+                          <span className="text-3xl">{l.flag}</span>
+                          <p className="font-medium mt-2 text-sm">{l.label}</p>
+                          {isSelected && <CheckCircle2 className="w-4 h-4 text-blue-500 mt-1 mx-auto" />}
                         </CardContent>
                       </Card>
                     )
@@ -1575,8 +1648,24 @@ export default function NouveauCapApp() {
             </div>
             
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
-                <Globe className="w-5 h-5 text-gray-600" />
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setShowLangMenu(!showLangMenu)}>
+                  <Globe className="w-5 h-5 text-gray-600" />
+                </Button>
+                {showLangMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-50 min-w-[150px]">
+                    {LANG_OPTIONS.map(l => (
+                      <button key={l.code} className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === l.code ? 'bg-red-50 text-red-700 font-medium' : ''}`}
+                        onClick={() => { setLanguage(l.code); setShowLangMenu(false) }}>
+                        <span>{l.flag}</span> {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <Button variant="ghost" size="icon" className="rounded-xl relative" onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel && unreadNotifCount > 0) markNotificationsRead() }}>
+                <Bell className="w-5 h-5 text-gray-600" />
+                {unreadNotifCount > 0 && <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">{unreadNotifCount > 9 ? '9+' : unreadNotifCount}</span>}
               </Button>
               <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
@@ -1748,8 +1837,57 @@ export default function NouveauCapApp() {
             </div>
           </aside>
 
+          {/* Notification Panel Overlay */}
+          {showNotifPanel && (
+            <div className="fixed inset-0 z-[60]" onClick={() => setShowNotifPanel(false)}>
+              <div className="absolute right-4 top-16 lg:right-8 lg:top-14 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                  <span className="font-semibold text-gray-900">{language === 'fr' ? 'Notifications' : 'Notifications'}</span>
+                  {unreadNotifCount > 0 && <Badge variant="destructive" className="text-xs">{unreadNotifCount}</Badge>}
+                </div>
+                <ScrollArea className="max-h-80">
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center text-gray-500 text-sm">{language === 'fr' ? 'Aucune notification' : 'No notifications'}</div>
+                  ) : (
+                    notifications.map(n => (
+                      <div key={n.id} className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 ${!n.isRead ? 'bg-blue-50/50' : ''}`}>
+                        <p className="text-sm font-medium text-gray-900">{n.title}</p>
+                        <p className="text-xs text-gray-600 mt-0.5">{n.message}</p>
+                        <p className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    ))
+                  )}
+                </ScrollArea>
+              </div>
+            </div>
+          )}
+
           {/* Main Content */}
           <main className="flex-1 lg:ml-72 pt-16 lg:pt-0">
+            {/* Desktop Top Bar */}
+            <div className="hidden lg:flex items-center justify-end gap-2 px-6 py-3 border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+              <div className="relative">
+                <Button variant="ghost" size="sm" className="rounded-xl gap-1.5" onClick={() => setShowLangMenu(!showLangMenu)}>
+                  <Globe className="w-4 h-4" />
+                  {LANG_OPTIONS.find(l => l.code === language)?.flag} {language.toUpperCase()}
+                </Button>
+                {showLangMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-50 min-w-[160px]">
+                    {LANG_OPTIONS.map(l => (
+                      <button key={l.code} className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === l.code ? 'bg-red-50 text-red-700 font-medium' : ''}`}
+                        onClick={() => { setLanguage(l.code); setShowLangMenu(false) }}>
+                        <span>{l.flag}</span> {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <Button variant="ghost" size="icon" className="rounded-xl relative" onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel && unreadNotifCount > 0) markNotificationsRead() }}>
+                <Bell className="w-5 h-5 text-gray-600" />
+                {unreadNotifCount > 0 && <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">{unreadNotifCount > 9 ? '9+' : unreadNotifCount}</span>}
+              </Button>
+            </div>
+
             {success && (
               <div className="fixed top-20 right-4 z-50">
                 <Alert className="bg-green-50 border-green-200">
