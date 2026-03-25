@@ -4,6 +4,10 @@
 import '@/lib/server-polyfills'
 import { NextRequest, NextResponse } from 'next/server'
 
+// Empêche Next.js d'évaluer cette route au build (pdf-parse/pdfjs-dist
+// référencent des APIs browser qui n'existent pas dans le contexte de build)
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   // Lazy-require so the polyfills above run first
   const pdfParse = require('pdf-parse')

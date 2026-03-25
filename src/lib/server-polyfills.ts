@@ -7,7 +7,8 @@
  * définis avant que Node.js évalue les modules dépendants.
  */
 
-const g = global as Record<string, unknown>
+// globalThis fonctionne dans Node.js, Edge runtime et le contexte d'analyse Turbopack
+const g = globalThis as Record<string, unknown>
 
 if (!g.DOMMatrix) {
   g.DOMMatrix = class DOMMatrix {
