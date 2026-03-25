@@ -1,13 +1,14 @@
 // NouveauCap - SaaS Platform for New Immigrants to Canada
-// Prisma Schema
+// Prisma Schema — PostgreSQL (Supabase)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 // User model with authentication and profile
@@ -17,24 +18,24 @@ model User {
   password      String?
   name          String?
   avatar        String?
-  
+
   // Profile information
-  immigrationStatus  String?   // PERMANENT_RESIDENT, FOREIGN_STUDENT, OPEN_WORK_PERMIT, CLOSED_WORK_PERMIT
-  province          String?   // ON, QC, BC, AB, MB, SK, NS, NB, PE, NL, NT, YT, NU
-  postalCode        String?   // Postal code for geolocation services (e.g., H2X 1Y4)
+  immigrationStatus  String?
+  province          String?
+  postalCode        String?
   arrivalDate       DateTime?
-  dateOfBirth       DateTime? // Date of birth for CRS calculation
+  dateOfBirth       DateTime?
   professionalSector String?
   preferredLanguage String?   @default("fr")
-  familyStatus      String?   // SINGLE, COUPLE, FAMILY_WITH_CHILDREN
+  familyStatus      String?
   countryOfOrigin   String?
-  
+
   // Permit expiry dates for temporary residents
   studyPermitExpiry    DateTime?
   workPermitExpiry     DateTime?
   passportExpiry       DateTime?
   visaExpiry           DateTime?
-  
+
   // Role-based access control
   role              String    @default("USER") // USER, ADMIN, PARTNER, ADVISOR, EMPLOYER
 
@@ -42,13 +43,13 @@ model User {
   subscriptionTier  String    @default("FREE") // FREE, ESSENTIEL, PREMIUM, FAMILLE
   subscriptionStart DateTime?
   subscriptionEnd   DateTime?
-  
+
   // Metadata
   onboardingCompleted Boolean @default(false)
   emailVerified     DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  
+
   // Relations
   tasks             Task[]
   documents         Document[]
@@ -61,6 +62,8 @@ model User {
   onboarding        Onboarding?
   subscription      Subscription?
   supportTickets    SupportTicket[]
+
+  @@index([email])
 }
 
 // Task/Checklist model
@@ -68,24 +71,27 @@ model Task {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   title       String
   titleEn     String?
   description String?
   descriptionEn String?
   category    String   // IMMIGRATION, EMPLOYMENT, HOUSING, FINANCE, HEALTH, COMMUNITY
-  priority    String   @default("MEDIUM") // HIGH, MEDIUM, LOW
-  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, SKIPPED
-  
+  priority    String   @default("MEDIUM")
+  status      String   @default("PENDING")
+
   dueDate     DateTime?
   completedAt DateTime?
-  
+
   order       Int      @default(0)
   isRequired  Boolean  @default(false)
-  source      String?  // Government source URL
-  
+  source      String?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
 // Document model for user uploads and templates
@@ -93,14 +99,16 @@ model Document {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   name        String
-  type        String   // CV, COVER_LETTER, PERMIT, PASSPORT, etc.
-  content     String?  // Text content or file path
+  type        String
+  content     String?
   aiOptimized Boolean  @default(false)
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // Forum Post model
@@ -108,20 +116,23 @@ model ForumPost {
   id          String   @id @default(cuid())
   authorId    String
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+
   title       String
   content     String
-  category    String   // IMMIGRATION, EMPLOYMENT, HOUSING, GENERAL, etc.
-  province    String?  // Filter by province
-  
+  category    String
+  province    String?
+
   likes       Int      @default(0)
   views       Int      @default(0)
   isPinned    Boolean  @default(false)
-  
+
   comments    ForumComment[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([category])
 }
 
 // Forum Comment model
@@ -131,37 +142,43 @@ model ForumComment {
   post        ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   authorId    String
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+
   content     String
   likes       Int      @default(0)
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
 }
 
-// Event model for community events
+// Event model
 model Event {
   id          String   @id @default(cuid())
   title       String
   titleEn     String?
   description String?
   descriptionEn String?
-  type        String   // NETWORKING, WORKSHOP, CULTURAL, SUPPORT
+  type        String
   province    String?
   city        String?
   address     String?
-  
+
   date        DateTime
   endDate     DateTime?
   isVirtual   Boolean  @default(false)
   virtualLink String?
   capacity    Int?
   price       Float    @default(0)
-  
+
   registrations EventRegistration[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([province])
+  @@index([date])
 }
 
 // Event Registration model
@@ -171,25 +188,32 @@ model EventRegistration {
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   registeredAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
 }
 
-// Alert model for deadline reminders
+// Alert model for deadline reminders and in-app notifications
 model Alert {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type        String   // PERMIT_EXPIRY, TAX_DEADLINE, HEALTH_CARD, etc.
+
+  type        String
   title       String
   message     String
   dueDate     DateTime
-  
+
   isRead      Boolean  @default(false)
   isEmailSent Boolean  @default(false)
-  
+
   createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([dueDate])
 }
 
 // Job Application tracker
@@ -197,25 +221,28 @@ model JobApplication {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   company     String
   position    String
-  status      String   @default("APPLIED") // APPLIED, INTERVIEW, OFFER, REJECTED, WITHDRAWN
+  status      String   @default("APPLIED")
   appliedDate DateTime?
   notes       String?
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
-// User Profile - Extended profile information
+// User Profile — Extended profile information
 model Profile {
   id                  String    @id @default(cuid())
   userId              String    @unique
   user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  immigrationStatus   String?   // PERMANENT_RESIDENT, FOREIGN_STUDENT, OPEN_WORK_PERMIT, etc.
-  province            String?   // ON, QC, BC, AB, etc.
+  immigrationStatus   String?
+  province            String?
   city                String?
   arrivalDate         DateTime?
   plannedArrivalDate  DateTime?
@@ -229,7 +256,7 @@ model Profile {
   needsFrenchClasses  Boolean   @default(false)
   needsEnglishClasses Boolean   @default(false)
 
-  familyStatus        String?   // SINGLE, COUPLE, FAMILY_WITH_CHILDREN
+  familyStatus        String?
   numberOfChildren    Int?
   primaryGoal         String?
 
@@ -278,8 +305,8 @@ model Subscription {
   userId          String    @unique
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  plan            String    @default("FREE") // FREE, PREMIUM, FAMILLE
-  status          String    @default("ACTIVE") // ACTIVE, CANCELED, EXPIRED
+  plan            String    @default("FREE")
+  status          String    @default("ACTIVE")
 
   startDate       DateTime?
   endDate         DateTime?
@@ -287,7 +314,7 @@ model Subscription {
   alertsLimit     Int       @default(3)
   alertsUsed      Int       @default(0)
 
-  stripeCustomerId    String?
+  stripeCustomerId     String?
   stripeSubscriptionId String?
 
   createdAt       DateTime  @default(now())
@@ -302,8 +329,8 @@ model SupportTicket {
 
   subject         String
   message         String
-  status          String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
-  priority        String    @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  status          String    @default("OPEN")
+  priority        String    @default("NORMAL")
 
   response        String?
   respondedAt     DateTime?
@@ -311,9 +338,12 @@ model SupportTicket {
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
-// Bank offers for comparison
+// Bank offers / B2B Partners
 model BankOffer {
   id              String   @id @default(cuid())
   bankName        String
@@ -326,7 +356,7 @@ model BankOffer {
   features        String?  // JSON string of features
   link            String?
   isActive        Boolean  @default(true)
-  
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -337,11 +367,11 @@ model ProvinceInfo {
   provinceCode    String   @unique
   provinceName    String
   provinceNameEn  String
-  
-  healthInsurance  String?  // JSON with health insurance info
-  housingInfo      String?  // JSON with housing info
-  taxInfo          String?  // JSON with tax info
-  
+
+  healthInsurance  String?
+  housingInfo      String?
+  taxInfo          String?
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
