@@ -5,13 +5,9 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  transpilePackages: ['pdf-parse', 'mammoth'],
-  // Exclure du bundle serveur les packages qui utilisent des APIs browser
-  serverExternalPackages: ['@mdxeditor/editor'],
-  experimental: {
-    // Activer le hook d'instrumentation (nécessaire pour le polyfill DOMMatrix)
-    instrumentationHook: true,
-  },
+  // Ces packages contiennent du code Node.js qui ne peut pas être bundlé
+  // par Turbopack (pdf-parse lit des fichiers au démarrage du module)
+  serverExternalPackages: ['@mdxeditor/editor', 'pdf-parse', 'mammoth'],
 };
 
 export default nextConfig;
