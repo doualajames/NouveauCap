@@ -353,3 +353,24 @@ model Lead {
 
   @@unique([email, source])
 }
+
+// Templates de tâches d'onboarding (corpus administrable — remplace le hardcode)
+model TaskTemplate {
+  id            String   @id @default(cuid())
+  status        String   // PERMANENT_RESIDENT | FOREIGN_STUDENT | OPEN_WORK_PERMIT | CLOSED_WORK_PERMIT
+  province      String?  // null = tâche de base (tous), sinon code province (ON, QC, ...)
+  title         String
+  titleEn       String
+  description   String?
+  descriptionEn String?
+  category      String
+  priority      String
+  isRequired    Boolean  @default(false)
+  order         Int      @default(0)
+  source        String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, province, active])
+}

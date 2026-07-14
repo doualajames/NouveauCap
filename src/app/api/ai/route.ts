@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { aiChat } from '@/lib/ai'
 import { requireAuth, hasPremiumAccess } from '@/lib/auth-jwt'
 
 // Actions réservées aux abonnés Premium/Famille
@@ -22,8 +22,6 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       )
     }
-
-    const zai = await ZAI.create()
 
     if (action === 'optimize-cv') {
       const { cvContent, targetJob, language } = data
@@ -62,15 +60,10 @@ Respond in English with the following JSON format:
   "keywords": ["keyword1", "keyword2"]
 }`
 
-      const completion = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: 'You are a professional CV writer specializing in Canadian job markets. Always respond with valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7
+      const responseText = await aiChat({
+        system: 'You are a professional CV writer specializing in Canadian job markets. Always respond with valid JSON.',
+        prompt,
       })
-
-      const responseText = completion.choices[0]?.message?.content || ''
       
       try {
         // Try to parse JSON from response
@@ -121,15 +114,10 @@ Respond in JSON:
   "questionsToAsk": ["question1", "question2"]
 }`
 
-      const completion = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: 'You are an interview coach specializing in Canadian job markets. Always respond with valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7
+      const responseText = await aiChat({
+        system: 'You are an interview coach specializing in Canadian job markets. Always respond with valid JSON.',
+        prompt,
       })
-
-      const responseText = completion.choices[0]?.message?.content || ''
       
       try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/)
@@ -157,17 +145,9 @@ Contexte: ${context || 'Utilisateur général'}`
         : `You are a helpful AI assistant for new immigrants to Canada. Respond in a clear, empathetic, and practical manner.
 Context: ${context || 'General user'}`
 
-      const completion = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: message }
-        ],
-        temperature: 0.7
-      })
+      const responseText = await aiChat({ system: systemPrompt, prompt: message })
 
-      return NextResponse.json({
-        response: completion.choices[0]?.message?.content || ''
-      })
+      return NextResponse.json({ response: responseText })
     }
 
     return NextResponse.json({ error: 'Action invalide' }, { status: 400 })

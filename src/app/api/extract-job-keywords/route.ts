@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { aiChat, readWebPage } from '@/lib/ai'
 import { requireAuth } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
@@ -15,16 +15,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
     }
 
-    const zai = await ZAI.create()
-
-    // Use web-reader to extract content from the job posting
-    const webContent = await zai.functions.invoke("web_reader", {
-      url: url
-    })
-
-    // Extract text content
-    const pageContent = webContent?.content || webContent?.text || ''
-    const pageTitle = webContent?.title || ''
+    // Extract content from the job posting
+    const { content: pageContent, title: pageTitle } = await readWebPage(url)
 
     if (!pageContent || pageContent.length < 100) {
       return NextResponse.json({ 
@@ -63,21 +55,10 @@ export async function POST(request: NextRequest) {
       
       Respond ONLY with valid JSON, no text before or after.`
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert ATS keyword extractor. You respond only with valid JSON.'
-        },
-        {
-          role: 'user',
-          content: extractionPrompt
-        }
-      ],
-      temperature: 0.3
-    })
-
-    const responseContent = completion.choices[0]?.message?.content || '{}'
+    const responseContent = (await aiChat({
+      system: 'You are an expert ATS keyword extractor. You respond only with valid JSON.',
+      prompt: extractionPrompt,
+    })) || '{}'
     
     // Parse the JSON response
     let extractedData = { keywords: [], jobInfo: null }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { aiChat } from '@/lib/ai'
 import { requireAuth, hasPremiumAccess } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
@@ -26,8 +26,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    const zai = await ZAI.create()
 
     const systemPrompt = language === 'fr' 
       ? `Tu es un expert en ressources humaines et en CV canadiens. Tu aide les nouveaux arrivants au Canada à optimiser leur CV selon les normes canadiennes.
@@ -77,15 +75,7 @@ Respond in JSON format with the following structure:
       ? `Voici mon CV:\n\n${cvText}\n\n${jobDescription ? `Voici la description du poste visé:\n\n${jobDescription}` : 'Je cherche un poste général.'}\n\nAnalyse mon CV et donne-moi des conseils pour l'optimiser selon les normes canadiennes.`
       : `Here is my CV:\n\n${cvText}\n\n${jobDescription ? `Here is the target job description:\n\n${jobDescription}` : 'I am looking for a general position.'}\n\nAnalyze my CV and give me advice to optimize it according to Canadian standards.`
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.7,
-    })
-
-    const responseText = completion.choices[0]?.message?.content || ''
+    const responseText = await aiChat({ system: systemPrompt, prompt: userPrompt })
 
     // Try to parse as JSON, if not, wrap in a structured response
     let analysis
