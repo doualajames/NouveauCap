@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/auth-jwt'
 
 // Server-side only - use require for compatibility with Turbopack
 const pdfParse = require('pdf-parse')
@@ -7,6 +8,11 @@ const mammoth = require('mammoth')
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request)
+    if (authResult instanceof Response) {
+      return authResult
+    }
+
     const formData = await request.formData()
     const file = formData.get('file') as File
 

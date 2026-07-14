@@ -49,3 +49,9 @@ prompt
 server.log
 # Skills directory
 /skills/
+# SQLite databases (never commit user data)
+*.db
+*.db-journal
+db/
+!.env.example
+package-lock.json

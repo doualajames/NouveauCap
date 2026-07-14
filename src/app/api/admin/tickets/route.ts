@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/auth-jwt'
+import { requireAuth, isAdmin } from '@/lib/auth-jwt'
 
 // GET - List all tickets (admin) or user's tickets
 export async function GET(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const where: any = {}
     
     // Non-admin users can only see their own tickets
-    if (user.subscriptionPlan !== 'ADMIN' && user.email !== 'admin@nouveaucap.com') {
+    if (!isAdmin(user)) {
       where.userId = user.id
     } else if (userId) {
       where.userId = userId
@@ -137,8 +137,8 @@ export async function PUT(request: NextRequest) {
     }
     
     // Check permissions - only admin or ticket owner can update
-    const isAdmin = user.subscriptionPlan === 'ADMIN' || user.email === 'admin@nouveaucap.com'
-    if (!isAdmin && existingTicket.userId !== user.id) {
+    const admin = isAdmin(user)
+    if (!admin && existingTicket.userId !== user.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
     }
     
     // Only admin can respond
-    if (response && isAdmin) {
+    if (response && admin) {
       updateData.response = response
       updateData.respondedAt = new Date()
       updateData.respondedBy = user.id
@@ -197,9 +197,8 @@ export async function DELETE(request: NextRequest) {
     }
     
     const user = authResult
-    const isAdmin = user.subscriptionPlan === 'ADMIN' || user.email === 'admin@nouveaucap.com'
-    
-    if (!isAdmin) {
+
+    if (!isAdmin(user)) {
       return NextResponse.json(
         { error: 'Unauthorized - Admin only' },
         { status: 403 }

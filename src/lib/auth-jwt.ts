@@ -2,7 +2,10 @@ import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 
-const secretKey = process.env.JWT_SECRET || 'nouveaucap-secret-key-change-in-production'
+const secretKey = process.env.JWT_SECRET
+if (!secretKey || secretKey.length < 32) {
+  throw new Error('JWT_SECRET environment variable must be set (min 32 characters)')
+}
 const key = new TextEncoder().encode(secretKey)
 
 export interface SessionUser {
@@ -161,4 +164,13 @@ export async function requireAuth(request: Request): Promise<SessionUser | Respo
 // Check if user has premium access
 export function hasPremiumAccess(user: SessionUser): boolean {
   return user.subscriptionPlan === 'PREMIUM' || user.subscriptionPlan === 'FAMILLE'
+}
+
+// Check if user is an administrator (ADMIN_EMAILS: comma-separated allowlist)
+export function isAdmin(user: SessionUser): boolean {
+  const adminEmails = (process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean)
+  return adminEmails.includes(user.email.toLowerCase())
 }

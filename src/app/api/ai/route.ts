@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
+import { requireAuth, hasPremiumAccess } from '@/lib/auth-jwt'
+
+// Actions réservées aux abonnés Premium/Famille
+const PREMIUM_ACTIONS = ['optimize-cv', 'interview-prep']
 
 // AI-powered CV optimization
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request)
+    if (authResult instanceof Response) {
+      return authResult
+    }
+
     const body = await request.json()
     const { action, data } = body
+
+    if (PREMIUM_ACTIONS.includes(action) && !hasPremiumAccess(authResult)) {
+      return NextResponse.json(
+        { error: 'Premium subscription required', code: 'PREMIUM_REQUIRED' },
+        { status: 403 }
+      )
+    }
 
     const zai = await ZAI.create()
 

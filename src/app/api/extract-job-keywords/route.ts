@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
+import { requireAuth } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request)
+    if (authResult instanceof Response) {
+      return authResult
+    }
+
     const { url, language } = await request.json()
     
     if (!url) {

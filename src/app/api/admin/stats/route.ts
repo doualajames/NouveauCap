@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { requireAuth, isAdmin } from '@/lib/auth-jwt'
 
 const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request)
+    if (authResult instanceof Response) {
+      return authResult
+    }
+    if (!isAdmin(authResult)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     const totalUsers = await prisma.user.count()
     
     const thirtyDaysAgo = new Date()

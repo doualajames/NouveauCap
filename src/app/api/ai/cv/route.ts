@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
-import { requireAuth } from '@/lib/auth-jwt'
+import { requireAuth, hasPremiumAccess } from '@/lib/auth-jwt'
 
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth(request)
-    
+
     if (authResult instanceof Response) {
       return authResult
+    }
+
+    if (!hasPremiumAccess(authResult)) {
+      return NextResponse.json(
+        { error: 'Premium subscription required', code: 'PREMIUM_REQUIRED' },
+        { status: 403 }
+      )
     }
 
     const body = await request.json()
