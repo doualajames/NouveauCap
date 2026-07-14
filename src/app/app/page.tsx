@@ -1,0 +1,9149 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useAppStore, t, type Task, type ImmigrationStatus, type Province, type Language } from '@/lib/stores/app-store'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Slider } from '@/components/ui/slider'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { 
+  Home, User, FileText, Building2, Wallet, Heart, Users, 
+  Plane, GraduationCap, Briefcase, Shield, Calendar,
+  CheckCircle2, Circle, AlertCircle, ChevronRight, ChevronLeft,
+  Menu, X, Globe, Bell, Settings, LogOut, Crown, Star,
+  MessageSquare, CalendarDays, BookOpen, HeartHandshake,
+  CreditCard, Calculator, FileSearch, Building, Stethoscope,
+  Brain, Send, Loader2, Sparkles, MapPin, Phone, Mail,
+  Clock, DollarSign, Users2, Award, Target, ListChecks,
+  FileCheck, Download, ExternalLink, Plus, Trash2, Edit,
+  TrendingUp, PiggyBank, Landmark, Receipt, Percent,
+  Activity, ClipboardList, UserCheck, FileWarning, Eye, Search, RefreshCw, PieChart
+} from 'lucide-react'
+
+// ==================== CITIZENSHIP TEST QUESTIONS ====================
+import { citizenshipTestQuestions } from '@/lib/public-data/citizenship-questions'
+
+// ==================== DATA ====================
+const provinces: { code: Province; name: string; nameEn: string }[] = [
+  { code: 'ON', name: 'Ontario', nameEn: 'Ontario' },
+  { code: 'QC', name: 'Québec', nameEn: 'Quebec' },
+  { code: 'BC', name: 'Colombie-Britannique', nameEn: 'British Columbia' },
+  { code: 'AB', name: 'Alberta', nameEn: 'Alberta' },
+  { code: 'MB', name: 'Manitoba', nameEn: 'Manitoba' },
+  { code: 'SK', name: 'Saskatchewan', nameEn: 'Saskatchewan' },
+  { code: 'NS', name: 'Nouvelle-Écosse', nameEn: 'Nova Scotia' },
+  { code: 'NB', name: 'Nouveau-Brunswick', nameEn: 'New Brunswick' },
+  { code: 'PE', name: 'Île-du-Prince-Édouard', nameEn: 'Prince Edward Island' },
+  { code: 'NL', name: 'Terre-Neuve-et-Labrador', nameEn: 'Newfoundland and Labrador' },
+]
+
+const immigrationStatuses = [
+  { code: 'PERMANENT_RESIDENT', icon: Shield, color: 'bg-green-500' },
+  { code: 'FOREIGN_STUDENT', icon: GraduationCap, color: 'bg-blue-500' },
+  { code: 'OPEN_WORK_PERMIT', icon: Briefcase, color: 'bg-purple-500' },
+  { code: 'CLOSED_WORK_PERMIT', icon: Building2, color: 'bg-orange-500' },
+]
+
+const sectors = [
+  { code: 'technology', label: 'Technologie / TI', labelEn: 'Technology / IT' },
+  { code: 'finance', label: 'Finance / Comptabilité', labelEn: 'Finance / Accounting' },
+  { code: 'health', label: 'Santé / Médical', labelEn: 'Health / Medical' },
+  { code: 'education', label: 'Éducation', labelEn: 'Education' },
+  { code: 'engineering', label: 'Ingénierie', labelEn: 'Engineering' },
+  { code: 'trades', label: 'Métiers spécialisés', labelEn: 'Skilled Trades' },
+  { code: 'retail', label: 'Commerce de détail', labelEn: 'Retail' },
+  { code: 'hospitality', label: 'Hôtellerie / Restauration', labelEn: 'Hospitality' },
+  { code: 'other', label: 'Autre', labelEn: 'Other' },
+]
+
+// Countries with social security agreements with Quebec (RAMQ eligible for students)
+const countriesWithQuebecAgreement = ['FR', 'BE', 'DK', 'FI', 'GR', 'LU', 'NO', 'PT', 'RO', 'SE']
+
+// Countries list for origin selection
+const countries = [
+  // Countries with Quebec RAMQ agreement (marked with 🏥)
+  { code: 'FR', name: 'France', flag: '🇫🇷', quebecAgreement: true },
+  { code: 'BE', name: 'Belgique', nameEn: 'Belgium', flag: '🇧🇪', quebecAgreement: true },
+  { code: 'DK', name: 'Danemark', nameEn: 'Denmark', flag: '🇩🇰', quebecAgreement: true },
+  { code: 'FI', name: 'Finlande', nameEn: 'Finland', flag: '🇫🇮', quebecAgreement: true },
+  { code: 'GR', name: 'Grèce', nameEn: 'Greece', flag: '🇬🇷', quebecAgreement: true },
+  { code: 'LU', name: 'Luxembourg', flag: '🇱🇺', quebecAgreement: true },
+  { code: 'NO', name: 'Norvège', nameEn: 'Norway', flag: '🇳🇴', quebecAgreement: true },
+  { code: 'PT', name: 'Portugal', flag: '🇵🇹', quebecAgreement: true },
+  { code: 'RO', name: 'Roumanie', nameEn: 'Romania', flag: '🇷🇴', quebecAgreement: true },
+  { code: 'SE', name: 'Suède', nameEn: 'Sweden', flag: '🇸🇪', quebecAgreement: true },
+  // Other common countries
+  { code: 'US', name: 'États-Unis', nameEn: 'United States', flag: '🇺🇸', quebecAgreement: false },
+  { code: 'CN', name: 'Chine', nameEn: 'China', flag: '🇨🇳', quebecAgreement: false },
+  { code: 'IN', name: 'Inde', nameEn: 'India', flag: '🇮🇳', quebecAgreement: false },
+  { code: 'BR', name: 'Brésil', nameEn: 'Brazil', flag: '🇧🇷', quebecAgreement: false },
+  { code: 'MX', name: 'Mexique', nameEn: 'Mexico', flag: '🇲🇽', quebecAgreement: false },
+  { code: 'PH', name: 'Philippines', flag: '🇵🇭', quebecAgreement: false },
+  { code: 'VN', name: 'Vietnam', flag: '🇻🇳', quebecAgreement: false },
+  { code: 'IR', name: 'Iran', flag: '🇮🇷', quebecAgreement: false },
+  { code: 'PK', name: 'Pakistan', flag: '🇵🇰', quebecAgreement: false },
+  { code: 'NG', name: 'Nigéria', nameEn: 'Nigeria', flag: '🇳🇬', quebecAgreement: false },
+  { code: 'BD', name: 'Bangladesh', flag: '🇧🇩', quebecAgreement: false },
+  { code: 'KR', name: 'Corée du Sud', nameEn: 'South Korea', flag: '🇰🇷', quebecAgreement: false },
+  { code: 'JP', name: 'Japon', nameEn: 'Japan', flag: '🇯🇵', quebecAgreement: false },
+  { code: 'EG', name: 'Égypte', nameEn: 'Egypt', flag: '🇪🇬', quebecAgreement: false },
+  { code: 'MA', name: 'Maroc', nameEn: 'Morocco', flag: '🇲🇦', quebecAgreement: false },
+  { code: 'DZ', name: 'Algérie', nameEn: 'Algeria', flag: '🇩🇿', quebecAgreement: false },
+  { code: 'TN', name: 'Tunisie', nameEn: 'Tunisia', flag: '🇹🇳', quebecAgreement: false },
+  { code: 'SN', name: 'Sénégal', nameEn: 'Senegal', flag: '🇸🇳', quebecAgreement: false },
+  { code: 'CI', name: 'Côte d\'Ivoire', flag: '🇨🇮', quebecAgreement: false },
+  { code: 'CM', name: 'Cameroun', nameEn: 'Cameroon', flag: '🇨🇲', quebecAgreement: false },
+  { code: 'CO', name: 'Colombie', nameEn: 'Colombia', flag: '🇨🇴', quebecAgreement: false },
+  { code: 'VE', name: 'Venezuela', flag: '🇻🇪', quebecAgreement: false },
+  { code: 'PE', name: 'Pérou', nameEn: 'Peru', flag: '🇵🇪', quebecAgreement: false },
+  { code: 'AR', name: 'Argentine', nameEn: 'Argentina', flag: '🇦🇷', quebecAgreement: false },
+  { code: 'CL', name: 'Chili', nameEn: 'Chile', flag: '🇨🇱', quebecAgreement: false },
+  { code: 'RU', name: 'Russie', nameEn: 'Russia', flag: '🇷🇺', quebecAgreement: false },
+  { code: 'UA', name: 'Ukraine', flag: '🇺🇦', quebecAgreement: false },
+  { code: 'DE', name: 'Allemagne', nameEn: 'Germany', flag: '🇩🇪', quebecAgreement: false },
+  { code: 'IT', name: 'Italie', nameEn: 'Italy', flag: '🇮🇹', quebecAgreement: false },
+  { code: 'ES', name: 'Espagne', nameEn: 'Spain', flag: '🇪🇸', quebecAgreement: false },
+  { code: 'GB', name: 'Royaume-Uni', nameEn: 'United Kingdom', flag: '🇬🇧', quebecAgreement: false },
+  { code: 'CH', name: 'Suisse', nameEn: 'Switzerland', flag: '🇨🇭', quebecAgreement: false },
+  { code: 'AU', name: 'Australie', nameEn: 'Australia', flag: '🇦🇺', quebecAgreement: false },
+  { code: 'NZ', name: 'Nouvelle-Zélande', nameEn: 'New Zealand', flag: '🇳🇿', quebecAgreement: false },
+  { code: 'OTHER', name: 'Autre pays', nameEn: 'Other country', flag: '🌍', quebecAgreement: false },
+]
+
+// Clinic Database - Organized by province and postal code prefix
+// Canadian postal codes: First 3 characters identify the region (FSAs - Forward Sortation Areas)
+interface Clinic {
+  name: string
+  nameEn?: string
+  type: 'WALK_IN' | 'CLSC' | 'PRIVATE' | 'HOSPITAL' | 'COMMUNITY'
+  address: string
+  addressEn?: string
+  phone: string
+  hours?: string
+  hoursEn?: string
+  postalCode: string
+  city: string
+  cityEn?: string
+  lat?: number
+  lng?: number
+  services?: string[]
+  servicesEn?: string[]
+  website?: string
+}
+
+const clinicDatabase: Record<Province, Clinic[]> = {
+  'QC': [
+    // Montreal Area (H prefixes)
+    { name: 'Clinique Médicale du Square', nameEn: 'Square Medical Clinic', type: 'WALK_IN', address: '1001 Rue Square, Montréal', addressEn: '1001 Square St, Montreal', phone: '514-286-2888', hours: '8h-20h 7j/7', hoursEn: '8am-8pm 7/7', postalCode: 'H3B', city: 'Montréal', cityEn: 'Montreal', services: ['Sans rendez-vous', 'Radiologie', 'Laboratoire'], servicesEn: ['Walk-in', 'Radiology', 'Laboratory'] },
+    { name: 'CLSC des Faubourgs', type: 'CLSC', address: '1705 Rue Berri, Montréal', addressEn: '1705 Berri St, Montreal', phone: '514-527-2361', hours: '8h-20h L-V, 9h-17h S-D', hoursEn: '8am-8pm M-F, 9am-5pm Sat-Sun', postalCode: 'H2L', city: 'Montréal', cityEn: 'Montreal', services: ['Soins gratuits', 'Vaccination', 'Santé mentale'], servicesEn: ['Free care', 'Vaccination', 'Mental health'] },
+    { name: 'Clinique Médicale Jeanne-Mance', type: 'WALK_IN', address: '1851 Rue Jeanne-Mance, Montréal', addressEn: '1851 Jeanne-Mance St, Montreal', phone: '514-842-1313', hours: '8h-21h 7j/7', hoursEn: '8am-9pm 7/7', postalCode: 'H2X', city: 'Montréal', cityEn: 'Montreal', services: ['Sans rendez-vous', 'Urgences mineures'], servicesEn: ['Walk-in', 'Minor emergencies'] },
+    { name: 'CLSC Metro', type: 'CLSC', address: '1815 Rue de Mateimoine, Montréal', addressEn: '1815 de Mateimoine St, Montreal', phone: '514-934-0354', hours: '8h-20h L-V', hoursEn: '8am-8pm M-F', postalCode: 'H2L', city: 'Montréal', cityEn: 'Montreal' },
+    { name: 'Clinique Rockland', type: 'PRIVATE', address: '1600 Bd de l\'Acadie, Montréal', addressEn: '1600 Acadie Blvd, Montreal', phone: '514-278-3888', hours: '9h-17h L-V', hoursEn: '9am-5pm M-F', postalCode: 'H3N', city: 'Montréal', cityEn: 'Montreal', services: ['Privé', 'Rendez-vous requis'], servicesEn: ['Private', 'Appointment required'] },
+    { name: 'Centre de santé Saint-Louis', type: 'COMMUNITY', address: '2430 Rue Dundas, Montréal', addressEn: '2430 Dundas St, Montreal', phone: '514-933-8971', hours: '9h-17h L-V', hoursEn: '9am-5pm M-F', postalCode: 'H3K', city: 'Montréal', cityEn: 'Montreal' },
+    // Laval Area (H7)
+    { name: 'CLSC du Marigot', type: 'CLSC', address: '850 Blvd Marcel-Laurin, Laval', addressEn: '850 Marcel-Laurin Blvd, Laval', phone: '450-668-3545', hours: '8h-20h L-V', hoursEn: '8am-8pm M-F', postalCode: 'H7H', city: 'Laval' },
+    { name: 'Clinique Médicale Laval', type: 'WALK_IN', address: '1700 Blvd Le Corbusier, Laval', addressEn: '1700 Le Corbusier Blvd, Laval', phone: '450-682-3388', hours: '8h-20h 7j/7', hoursEn: '8am-8pm 7/7', postalCode: 'H7S', city: 'Laval' },
+    // Quebec City Area (G prefixes)
+    { name: 'CLSC de la Basse-Ville', type: 'CLSC', address: '450 Rue de la Couronne, Québec', addressEn: '450 Couronne St, Quebec City', phone: '418-641-6500', hours: '8h-20h L-V', hoursEn: '8am-8pm M-F', postalCode: 'G1K', city: 'Québec', cityEn: 'Quebec City' },
+    { name: 'Clinique Médicale Sainte-Foy', type: 'WALK_IN', address: '1200 Bd Laurier, Québec', addressEn: '1200 Laurier Blvd, Quebec City', phone: '418-658-3388', hours: '8h-18h L-V', hoursEn: '8am-6pm M-F', postalCode: 'G1V', city: 'Québec', cityEn: 'Quebec City' },
+    { name: 'CHUL - Centre Hospitalier', type: 'HOSPITAL', address: '2705 Bd Laurier, Québec', addressEn: '2705 Laurier Blvd, Quebec City', phone: '418-654-2705', hours: '24h/24 7j/7', hoursEn: '24/7', postalCode: 'G1V', city: 'Québec', cityEn: 'Quebec City', services: ['Urgences', 'Spécialités'], servicesEn: ['Emergency', 'Specialties'] },
+    // Gatineau Area (J8, J9)
+    { name: 'CLSC de Gatineau', type: 'CLSC', address: '135 Bd Saint-Raymond, Gatineau', addressEn: '135 Saint-Raymond Blvd, Gatineau', phone: '819-561-5959', hours: '8h-20h L-V', hoursEn: '8am-8pm M-F', postalCode: 'J8X', city: 'Gatineau' },
+    { name: 'Clinique Médicale Hull', type: 'WALK_IN', address: '705 Bd Saint-Joseph, Gatineau', addressEn: '705 Saint-Joseph Blvd, Gatineau', phone: '819-770-3030', hours: '8h-20h 7j/7', hoursEn: '8am-8pm 7/7', postalCode: 'J8Y', city: 'Gatineau' },
+    // Sherbrooke Area (J1)
+    { name: 'CLSC de Sherbrooke', type: 'CLSC', address: '275 Rue King Ouest, Sherbrooke', addressEn: '275 King St West, Sherbrooke', phone: '819-564-3311', hours: '8h-20h L-V', hoursEn: '8am-8pm M-F', postalCode: 'J1H', city: 'Sherbrooke' },
+  ],
+  'ON': [
+    // Toronto Area (M prefixes)
+    { name: 'Walk-in Clinic Toronto Downtown', type: 'WALK_IN', address: '123 Yonge St, Toronto', phone: '416-366-3300', hours: '8am-9pm 7/7', hoursEn: '8am-9pm 7/7', postalCode: 'M5C', city: 'Toronto', services: ['Walk-in', 'Vaccines', 'Lab on-site'], servicesEn: ['Walk-in', 'Vaccines', 'Lab on-site'] },
+    { name: 'St. Michael\'s Hospital ER', type: 'HOSPITAL', address: '30 Bond St, Toronto', phone: '416-360-4000', hours: '24/7', hoursEn: '24/7', postalCode: 'M5B', city: 'Toronto', services: ['Emergency', 'Trauma'], servicesEn: ['Emergency', 'Trauma'] },
+    { name: 'Toronto General Hospital', type: 'HOSPITAL', address: '200 Elizabeth St, Toronto', phone: '416-340-3131', hours: '24/7', hoursEn: '24/7', postalCode: 'M5G', city: 'Toronto', services: ['Emergency', 'Specialties'], servicesEn: ['Emergency', 'Specialties'] },
+    { name: 'Clinique Médicale Francophone', nameEn: 'Francophone Medical Clinic', type: 'WALK_IN', address: '456 College St, Toronto', phone: '416-920-3300', hours: '9am-6pm M-F', hoursEn: '9am-6pm M-F', postalCode: 'M5T', city: 'Toronto', services: ['French-speaking', 'Family medicine'], servicesEn: ['French-speaking', 'Family medicine'] },
+    { name: 'North York General Hospital', type: 'HOSPITAL', address: '4001 Leslie St, North York', phone: '416-756-6000', hours: '24/7', hoursEn: '24/7', postalCode: 'M2K', city: 'North York' },
+    { name: 'Scarborough Health Network', type: 'HOSPITAL', address: '3050 Lawrence Ave E, Scarborough', phone: '416-438-2911', hours: '24/7', hoursEn: '24/7', postalCode: 'M1P', city: 'Scarborough' },
+    // Ottawa Area (K1, K2)
+    { name: 'Ottawa Hospital - Civic Campus', type: 'HOSPITAL', address: '1053 Carling Ave, Ottawa', phone: '613-722-7000', hours: '24/7', hoursEn: '24/7', postalCode: 'K1Y', city: 'Ottawa' },
+    { name: 'Montfort Hospital', type: 'HOSPITAL', address: '713 Montreal Rd, Ottawa', phone: '613-746-4621', hours: '24/7', hoursEn: '24/7', postalCode: 'K1K', city: 'Ottawa', services: ['Francophone', 'Emergency'], servicesEn: ['French-speaking', 'Emergency'] },
+    { name: 'CHEO - Children\'s Hospital', type: 'HOSPITAL', address: '401 Smyth Rd, Ottawa', phone: '613-737-7600', hours: '24/7', hoursEn: '24/7', postalCode: 'K1H', city: 'Ottawa', services: ['Pediatric', 'Emergency'], servicesEn: ['Pediatric', 'Emergency'] },
+    { name: 'Ottawa Walk-in Clinic', type: 'WALK_IN', address: '235 Bank St, Ottawa', phone: '613-233-3300', hours: '8am-8pm 7/7', hoursEn: '8am-8pm 7/7', postalCode: 'K1P', city: 'Ottawa' },
+    // Hamilton Area (L8)
+    { name: 'Hamilton Health Sciences', type: 'HOSPITAL', address: '1200 Main St W, Hamilton', phone: '905-521-2100', hours: '24/7', hoursEn: '24/7', postalCode: 'L8N', city: 'Hamilton' },
+    // London Area (N6)
+    { name: 'London Health Sciences Centre', type: 'HOSPITAL', address: '339 Windermere Rd, London', phone: '519-685-8500', hours: '24/7', hoursEn: '24/7', postalCode: 'N6A', city: 'London' },
+    // Kingston Area (K7)
+    { name: 'Kingston Health Sciences Centre', type: 'HOSPITAL', address: '76 Stuart St, Kingston', phone: '613-548-3232', hours: '24/7', hoursEn: '24/7', postalCode: 'K7L', city: 'Kingston' },
+  ],
+  'BC': [
+    // Vancouver Area (V prefixes)
+    { name: 'Vancouver General Hospital', type: 'HOSPITAL', address: '899 W 12th Ave, Vancouver', phone: '604-875-4111', hours: '24/7', hoursEn: '24/7', postalCode: 'V5Z', city: 'Vancouver' },
+    { name: 'St. Paul\'s Hospital', type: 'HOSPITAL', address: '1081 Burrard St, Vancouver', phone: '604-682-2344', hours: '24/7', hoursEn: '24/7', postalCode: 'V6Z', city: 'Vancouver' },
+    { name: 'BC Children\'s Hospital', type: 'HOSPITAL', address: '4480 Oak St, Vancouver', phone: '604-875-2345', hours: '24/7', hoursEn: '24/7', postalCode: 'V6H', city: 'Vancouver', services: ['Pediatric', 'Emergency'], servicesEn: ['Pediatric', 'Emergency'] },
+    { name: 'Vancouver Walk-in Clinic', type: 'WALK_IN', address: '1015 Davie St, Vancouver', phone: '604-681-5656', hours: '9am-9pm 7/7', hoursEn: '9am-9pm 7/7', postalCode: 'V6E', city: 'Vancouver' },
+    { name: 'Clinique Francophone de Vancouver', type: 'WALK_IN', address: '888 Cambie St, Vancouver', phone: '604-683-8282', hours: '9am-5pm M-F', hoursEn: '9am-5pm M-F', postalCode: 'V6B', city: 'Vancouver', services: ['French-speaking'], servicesEn: ['French-speaking'] },
+    // Victoria Area (V8, V9)
+    { name: 'Royal Jubilee Hospital', type: 'HOSPITAL', address: '1952 Bay St, Victoria', phone: '250-370-8000', hours: '24/7', hoursEn: '24/7', postalCode: 'V8R', city: 'Victoria' },
+    { name: 'Victoria General Hospital', type: 'HOSPITAL', address: '1 Hospital Way, Victoria', phone: '250-370-8000', hours: '24/7', hoursEn: '24/7', postalCode: 'V8Z', city: 'Victoria' },
+    // Surrey Area (V3)
+    { name: 'Surrey Memorial Hospital', type: 'HOSPITAL', address: '13750 96 Ave, Surrey', phone: '604-581-2211', hours: '24/7', hoursEn: '24/7', postalCode: 'V3V', city: 'Surrey' },
+    // Burnaby Area (V5)
+    { name: 'Burnaby Hospital', type: 'HOSPITAL', address: '3935 Kincaid St, Burnaby', phone: '604-434-4211', hours: '24/7', hoursEn: '24/7', postalCode: 'V5G', city: 'Burnaby' },
+  ],
+  'AB': [
+    // Calgary Area (T prefixes)
+    { name: 'Foothills Medical Centre', type: 'HOSPITAL', address: '1403 29 St NW, Calgary', phone: '403-944-1110', hours: '24/7', hoursEn: '24/7', postalCode: 'T2N', city: 'Calgary' },
+    { name: 'Rockyview General Hospital', type: 'HOSPITAL', address: '7007 14 St SW, Calgary', phone: '403-943-3000', hours: '24/7', hoursEn: '24/7', postalCode: 'T2V', city: 'Calgary' },
+    { name: 'Peter Lougheed Centre', type: 'HOSPITAL', address: '3500 26 Ave NE, Calgary', phone: '403-943-4555', hours: '24/7', hoursEn: '24/7', postalCode: 'T1Y', city: 'Calgary' },
+    { name: 'Calgary Walk-in Clinic', type: 'WALK_IN', address: '321 17 Ave SW, Calgary', phone: '403-269-3300', hours: '8am-8pm 7/7', hoursEn: '8am-8pm 7/7', postalCode: 'T2S', city: 'Calgary' },
+    // Edmonton Area (T5, T6)
+    { name: 'University of Alberta Hospital', type: 'HOSPITAL', address: '8440 112 St NW, Edmonton', phone: '780-407-8822', hours: '24/7', hoursEn: '24/7', postalCode: 'T6G', city: 'Edmonton' },
+    { name: 'Royal Alexandra Hospital', type: 'HOSPITAL', address: '10240 Kingsway Ave NW, Edmonton', phone: '780-735-4111', hours: '24/7', hoursEn: '24/7', postalCode: 'T5H', city: 'Edmonton' },
+    { name: 'Stollery Children\'s Hospital', type: 'HOSPITAL', address: '8440 112 St NW, Edmonton', phone: '780-407-8822', hours: '24/7', hoursEn: '24/7', postalCode: 'T6G', city: 'Edmonton', services: ['Pediatric', 'Emergency'], servicesEn: ['Pediatric', 'Emergency'] },
+    { name: 'Edmonton Walk-in Clinic', type: 'WALK_IN', address: '10020 82 Ave, Edmonton', phone: '780-433-3300', hours: '9am-9pm 7/7', hoursEn: '9am-9pm 7/7', postalCode: 'T6E', city: 'Edmonton' },
+  ],
+  'MB': [
+    // Winnipeg Area (R prefixes)
+    { name: 'Health Sciences Centre', type: 'HOSPITAL', address: '820 Sherbrook St, Winnipeg', phone: '204-787-2000', hours: '24/7', hoursEn: '24/7', postalCode: 'R3A', city: 'Winnipeg' },
+    { name: 'St. Boniface Hospital', type: 'HOSPITAL', address: '409 Taché Ave, Winnipeg', phone: '204-233-8563', hours: '24/7', hoursEn: '24/7', postalCode: 'R2H', city: 'Winnipeg', services: ['Francophone', 'Emergency'], servicesEn: ['French-speaking', 'Emergency'] },
+    { name: 'Children\'s Hospital of Winnipeg', type: 'HOSPITAL', address: '840 Sherbrook St, Winnipeg', phone: '204-787-4000', hours: '24/7', hoursEn: '24/7', postalCode: 'R3A', city: 'Winnipeg', services: ['Pediatric'], servicesEn: ['Pediatric'] },
+    { name: 'Winnipeg Walk-in Clinic', type: 'WALK_IN', address: '265 Stafford St, Winnipeg', phone: '204-452-3311', hours: '8am-8pm 7/7', hoursEn: '8am-8pm 7/7', postalCode: 'R3M', city: 'Winnipeg' },
+  ],
+  'SK': [
+    // Saskatoon Area (S7)
+    { name: 'Royal University Hospital', type: 'HOSPITAL', address: '103 Hospital Dr, Saskatoon', phone: '306-655-1000', hours: '24/7', hoursEn: '24/7', postalCode: 'S7N', city: 'Saskatoon' },
+    { name: 'Saskatoon City Hospital', type: 'HOSPITAL', address: '701 Queen St, Saskatoon', phone: '306-655-8000', hours: '24/7', hoursEn: '24/7', postalCode: 'S7K', city: 'Saskatoon' },
+    // Regina Area (S4)
+    { name: 'Regina General Hospital', type: 'HOSPITAL', address: '1440 14 Ave, Regina', phone: '306-766-4444', hours: '24/7', hoursEn: '24/7', postalCode: 'S4P', city: 'Regina' },
+    { name: 'Pasqua Hospital', type: 'HOSPITAL', address: '4101 Dewdney Ave, Regina', phone: '306-766-2222', hours: '24/7', hoursEn: '24/7', postalCode: 'S4T', city: 'Regina' },
+  ],
+  'NS': [
+    // Halifax Area (B3, B2)
+    { name: 'QEII Health Sciences Centre', type: 'HOSPITAL', address: '1276 South Park St, Halifax', phone: '902-473-2222', hours: '24/7', hoursEn: '24/7', postalCode: 'B3H', city: 'Halifax' },
+    { name: 'IWK Health Centre', type: 'HOSPITAL', address: '5850 University Ave, Halifax', phone: '902-470-8888', hours: '24/7', hoursEn: '24/7', postalCode: 'B3K', city: 'Halifax', services: ['Pediatric', 'Maternity'], servicesEn: ['Pediatric', 'Maternity'] },
+    { name: 'Halifax Walk-in Clinic', type: 'WALK_IN', address: '6080 Young St, Halifax', phone: '902-455-3300', hours: '9am-9pm 7/7', hoursEn: '9am-9pm 7/7', postalCode: 'B3K', city: 'Halifax' },
+  ],
+  'NB': [
+    // Moncton Area (E1)
+    { name: 'The Moncton Hospital', type: 'HOSPITAL', address: '135 MacBeath Ave, Moncton', phone: '506-857-5111', hours: '24/7', hoursEn: '24/7', postalCode: 'E1C', city: 'Moncton' },
+    { name: 'Georges L. Dumont Hospital', type: 'HOSPITAL', address: '330 University Ave, Moncton', phone: '506-862-4000', hours: '24/7', hoursEn: '24/7', postalCode: 'E1C', city: 'Moncton', services: ['Francophone'], servicesEn: ['French-speaking'] },
+    // Fredericton Area (E3)
+    { name: 'Dr. Everett Chalmers Hospital', type: 'HOSPITAL', address: '700 Priestman St, Fredericton', phone: '506-452-5400', hours: '24/7', hoursEn: '24/7', postalCode: 'E3B', city: 'Fredericton' },
+    // Saint John Area (E2)
+    { name: 'Saint John Regional Hospital', type: 'HOSPITAL', address: '400 University Ave, Saint John', phone: '506-648-6000', hours: '24/7', hoursEn: '24/7', postalCode: 'E2L', city: 'Saint John' },
+  ],
+  'PE': [
+    // Charlottetown Area (C1)
+    { name: 'Queen Elizabeth Hospital', type: 'HOSPITAL', address: '60 Riverside Dr, Charlottetown', phone: '902-894-2111', hours: '24/7', hoursEn: '24/7', postalCode: 'C1A', city: 'Charlottetown' },
+    { name: 'Prince County Hospital', type: 'HOSPITAL', address: '65 Roy Boates Ave, Summerside', phone: '902-432-2500', hours: '24/7', hoursEn: '24/7', postalCode: 'C1N', city: 'Summerside' },
+  ],
+  'NL': [
+    // St. John's Area (A1)
+    { name: 'Health Sciences Centre', type: 'HOSPITAL', address: '300 Prince Philip Dr, St. John\'s', phone: '709-777-8000', hours: '24/7', hoursEn: '24/7', postalCode: 'A1B', city: 'St. John\'s' },
+    { name: 'Janeway Children\'s Hospital', type: 'HOSPITAL', address: '300 Prince Philip Dr, St. John\'s', phone: '709-777-6600', hours: '24/7', hoursEn: '24/7', postalCode: 'A1B', city: 'St. John\'s', services: ['Pediatric'], servicesEn: ['Pediatric'] },
+  ],
+  'NT': [],
+  'YT': [],
+  'NU': []
+}
+
+// Function to calculate approximate distance between two postal codes
+function getPostalCodeDistance(code1: string, code2: string): number {
+  // Simplified distance estimation based on postal code similarity
+  // Canadian postal codes: first 3 chars = FSA (Forward Sortation Area)
+  if (!code1 || !code2) return 999
+  
+  const c1 = code1.toUpperCase().replace(/\s/g, '').substring(0, 3)
+  const c2 = code2.toUpperCase().replace(/\s/g, '').substring(0, 3)
+  
+  if (c1 === c2) return 0 // Same FSA = very close
+  
+  // Check first 2 characters (same region)
+  if (c1.substring(0, 2) === c2.substring(0, 2)) return 5 // Same region, ~5km
+  
+  // Check first character (same province/area)
+  if (c1[0] === c2[0]) return 20 // Same province, ~20km
+  
+  return 100 // Different province/area
+}
+
+// Function to get clinics sorted by distance to postal code
+function getClinicsByPostalCode(province: Province, postalCode: string, limit: number = 10): (Clinic & { distance: number })[] {
+  const clinics = clinicDatabase[province] || []
+  
+  return clinics
+    .map(clinic => ({
+      ...clinic,
+      distance: getPostalCodeDistance(postalCode, clinic.postalCode)
+    }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, limit)
+}
+
+// In-Demand Jobs Database by Province
+// Based on Canadian job market data and provincial nominee programs
+interface InDemandJob {
+  title: string
+  titleEn: string
+  sector: string
+  sectorEn: string
+  avgSalary: string
+  demand: 'VERY_HIGH' | 'HIGH' | 'MODERATE'
+  nocCode?: string // National Occupational Classification
+  description: string
+  descriptionEn: string
+  requirements?: string
+  requirementsEn?: string
+  immigrationBonus?: string // Bonus for immigration programs
+}
+
+const inDemandJobsByProvince: Record<Province, InDemandJob[]> = {
+  'QC': [
+    { title: 'Infirmier(ère) / Infirmier(ère) auxiliaire', titleEn: 'Nurse / Licensed Practical Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '65 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Forte pénurie dans tout le Québec. Le gouvernement offre des incitatifs.', descriptionEn: 'Severe shortage across Quebec. Government offers incentives.', requirements: 'Ordre des infirmières du Québec', requirementsEn: 'Order of Nurses of Quebec', immigrationBonus: 'Programme régulier des travailleurs qualifiés' },
+    { title: 'Développeur informatique', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '70 000 $ - 120 000 $', demand: 'VERY_HIGH', nocCode: '21230', description: 'Montréal est un hub technologique majeur. IA, jeux vidéo, fintech.', descriptionEn: 'Montreal is a major tech hub. AI, video games, fintech.', immigrationBonus: 'Volet traitement accéléré (VTA)' },
+    { title: 'Ingénieur civil', titleEn: 'Civil Engineer', sector: 'Ingénierie', sectorEn: 'Engineering', avgSalary: '75 000 $ - 110 000 $', demand: 'HIGH', nocCode: '21300', description: 'Grands projets d\'infrastructure au Québec. Construction et rénovation.', descriptionEn: 'Major infrastructure projects in Quebec. Construction and renovation.' },
+    { title: 'Électricien industriel', titleEn: 'Industrial Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '55 000 $ - 85 000 $', demand: 'VERY_HIGH', nocCode: '72201', description: 'Pénurie critique. Travaux de construction et maintenance industrielle.', descriptionEn: 'Critical shortage. Construction work and industrial maintenance.', immigrationBonus: 'Priorité PRTQ' },
+    { title: 'Enseignant au primaire/secondaire', titleEn: 'Elementary/Secondary Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '41220', description: 'Demande pour enseignants en mathématiques, sciences, français.', descriptionEn: 'Demand for math, science, French teachers.' },
+    { title: 'Comptable professionnel agréé (CPA)', titleEn: 'Chartered Professional Accountant', sector: 'Finance', sectorEn: 'Finance', avgSalary: '65 000 $ - 110 000 $', demand: 'HIGH', nocCode: '11100', description: 'Forte demande dans les secteurs manufacturier et des services.', descriptionEn: 'High demand in manufacturing and services sectors.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '72106', description: 'Industrie manufacturière, construction navale, aéronautique.', descriptionEn: 'Manufacturing, shipbuilding, aerospace industries.' },
+    { title: 'Travailleur social', titleEn: 'Social Worker', sector: 'Services sociaux', sectorEn: 'Social Services', avgSalary: '50 000 $ - 80 000 $', demand: 'HIGH', nocCode: '41300', description: 'Services aux jeunes, aux aînés, et aux familles immigrantes.', descriptionEn: 'Youth, seniors, and immigrant family services.' },
+    { title: 'Mécanicien de machines lourdes', titleEn: 'Heavy Equipment Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 80 000 $', demand: 'HIGH', nocCode: '72401', description: 'Secteur minier, construction, transport.', descriptionEn: 'Mining, construction, transport sectors.' },
+    { title: 'Cuisinier / Chef', titleEn: 'Cook / Chef', sector: 'Hôtellerie', sectorEn: 'Hospitality', avgSalary: '35 000 $ - 65 000 $', demand: 'HIGH', nocCode: '63200', description: 'Industrie touristique et restauration en croissance.', descriptionEn: 'Growing tourism and restaurant industry.' },
+  ],
+  'ON': [
+    { title: 'Développeur de logiciels', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '80 000 $ - 140 000 $', demand: 'VERY_HIGH', nocCode: '21230', description: 'Toronto-Waterloo est la Silicon Valley du Nord. IA, fintech, SaaS.', descriptionEn: 'Toronto-Waterloo is the Silicon Valley of the North. AI, fintech, SaaS.', immigrationBonus: 'OINP Tech Draw' },
+    { title: 'Infirmier autorisé', titleEn: 'Registered Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '70 000 $ - 100 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Pénurie dans tout l\'Ontario, particulièrement en régions rurales.', descriptionEn: 'Shortage across Ontario, especially in rural areas.', immigrationBonus: 'OINP Human Capital' },
+    { title: 'Ingénieur électrique', titleEn: 'Electrical Engineer', sector: 'Ingénierie', sectorEn: 'Engineering', avgSalary: '80 000 $ - 120 000 $', demand: 'HIGH', nocCode: '21310', description: 'Automobile, technologie propre, télécommunications.', descriptionEn: 'Automotive, clean tech, telecommunications.' },
+    { title: 'Camionneur', titleEn: 'Truck Driver', sector: 'Transport', sectorEn: 'Transportation', avgSalary: '50 000 $ - 80 000 $', demand: 'VERY_HIGH', nocCode: '73300', description: 'Chauffeurs de camion longue distance et locaux recherchés.', descriptionEn: 'Long-haul and local truck drivers in demand.', immigrationBonus: 'OINP In-Demand Skills' },
+    { title: 'Charpentier-menuisier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72014', description: 'Boom de la construction résidentielle et commerciale.', descriptionEn: 'Residential and commercial construction boom.' },
+    { title: 'Analyste de données', titleEn: 'Data Analyst', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '70 000 $ - 110 000 $', demand: 'VERY_HIGH', nocCode: '21211', description: 'Finance, santé, commerce de détail recherchent des analystes.', descriptionEn: 'Finance, healthcare, retail seeking analysts.' },
+    { title: 'Aide-soignant', titleEn: 'Personal Support Worker', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '35 000 $ - 50 000 $', demand: 'VERY_HIGH', nocCode: '33102', description: 'Soins à domicile, établissements de soins de longue durée.', descriptionEn: 'Home care, long-term care facilities.', immigrationBonus: 'OINP In-Demand Skills' },
+    { title: 'Mécanicien d\'automobile', titleEn: 'Automotive Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '72410', description: 'Industrie automobile importante en Ontario (Oakville, Windsor).', descriptionEn: 'Significant automotive industry in Ontario.' },
+    { title: 'Pharmacien', titleEn: 'Pharmacist', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '90 000 $ - 130 000 $', demand: 'HIGH', nocCode: '31120', description: 'Expansion des chaînes de pharmacies communautaires.', descriptionEn: 'Expansion of community pharmacy chains.' },
+    { title: 'Technicien en informatique', titleEn: 'IT Technician', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '50 000 $ - 80 000 $', demand: 'HIGH', nocCode: '22221', description: 'Support technique, administration réseau.', descriptionEn: 'Technical support, network administration.' },
+  ],
+  'BC': [
+    { title: 'Développeur de logiciels', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '85 000 $ - 145 000 $', demand: 'VERY_HIGH', nocCode: '21230', description: 'Vancouver est un hub tech majeur. Studios de jeux, startups IA.', descriptionEn: 'Vancouver is a major tech hub. Game studios, AI startups.', immigrationBonus: 'BC PNP Tech' },
+    { title: 'Infirmier autorisé', titleEn: 'Registered Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '70 000 $ - 100 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Système de santé sous pression. Bonus de recrutement offerts.', descriptionEn: 'Healthcare system under pressure. Recruitment bonuses offered.' },
+    { title: 'Charpentier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '55 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '72014', description: 'Construction résidentielle en plein essor. Projets majeurs.', descriptionEn: 'Booming residential construction. Major projects.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '60 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '72200', description: 'Construction, énergie propre, infrastructure.', descriptionEn: 'Construction, clean energy, infrastructure.' },
+    { title: 'Ingénieur minier', titleEn: 'Mining Engineer', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '90 000 $ - 140 000 $', demand: 'HIGH', nocCode: '21330', description: 'Industrie minière importante dans le nord de la BC.', descriptionEn: 'Significant mining industry in northern BC.' },
+    { title: 'Comptable', titleEn: 'Accountant', sector: 'Finance', sectorEn: 'Finance', avgSalary: '60 000 $ - 100 000 $', demand: 'HIGH', nocCode: '11100', description: 'Centre financier de l\'Ouest canadien.', descriptionEn: 'Financial center of Western Canada.' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '55 000 $ - 90 000 $', demand: 'HIGH', nocCode: '41220', description: 'Pénurie dans les communautés rurales et nordiques.', descriptionEn: 'Shortage in rural and northern communities.' },
+    { title: 'Cuisinier', titleEn: 'Cook', sector: 'Hôtellerie', sectorEn: 'Hospitality', avgSalary: '35 000 $ - 55 000 $', demand: 'HIGH', nocCode: '63200', description: 'Industrie touristique très forte. Ski, croisières.', descriptionEn: 'Very strong tourism industry. Ski, cruises.' },
+    { title: 'Plombier', titleEn: 'Plumber', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '55 000 $ - 90 000 $', demand: 'HIGH', nocCode: '72300', description: 'Construction résidentielle et commerciale.', descriptionEn: 'Residential and commercial construction.' },
+    { title: 'Technicien en HVAC', titleEn: 'HVAC Technician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72402', description: 'Installation et maintenance de systèmes de chauffage/climatisation.', descriptionEn: 'Heating/cooling system installation and maintenance.' },
+  ],
+  'AB': [
+    { title: 'Ingénieur pétrolier', titleEn: 'Petroleum Engineer', sector: 'Énergie', sectorEn: 'Energy', avgSalary: '100 000 $ - 180 000 $', demand: 'HIGH', nocCode: '21330', description: 'Industrie pétrolière et gazière. Tournant vers énergies renouvelables.', descriptionEn: 'Oil and gas industry. Transition to renewables.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '72106', description: 'Construction, pipelines, fabrication industrielle.', descriptionEn: 'Construction, pipelines, industrial fabrication.', immigrationBonus: 'Alberta Opportunity Stream' },
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '70 000 $ - 100 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Pénurie critique. Alberta Health Services recrute activement.', descriptionEn: 'Critical shortage. Alberta Health Services actively recruiting.' },
+    { title: 'Camionneur', titleEn: 'Truck Driver', sector: 'Transport', sectorEn: 'Transportation', avgSalary: '55 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '73300', description: 'Transport de marchandises, secteur pétrolier.', descriptionEn: 'Freight transport, oil sector.' },
+    { title: 'Électricien industriel', titleEn: 'Industrial Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '60 000 $ - 100 000 $', demand: 'VERY_HIGH', nocCode: '72201', description: 'Usines, sites pétroliers, mines.', descriptionEn: 'Factories, oil sites, mines.' },
+    { title: 'Mécanicien lourd', titleEn: 'Heavy Duty Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '60 000 $ - 100 000 $', demand: 'VERY_HIGH', nocCode: '72401', description: 'Équipements miniers, construction, pétrole.', descriptionEn: 'Mining equipment, construction, oil.' },
+    { title: 'Charpentier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72014', description: 'Construction résidentielle et commerciale en croissance.', descriptionEn: 'Growing residential and commercial construction.' },
+    { title: 'Comptable', titleEn: 'Accountant', sector: 'Finance', sectorEn: 'Finance', avgSalary: '60 000 $ - 100 000 $', demand: 'HIGH', nocCode: '11100', description: 'Secteurs pétrolier, construction, services.', descriptionEn: 'Oil, construction, services sectors.' },
+    { title: 'Technicien en instrumentation', titleEn: 'Instrumentation Technician', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '65 000 $ - 100 000 $', demand: 'HIGH', nocCode: '22401', description: 'Automatisation industrielle, contrôle de processus.', descriptionEn: 'Industrial automation, process control.' },
+    { title: 'Aide-soignant', titleEn: 'Health Care Aide', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '35 000 $ - 50 000 $', demand: 'VERY_HIGH', nocCode: '33102', description: 'Établissements de soins de longue durée.', descriptionEn: 'Long-term care facilities.' },
+  ],
+  'MB': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '65 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Winnipeg et régions rurales en pénurie.', descriptionEn: 'Winnipeg and rural areas in shortage.', immigrationBonus: 'MPNP Strategic Recruitment' },
+    { title: 'Développeur informatique', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '60 000 $ - 100 000 $', demand: 'HIGH', nocCode: '21230', description: 'Winnipeg développe son secteur tech. Coût de vie bas.', descriptionEn: 'Winnipeg developing its tech sector. Low cost of living.' },
+    { title: 'Camionneur', titleEn: 'Truck Driver', sector: 'Transport', sectorEn: 'Transportation', avgSalary: '45 000 $ - 75 000 $', demand: 'VERY_HIGH', nocCode: '73300', description: 'Hub de transport au centre du Canada.', descriptionEn: 'Transport hub in central Canada.', immigrationBonus: 'MPNP In-Demand Occupations' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '41220', description: 'Écoles francophones et anglophones recherchent des enseignants.', descriptionEn: 'French and English schools seeking teachers.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '72106', description: 'Fabrication métallique, construction.', descriptionEn: 'Metal fabrication, construction.' },
+    { title: 'Comptable', titleEn: 'Accountant', sector: 'Finance', sectorEn: 'Finance', avgSalary: '55 000 $ - 90 000 $', demand: 'HIGH', nocCode: '11100', description: 'Services financiers en croissance à Winnipeg.', descriptionEn: 'Growing financial services in Winnipeg.' },
+    { title: 'Agriculteur / Technicien agricole', titleEn: 'Farmer / Agricultural Technician', sector: 'Agriculture', sectorEn: 'Agriculture', avgSalary: '40 000 $ - 70 000 $', demand: 'HIGH', nocCode: '82030', description: 'Grande province agricole. Fermes laitières, céréales.', descriptionEn: 'Major agricultural province. Dairy, grain farms.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72200', description: 'Construction et maintenance industrielle.', descriptionEn: 'Construction and industrial maintenance.' },
+  ],
+  'SK': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '65 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Pénurie dans tout le système de santé.', descriptionEn: 'Shortage throughout healthcare system.', immigrationBonus: 'SINP Health Sector' },
+    { title: 'Ingénieur minier', titleEn: 'Mining Engineer', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '85 000 $ - 130 000 $', demand: 'VERY_HIGH', nocCode: '21330', description: 'Potasse, uranium. Majeur producteur mondial.', descriptionEn: 'Potash, uranium. Major global producer.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 80 000 $', demand: 'VERY_HIGH', nocCode: '72106', description: 'Industrie manufacturière et mines.', descriptionEn: 'Manufacturing and mining industries.', immigrationBonus: 'SINP In-Demand' },
+    { title: 'Camionneur', titleEn: 'Truck Driver', sector: 'Transport', sectorEn: 'Transportation', avgSalary: '45 000 $ - 75 000 $', demand: 'VERY_HIGH', nocCode: '73300', description: 'Transport de marchandises agricoles et minières.', descriptionEn: 'Agricultural and mining freight transport.' },
+    { title: 'Électricien industriel', titleEn: 'Industrial Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '55 000 $ - 90 000 $', demand: 'HIGH', nocCode: '72201', description: 'Mines, usines de transformation.', descriptionEn: 'Mines, processing plants.' },
+    { title: 'Mécanicien lourd', titleEn: 'Heavy Equipment Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '55 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '72401', description: 'Équipements miniers et agricoles.', descriptionEn: 'Mining and agricultural equipment.' },
+    { title: 'Travailleur agricole', titleEn: 'Farm Worker', sector: 'Agriculture', sectorEn: 'Agriculture', avgSalary: '30 000 $ - 50 000 $', demand: 'HIGH', nocCode: '85100', description: 'Céréales, oléagineux, élevage.', descriptionEn: 'Grains, oilseeds, livestock.' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '41220', description: 'Communautés rurales et nordiques.', descriptionEn: 'Rural and northern communities.' },
+  ],
+  'NS': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '65 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Système de santé sous forte pression.', descriptionEn: 'Healthcare system under severe pressure.', immigrationBonus: 'NSNP Labour Market Priorities' },
+    { title: 'Développeur informatique', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '60 000 $ - 100 000 $', demand: 'HIGH', nocCode: '21230', description: 'Halifax développe son écosystème tech. Startups, centres d\'appels tech.', descriptionEn: 'Halifax developing tech ecosystem. Startups, tech call centers.' },
+    { title: 'Charpentier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '72014', description: 'Projet de construction navale Irving. Boom immobilier.', descriptionEn: 'Irving shipbuilding project. Real estate boom.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72200', description: 'Construction navale, résidentiel, commercial.', descriptionEn: 'Shipbuilding, residential, commercial.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 80 000 $', demand: 'VERY_HIGH', nocCode: '72106', description: 'Construction navale Irving - demande massive.', descriptionEn: 'Irving shipbuilding - massive demand.', immigrationBonus: 'NSNP In-Demand' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '41220', description: 'Écoles françaises et anglaises.', descriptionEn: 'French and English schools.' },
+    { title: 'Mécanicien', titleEn: 'Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '72410', description: 'Automobile, marine, industriel.', descriptionEn: 'Automotive, marine, industrial.' },
+    { title: 'Aide-soignant', titleEn: 'Continuing Care Assistant', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '32 000 $ - 45 000 $', demand: 'VERY_HIGH', nocCode: '33102', description: 'Soins à domicile, établissements de soins.', descriptionEn: 'Home care, care facilities.' },
+  ],
+  'NB': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '60 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Pénurie critique. Seule province officiellement bilingue.', descriptionEn: 'Critical shortage. Only officially bilingual province.', immigrationBonus: 'NBPNP Express Entry' },
+    { title: 'Enseignant francophone', titleEn: 'French Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 80 000 $', demand: 'VERY_HIGH', nocCode: '41220', description: 'Seule province bilingue. Forte demande pour enseignants francophones.', descriptionEn: 'Only bilingual province. High demand for francophone teachers.' },
+    { title: 'Développeur informatique', titleEn: 'Software Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '55 000 $ - 95 000 $', demand: 'HIGH', nocCode: '21230', description: 'Moncton et Fredericton développent leur secteur tech.', descriptionEn: 'Moncton and Fredericton developing tech sector.' },
+    { title: 'Camionneur', titleEn: 'Truck Driver', sector: 'Transport', sectorEn: 'Transportation', avgSalary: '40 000 $ - 70 000 $', demand: 'HIGH', nocCode: '73300', description: 'Transport de marchandises. Port de Saint John.', descriptionEn: 'Freight transport. Port of Saint John.' },
+    { title: 'Charpentier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '40 000 $ - 70 000 $', demand: 'HIGH', nocCode: '72014', description: 'Construction résidentielle et commerciale.', descriptionEn: 'Residential and commercial construction.' },
+    { title: 'Comptable bilingue', titleEn: 'Bilingual Accountant', sector: 'Finance', sectorEn: 'Finance', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '11100', description: 'Services financiers bilingues recherchés.', descriptionEn: 'Bilingual financial services in demand.' },
+    { title: 'Travailleur social', titleEn: 'Social Worker', sector: 'Services sociaux', sectorEn: 'Social Services', avgSalary: '45 000 $ - 75 000 $', demand: 'HIGH', nocCode: '41300', description: 'Services aux familles, jeunes, aînés.', descriptionEn: 'Family, youth, senior services.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '45 000 $ - 80 000 $', demand: 'HIGH', nocCode: '72200', description: 'Construction et maintenance.', descriptionEn: 'Construction and maintenance.' },
+  ],
+  'PE': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '60 000 $ - 90 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Petit système de santé en pénurie.', descriptionEn: 'Small healthcare system in shortage.', immigrationBonus: 'PEI PNP Labour Impact' },
+    { title: 'Travailleur agricole', titleEn: 'Farm Worker', sector: 'Agriculture', sectorEn: 'Agriculture', avgSalary: '28 000 $ - 45 000 $', demand: 'VERY_HIGH', nocCode: '85100', description: 'Pomme de terre, agriculture. Plus grosse industrie.', descriptionEn: 'Potatoes, agriculture. Biggest industry.' },
+    { title: 'Cuisinier / Chef', titleEn: 'Cook / Chef', sector: 'Hôtellerie', sectorEn: 'Hospitality', avgSalary: '30 000 $ - 55 000 $', demand: 'HIGH', nocCode: '63200', description: 'Tourisme important en été. Restaurants réputés.', descriptionEn: 'Important summer tourism. Renowned restaurants.' },
+    { title: 'Serveur', titleEn: 'Server', sector: 'Hôtellerie', sectorEn: 'Hospitality', avgSalary: '25 000 $ - 45 000 $', demand: 'HIGH', nocCode: '65200', description: 'Industrie touristique saisonnière.', descriptionEn: 'Seasonal tourism industry.' },
+    { title: 'Charpentier', titleEn: 'Carpenter', sector: 'Construction', sectorEn: 'Construction', avgSalary: '40 000 $ - 70 000 $', demand: 'HIGH', nocCode: '72014', description: 'Construction résidentielle en croissance.', descriptionEn: 'Growing residential construction.' },
+    { title: 'Développeur web', titleEn: 'Web Developer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '50 000 $ - 85 000 $', demand: 'MODERATE', nocCode: '21230', description: 'Startups tech émergentes à Charlottetown.', descriptionEn: 'Emerging tech startups in Charlottetown.' },
+  ],
+  'NL': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '65 000 $ - 95 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Pénurie critique. Terre-Neuve offre des incitatifs.', descriptionEn: 'Critical shortage. Newfoundland offers incentives.', immigrationBonus: 'NLPNP Priority Skills' },
+    { title: 'Ingénieur pétrolier', titleEn: 'Petroleum Engineer', sector: 'Énergie', sectorEn: 'Energy', avgSalary: '90 000 $ - 150 000 $', demand: 'HIGH', nocCode: '21330', description: 'Projets offshore. Hibernia, Terra Nova.', descriptionEn: 'Offshore projects. Hibernia, Terra Nova.' },
+    { title: 'Soudeur', titleEn: 'Welder', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 85 000 $', demand: 'VERY_HIGH', nocCode: '72106', description: 'Construction navale (Memorial University), pétrole offshore.', descriptionEn: 'Shipbuilding (Memorial University), offshore oil.' },
+    { title: 'Ingénieur minier', titleEn: 'Mining Engineer', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '80 000 $ - 130 000 $', demand: 'HIGH', nocCode: '21330', description: 'Mines de fer, nickel. Voisey\'s Bay.', descriptionEn: 'Iron, nickel mines. Voisey\'s Bay.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '72200', description: 'Industrie pétrolière, construction.', descriptionEn: 'Oil industry, construction.' },
+    { title: 'Mécanicien lourd', titleEn: 'Heavy Equipment Mechanic', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '55 000 $ - 90 000 $', demand: 'HIGH', nocCode: '72401', description: 'Mines, pétrole, construction.', descriptionEn: 'Mining, oil, construction.' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '50 000 $ - 85 000 $', demand: 'HIGH', nocCode: '41220', description: 'Communautés rurales et côtières.', descriptionEn: 'Rural and coastal communities.' },
+    { title: 'Programmeur informatique', titleEn: 'Computer Programmer', sector: 'Technologie', sectorEn: 'Technology', avgSalary: '55 000 $ - 95 000 $', demand: 'MODERATE', nocCode: '21230', description: 'St. John\'s développe un secteur tech.', descriptionEn: 'St. John\'s developing a tech sector.' },
+  ],
+  'NT': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '80 000 $ - 120 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Salaires élevés. Isolation pay. Communautés nordiques.', descriptionEn: 'High salaries. Isolation pay. Northern communities.' },
+    { title: 'Mineur', titleEn: 'Miner', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '80 000 $ - 140 000 $', demand: 'HIGH', nocCode: '83100', description: 'Diamants (Diavik, Ekati), or.', descriptionEn: 'Diamonds (Diavik, Ekati), gold.' },
+    { title: 'Électricien', titleEn: 'Electrician', sector: 'Métiers spécialisés', sectorEn: 'Skilled Trades', avgSalary: '70 000 $ - 110 000 $', demand: 'VERY_HIGH', nocCode: '72200', description: 'Mines, construction, maintenance.', descriptionEn: 'Mines, construction, maintenance.' },
+  ],
+  'YT': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '75 000 $ - 110 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Salaires nordiques. Whitehorse et communautés rurales.', descriptionEn: 'Northern salaries. Whitehorse and rural communities.' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '60 000 $ - 95 000 $', demand: 'HIGH', nocCode: '41220', description: 'Écoles en régions éloignées.', descriptionEn: 'Schools in remote areas.' },
+    { title: 'Mineur', titleEn: 'Miner', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '75 000 $ - 130 000 $', demand: 'HIGH', nocCode: '83100', description: 'Or, métaux précieux.', descriptionEn: 'Gold, precious metals.' },
+  ],
+  'NU': [
+    { title: 'Infirmier', titleEn: 'Nurse', sector: 'Santé', sectorEn: 'Healthcare', avgSalary: '85 000 $ - 130 000 $', demand: 'VERY_HIGH', nocCode: '31301', description: 'Salaires les plus élevés au Canada. Isolation.', descriptionEn: 'Highest salaries in Canada. Isolation.' },
+    { title: 'Mineur', titleEn: 'Miner', sector: 'Extraction', sectorEn: 'Extraction', avgSalary: '90 000 $ - 150 000 $', demand: 'HIGH', nocCode: '83100', description: 'Mines d\'or, diamants, fer.', descriptionEn: 'Gold, diamond, iron mines.' },
+    { title: 'Enseignant', titleEn: 'Teacher', sector: 'Éducation', sectorEn: 'Education', avgSalary: '70 000 $ - 105 000 $', demand: 'HIGH', nocCode: '41220', description: 'Communautés inuites. Programme d\'enseignement du Nord.', descriptionEn: 'Inuit communities. Northern teaching program.' },
+  ],
+}
+
+const modules = [
+  { id: 'province', icon: MapPin, color: 'text-cyan-500', bgColor: 'bg-cyan-50 dark:bg-cyan-950' },
+  { id: 'immigration', icon: Shield, color: 'text-green-500', bgColor: 'bg-green-50 dark:bg-green-950' },
+  { id: 'employment', icon: Briefcase, color: 'text-blue-500', bgColor: 'bg-blue-50 dark:bg-blue-950' },
+  { id: 'housing', icon: Building, color: 'text-purple-500', bgColor: 'bg-purple-50 dark:bg-purple-950' },
+  { id: 'finance', icon: Wallet, color: 'text-amber-500', bgColor: 'bg-amber-50 dark:bg-amber-950' },
+  { id: 'health', icon: Heart, color: 'text-red-500', bgColor: 'bg-red-50 dark:bg-red-950' },
+  { id: 'community', icon: Users, color: 'text-indigo-500', bgColor: 'bg-indigo-50 dark:bg-indigo-950' },
+  { id: 'admin', icon: Settings, color: 'text-gray-500', bgColor: 'bg-gray-50 dark:bg-gray-950' },
+]
+
+// ==================== MAIN APP ====================
+export default function NouveauCapApp() {
+  const {
+    user, isAuthenticated, currentView, setCurrentView,
+    onboardingStep, setOnboardingStep, onboardingData, setOnboardingData,
+    language, setLanguage, tasks, setTasks, updateTaskStatus,
+    activeModule, setActiveModule, authMode, setAuthMode,
+    completeOnboarding, logout
+  } = useAppStore()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
+  const [error, setError] = useState('')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [isHydrated, setIsHydrated] = useState(true) // Start hydrated on client
+
+  // Task detail modal
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [taskModalOpen, setTaskModalOpen] = useState(false)
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/auth/me')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.user) {
+            useAppStore.setState({ 
+              user: data.user, 
+              isAuthenticated: true 
+            })
+            if (data.user.onboardingCompleted) {
+              setCurrentView('dashboard')
+            } else {
+              setCurrentView('onboarding')
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Session check failed', e)
+      }
+    }
+    
+    // Only check session if not already authenticated
+    if (!isAuthenticated) {
+      checkSession()
+    }
+  }, []) // Run once on mount
+
+  // Fetch user profile from database when authenticated
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user?.id) return
+      try {
+        const res = await fetch(`/api/user-data?action=get-profile&userId=${user.id}`)
+        const data = await res.json()
+        if (data.user) {
+          useAppStore.setState({ user: data.user })
+        }
+      } catch (e) {
+        console.error('Failed to fetch user profile', e)
+      }
+    }
+    
+    if (isAuthenticated && user?.id) {
+      fetchUserProfile()
+    }
+  }, [isAuthenticated, user?.id])
+
+  // Fetch tasks when authenticated
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!user?.id) return
+      try {
+        // First refresh task descriptions (in case they're missing)
+        await fetch('/api/tasks/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id })
+        })
+        
+        // Then fetch updated tasks
+        const res = await fetch(`/api/onboarding?userId=${user.id}`)
+        const data = await res.json()
+        if (data.tasks) setTasks(data.tasks)
+      } catch (e) {
+        console.error('Failed to fetch tasks', e)
+      }
+    }
+    
+    if (isAuthenticated && user?.id) {
+      fetchTasks()
+    }
+  }, [isAuthenticated, user?.id, setTasks])
+
+  // Auth handler
+  const handleAuth = async () => {
+    setIsLoading(true)
+    setError('')
+    
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: authMode === 'signIn' ? 'signin' : 'signup',
+          email,
+          password,
+          name
+        })
+      })
+      
+      const data = await res.json()
+      
+      if (data.error) {
+        setError(data.error)
+      } else {
+        useAppStore.setState({ 
+          user: data.user, 
+          isAuthenticated: true,
+          currentView: data.user.onboardingCompleted ? 'dashboard' : 'onboarding'
+        })
+        setEmail('')
+        setPassword('')
+        setName('')
+      }
+    } catch (e) {
+      setError('Une erreur est survenue')
+    }
+    
+    setIsLoading(false)
+  }
+
+  // Onboarding complete
+  const handleOnboardingComplete = async () => {
+    // Get fresh user state from store (in case of stale closure)
+    const currentUser = useAppStore.getState().user
+    
+    if (!currentUser?.id) {
+      setError(language === 'fr' 
+        ? 'Erreur: Utilisateur non connecté. Veuillez vous reconnecter.' 
+        : 'Error: User not logged in. Please log in again.')
+      return
+    }
+    
+    // Validate required fields
+    if (!onboardingData.immigrationStatus) {
+      setError(language === 'fr' 
+        ? 'Veuillez sélectionner votre statut d\'immigration.' 
+        : 'Please select your immigration status.')
+      return
+    }
+    if (!onboardingData.province) {
+      setError(language === 'fr' 
+        ? 'Veuillez sélectionner votre province.' 
+        : 'Please select your province.')
+      return
+    }
+    
+    setIsLoading(true)
+    setError('')
+    
+    try {
+      const res = await fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          onboardingData
+        })
+      })
+      
+      const data = await res.json()
+      
+      if (data.success) {
+        useAppStore.setState({ user: data.user })
+        if (data.tasks) setTasks(data.tasks)
+        completeOnboarding()
+        setSuccess(language === 'fr' ? 'Profil complété avec succès!' : 'Profile completed successfully!')
+      } else {
+        setError(data.error || (language === 'fr' 
+          ? 'Une erreur est survenue lors de la sauvegarde.' 
+          : 'An error occurred while saving.'))
+      }
+    } catch (e) {
+      console.error('Onboarding error', e)
+      setError(language === 'fr' 
+        ? 'Erreur de connexion. Veuillez réessayer.' 
+        : 'Connection error. Please try again.')
+    }
+    
+    setIsLoading(false)
+  }
+
+  // Task status update
+  const handleTaskUpdate = async (taskId: string, status: Task['status']) => {
+    updateTaskStatus(taskId, status)
+    try {
+      await fetch('/api/onboarding', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId, status })
+      })
+      setSuccess(language === 'fr' ? 'Tâche mise à jour!' : 'Task updated!')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (e) {
+      console.error('Task update error', e)
+    }
+  }
+
+  // Calculate progress
+  const completedTasks = tasks.filter(t => t.status === 'COMPLETED').length
+  const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0
+
+  // ==================== HYDRATION LOADING ====================
+  // Show loading while hydrating from localStorage to prevent flash
+  // Added fallback timeout to prevent infinite loading
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-lg shadow-red-500/30">
+            <MapPin className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-gray-500">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ==================== RENDER LANDING ====================
+  if (currentView === 'landing') {
+    return (
+      <div className="min-h-screen bg-gray-50 overflow-hidden">
+        {/* Background Pattern & Orbs */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-red-500/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
+        </div>
+
+        {/* Header */}
+        <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl z-50 border-b border-gray-100 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30">
+                <MapPin className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="rounded-xl gap-1.5" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
+                <Globe className="w-4 h-4" />
+                {language === 'fr' ? 'EN' : 'FR'}
+              </Button>
+              <Button className="rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/20" onClick={() => { setCurrentView('auth'); setAuthMode('signIn') }}>
+                {t('auth.signIn', language)}
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className="relative pt-32 pb-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-red-50 border border-red-100 px-4 py-2 mb-6">
+                  <Sparkles className="h-4 w-4 text-red-500" />
+                  <span className="text-sm font-medium text-red-700">
+                    {language === 'fr' ? 'Nouveau au Canada? On vous accompagne!' : 'New to Canada? We guide you!'}
+                  </span>
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">
+                  {language === 'fr' ? 'Votre nouveau départ' : 'Your new beginning'}
+                  <span className="block bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
+                    {language === 'fr' ? 'au Canada commence ici' : 'in Canada starts here'}
+                  </span>
+                </h1>
+                
+                <p className="text-lg text-gray-600 mb-8 max-w-xl leading-relaxed">
+                  {language === 'fr'
+                    ? 'NouveauCap vous guide à travers toutes les étapes de votre installation: immigration, emploi, santé, finance et plus encore.'
+                    : 'NouveauCap guides you through every step of your settlement: immigration, employment, health, finance and more.'}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" className="text-lg px-8 h-14 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-xl shadow-red-500/30 gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
+                    {t('auth.createAccount', language)}
+                    <ChevronRight className="w-5 h-5" />
+                  </Button>
+                  <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2 hover:bg-gray-50 gap-2" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
+                    <Globe className="w-5 h-5" />
+                    {language === 'fr' ? 'Continue in English' : 'Continuer en français'}
+                  </Button>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className="mt-12 flex items-center gap-6">
+                  <div className="flex -space-x-3">
+                    {[1,2,3,4,5].map(i => (
+                      <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                        {['JD', 'MK', 'SL', 'AR', 'PT'][i-1]}
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">+5,000 {language === 'fr' ? 'utilisateurs' : 'users'}</p>
+                    <p className="text-sm text-gray-500">{language === 'fr' ? 'nous font confiance' : 'trust us'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Illustration / Dashboard Preview */}
+              <div className="relative hidden lg:block">
+                <div className="relative rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-1 shadow-2xl shadow-red-500/30">
+                  <div className="rounded-[22px] bg-white p-6">
+                    {/* Mini Dashboard Preview */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="h-6 w-24 rounded-lg bg-gray-100" />
+                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                          <User className="h-4 w-4 text-red-600" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {[
+                          { icon: Shield, label: 'Immigration', value: '75%', color: 'from-purple-500 to-pink-500' },
+                          { icon: Briefcase, label: 'Emploi', value: '3', color: 'from-green-500 to-emerald-500' },
+                          { icon: Heart, label: 'Santé', value: 'Active', color: 'from-red-500 to-rose-500' },
+                          { icon: Wallet, label: 'Finance', value: 'Setup', color: 'from-amber-500 to-orange-500' },
+                        ].map((item, i) => (
+                          <div key={i} className="rounded-xl bg-gray-50 p-3">
+                            <div className={`inline-flex rounded-lg bg-gradient-to-br ${item.color} p-1.5 mb-2 shadow-md`}>
+                              <item.icon className="h-3 w-3 text-white" />
+                            </div>
+                            <p className="text-xs text-gray-500">{item.label}</p>
+                            <p className="font-semibold text-gray-900">{item.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="h-16 rounded-xl bg-gray-50 flex items-center px-4 gap-3">
+                        <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</p>
+                          <p className="text-xs text-gray-500">{language === 'fr' ? 'Demande NAS envoyée' : 'SIN application sent'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Cards */}
+                <div className="absolute -left-8 top-1/4 rounded-xl bg-white p-3 shadow-xl border border-gray-100 animate-bounce" style={{ animationDuration: '3s' }}>
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium">{language === 'fr' ? 'CRS: 468' : 'CRS: 468'}</p>
+                      <p className="text-[10px] text-green-600">+15 {language === 'fr' ? 'points' : 'points'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute -right-4 bottom-1/3 rounded-xl bg-white p-3 shadow-xl border border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <Shield className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium">{language === 'fr' ? 'RP Éligible' : 'PR Eligible'}</p>
+                      <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Express Entry' : 'Express Entry'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">
+                {language === 'fr' ? 'Tout ce dont vous avez besoin' : 'Everything you need'}
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                {language === 'fr' 
+                  ? 'Une plateforme complète pour vous accompagner à chaque étape de votre installation'
+                  : 'A complete platform to accompany you at every step of your settlement'}
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { icon: Shield, title: language === 'fr' ? 'Immigration' : 'Immigration', desc: language === 'fr' ? 'Suivi de permis, simulateurs CRS, alertes de dates limites' : 'Permit tracking, CRS simulators, deadline alerts', color: 'from-purple-500 to-pink-500', badge: language === 'fr' ? 'Populaire' : 'Popular' },
+                { icon: Briefcase, title: language === 'fr' ? 'Emploi' : 'Employment', desc: language === 'fr' ? 'Optimisation CV IA, préparation entretiens, offres ciblées' : 'AI CV optimization, interview prep, targeted offers', color: 'from-green-500 to-emerald-500' },
+                { icon: Building, title: language === 'fr' ? 'Logement' : 'Housing', desc: language === 'fr' ? 'Guides locatifs, calculateur budget, conseils premiers locataires' : 'Rental guides, budget calculator, first renter tips', color: 'from-blue-500 to-cyan-500' },
+                { icon: Wallet, title: language === 'fr' ? 'Finances' : 'Finance', desc: language === 'fr' ? 'Comparateur bancaire, guide du crédit, outils budgétaires' : 'Bank comparator, credit guide, budgeting tools', color: 'from-amber-500 to-orange-500' },
+                { icon: Heart, title: language === 'fr' ? 'Santé' : 'Health', desc: language === 'fr' ? 'Assurance maladie, annuaire cliniques, rendez-vous médicaux' : 'Health insurance, clinic directory, medical appointments', color: 'from-red-500 to-rose-500', badge: language === 'fr' ? 'Nouveau' : 'New' },
+                { icon: Users, title: language === 'fr' ? 'Communauté' : 'Community', desc: language === 'fr' ? 'Forum, événements locaux, programme de mentorat' : 'Forum, local events, mentorship program', color: 'from-indigo-500 to-violet-500' },
+              ].map((feature, i) => (
+                <div 
+                  key={i} 
+                  className="group relative overflow-hidden rounded-2xl bg-white p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                >
+                  {/* Background Gradient on Hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`} />
+                  
+                  <div className={`w-12 h-12 rounded-xl mb-4 bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
+                    {feature.badge && (
+                      <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-medium">
+                        {feature.badge}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+                  
+                  <div className="mt-4 flex items-center text-sm font-medium text-gray-400 transition-colors group-hover:text-red-500">
+                    {language === 'fr' ? 'Explorer' : 'Explore'}
+                    <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-8 md:p-12 shadow-2xl shadow-red-500/30">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+              
+              <div className="relative text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  {language === 'fr' ? 'Prêt à commencer votre aventure?' : 'Ready to start your adventure?'}
+                </h2>
+                <p className="text-white/80 mb-8 max-w-xl mx-auto">
+                  {language === 'fr' 
+                    ? 'Rejoignez des milliers de nouveaux arrivants qui ont fait confiance à NouveauCap pour leur installation.'
+                    : 'Join thousands of newcomers who trusted NouveauCap for their settlement.'}
+                </p>
+                <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 text-lg px-8 h-14 rounded-xl shadow-xl gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
+                  {t('auth.createAccount', language)}
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-8 px-4 border-t bg-white">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-md shadow-red-500/30">
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+            </div>
+            <p className="text-gray-500 text-sm">© 2025 NouveauCap. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+            <div className="flex items-center gap-4 text-gray-500 text-sm">
+              <a href="#" className="hover:text-gray-900 transition-colors">{language === 'fr' ? 'Confidentialité' : 'Privacy'}</a>
+              <a href="#" className="hover:text-gray-900 transition-colors">{language === 'fr' ? 'Conditions' : 'Terms'}</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    )
+  }
+
+  // ==================== RENDER AUTH ====================
+  if (currentView === 'auth') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+        <Card className="w-full max-w-md shadow-2xl border-0">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/30">
+              <Plane className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl">
+              {authMode === 'signIn' ? t('auth.welcomeBack', language) : t('auth.joinUs', language)}
+            </CardTitle>
+            <CardDescription>
+              {authMode === 'signIn' 
+                ? (language === 'fr' ? 'Connectez-vous à votre compte' : 'Sign in to your account')
+                : (language === 'fr' ? 'Créez votre compte gratuit' : 'Create your free account')}
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="w-4 h-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            {authMode === 'signUp' && (
+              <div className="space-y-2">
+                <Label htmlFor="name">{language === 'fr' ? 'Nom complet' : 'Full name'}</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jean Dupont" />
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('auth.email', language)}</Label>
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jean@exemple.com" />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('auth.password', language)}</Label>
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            </div>
+            
+            <Button className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30" onClick={handleAuth} disabled={isLoading}>
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {authMode === 'signIn' ? t('auth.signIn', language) : t('auth.signUp', language)}
+            </Button>
+            
+            <div className="text-center text-sm text-gray-500">
+              {authMode === 'signIn' ? (
+                <>
+                  {t('auth.noAccount', language)}{' '}
+                  <Button variant="link" className="p-0 h-auto" onClick={() => setAuthMode('signUp')}>
+                    {t('auth.createAccount', language)}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {t('auth.hasAccount', language)}{' '}
+                  <Button variant="link" className="p-0 h-auto" onClick={() => setAuthMode('signIn')}>
+                    {t('auth.signIn', language)}
+                  </Button>
+                </>
+              )}
+            </div>
+            
+            <Separator />
+            
+            <Button variant="outline" className="w-full" onClick={() => setCurrentView('landing')}>
+              {t('common.back', language)}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // ==================== RENDER ONBOARDING ====================
+  if (currentView === 'onboarding') {
+    // Dynamic steps based on immigration status
+    const isForeignStudent = onboardingData.immigrationStatus === 'FOREIGN_STUDENT'
+    const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(onboardingData.immigrationStatus || '')
+    
+    // Foreign students have an extra step for country of origin
+    // Flow: Status -> Country (students only) -> Province -> Arrival -> Documents -> Sector -> Language -> Family
+    const totalSteps = isForeignStudent ? 8 : isTemporaryResident ? 7 : 6
+    const progressPercent = ((onboardingStep + 1) / totalSteps) * 100
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+        <div className="max-w-2xl mx-auto pt-8">
+          <div className="mb-8">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>{t('onboarding.step', language)} {onboardingStep + 1} {t('onboarding.of', language)} {totalSteps}</span>
+              <span>{Math.round(progressPercent)}%</span>
+            </div>
+            <Progress value={progressPercent} className="h-2" />
+          </div>
+
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl text-center">
+                {onboardingStep === 0 && t('onboarding.status.title', language)}
+                {onboardingStep === 1 && isForeignStudent && (language === 'fr' ? '🌍 Votre pays d\'origine' : '🌍 Your country of origin')}
+                {onboardingStep === 1 && !isForeignStudent && t('onboarding.province.title', language)}
+                {onboardingStep === 2 && isForeignStudent && t('onboarding.province.title', language)}
+                {onboardingStep === 2 && !isForeignStudent && t('onboarding.arrival.title', language)}
+                {onboardingStep === 3 && isForeignStudent && t('onboarding.arrival.title', language)}
+                {onboardingStep === 3 && !isForeignStudent && isTemporaryResident && (language === 'fr' ? '📅 Dates d\'expiration de vos documents' : '📅 Document expiry dates')}
+                {onboardingStep === 3 && !isTemporaryResident && t('onboarding.sector.title', language)}
+                {onboardingStep === 4 && isForeignStudent && (language === 'fr' ? '📅 Dates d\'expiration de vos documents' : '📅 Document expiry dates')}
+                {onboardingStep === 4 && !isForeignStudent && isTemporaryResident && t('onboarding.sector.title', language)}
+                {onboardingStep === 4 && !isTemporaryResident && t('onboarding.language.title', language)}
+                {onboardingStep === 5 && isForeignStudent && t('onboarding.sector.title', language)}
+                {onboardingStep === 5 && !isForeignStudent && isTemporaryResident && t('onboarding.language.title', language)}
+                {onboardingStep === 5 && !isTemporaryResident && t('onboarding.family.title', language)}
+                {onboardingStep === 6 && isForeignStudent && t('onboarding.language.title', language)}
+                {onboardingStep === 6 && !isForeignStudent && isTemporaryResident && t('onboarding.family.title', language)}
+                {onboardingStep === 7 && isForeignStudent && t('onboarding.family.title', language)}
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
+              {/* Error Alert */}
+              {error && (
+                <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-2">
+                  <AlertCircle className="w-4 h-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              {/* Success Alert */}
+              {success && (
+                <Alert className="bg-green-50 border-green-200 text-green-800 animate-in fade-in slide-in-from-top-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <AlertDescription>{success}</AlertDescription>
+                </Alert>
+              )}
+              
+              {onboardingStep === 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {immigrationStatuses.map((status) => {
+                    const Icon = status.icon
+                    const isSelected = onboardingData.immigrationStatus === status.code
+                    const label = t(`status.${status.code}`, language)
+                    
+                    return (
+                      <Card 
+                        key={status.code}
+                        className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950' : ''}`}
+                        onClick={() => setOnboardingData({ immigrationStatus: status.code as ImmigrationStatus })}
+                      >
+                        <CardContent className="p-4 flex items-center gap-3">
+                          <div className={`w-12 h-12 ${status.color} rounded-xl flex items-center justify-center`}>
+                            <Icon className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{label}</p>
+                          </div>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-500 ml-auto" />}
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Country of Origin - Step 1 for Foreign Students only */}
+              {onboardingStep === 1 && isForeignStudent && (
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>{language === 'fr' ? '💡 Pourquoi cette question?' : '💡 Why this question?'}</strong>
+                      <br />
+                      {language === 'fr' 
+                        ? 'Votre pays d\'origine détermine votre admissibilité à l\'assurance maladie provinciale (ex: RAMQ au Québec pour les étudiants français).'
+                        : 'Your country of origin determines your eligibility for provincial health insurance (e.g., RAMQ in Quebec for French students).'}
+                    </p>
+                  </div>
+                  
+                  {/* Countries with Quebec Agreement */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                      {language === 'fr' ? '🏥 Pays avec entente de sécurité sociale (RAMQ éligible au Québec):' : '🏥 Countries with social security agreement (RAMQ eligible in Quebec):'}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {countries.filter(c => c.quebecAgreement).map((country) => {
+                        const isSelected = onboardingData.countryOfOrigin === country.code
+                        return (
+                          <Button
+                            key={country.code}
+                            variant={isSelected ? 'default' : 'outline'}
+                            className={`h-auto py-2 justify-start ${isSelected ? 'bg-green-500 hover:bg-green-600' : ''}`}
+                            onClick={() => setOnboardingData({ countryOfOrigin: country.code })}
+                          >
+                            <span className="mr-2">{country.flag}</span>
+                            <span className="text-sm">{country.name}</span>
+                            {isSelected && <CheckCircle2 className="w-4 h-4 ml-auto" />}
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  
+                  {/* Other Countries */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      {language === 'fr' ? 'Autres pays:' : 'Other countries:'}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[200px] overflow-y-auto">
+                      {countries.filter(c => !c.quebecAgreement).map((country) => {
+                        const isSelected = onboardingData.countryOfOrigin === country.code
+                        return (
+                          <Button
+                            key={country.code}
+                            variant={isSelected ? 'default' : 'outline'}
+                            className="h-auto py-2 justify-start text-left"
+                            onClick={() => setOnboardingData({ countryOfOrigin: country.code })}
+                          >
+                            <span className="mr-2">{country.flag}</span>
+                            <span className="text-sm truncate">{country.name}</span>
+                            {isSelected && <CheckCircle2 className="w-4 h-4 ml-auto flex-shrink-0" />}
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Province - Step 1 for non-students, Step 2 for foreign students */}
+              {((onboardingStep === 1 && !isForeignStudent) || (onboardingStep === 2 && isForeignStudent)) && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {provinces.map((province) => {
+                    const isSelected = onboardingData.province === province.code
+                    return (
+                      <Button
+                        key={province.code}
+                        variant={isSelected ? 'default' : 'outline'}
+                        className="h-auto py-3"
+                        onClick={() => setOnboardingData({ province: province.code })}
+                      >
+                        {language === 'fr' ? province.name : province.nameEn}
+                        {isSelected && <CheckCircle2 className="w-4 h-4 ml-2" />}
+                      </Button>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Arrival Date - Step 2 for non-students, Step 3 for foreign students */}
+              {((onboardingStep === 2 && !isForeignStudent) || (onboardingStep === 3 && isForeignStudent)) && (
+                <div className="space-y-4">
+                  <Input
+                    type="date"
+                    value={onboardingData.arrivalDate || ''}
+                    onChange={(e) => setOnboardingData({ arrivalDate: e.target.value })}
+                    className="text-lg py-6"
+                  />
+                </div>
+              )}
+
+              {/* Document Expiry - Step 3 for non-student temp residents, Step 4 for foreign students */}
+              {((onboardingStep === 3 && isTemporaryResident && !isForeignStudent) || (onboardingStep === 4 && isForeignStudent)) && (
+                <div className="space-y-6">
+                  <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800">
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      <strong>{language === 'fr' ? '💡 Pourquoi ces dates?' : '💡 Why these dates?'}</strong>
+                      <br />
+                      {language === 'fr' 
+                        ? 'Nous vous enverrons des rappels avant l\'expiration de vos documents pour que vous puissiez les renouveler à temps.'
+                        : 'We\'ll send you reminders before your documents expire so you can renew them on time.'}
+                    </p>
+                  </div>
+                  
+                  {/* Study Permit Expiry */}
+                  {onboardingData.immigrationStatus === 'FOREIGN_STUDENT' && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4 text-blue-500" />
+                        {language === 'fr' ? 'Date d\'expiration du permis d\'études' : 'Study permit expiry date'}
+                      </Label>
+                      <Input
+                        type="date"
+                        value={onboardingData.studyPermitExpiry || ''}
+                        onChange={(e) => setOnboardingData({ studyPermitExpiry: e.target.value })}
+                        className="text-lg py-4"
+                      />
+                      <p className="text-xs text-gray-500">
+                        {language === 'fr' 
+                          ? '📅 Renouvellement recommandé 90 jours avant l\'expiration'
+                          : '📅 Renewal recommended 90 days before expiry'}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Work Permit Expiry */}
+                  {(onboardingData.immigrationStatus === 'OPEN_WORK_PERMIT' || onboardingData.immigrationStatus === 'CLOSED_WORK_PERMIT') && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-purple-500" />
+                        {language === 'fr' ? 'Date d\'expiration du permis de travail' : 'Work permit expiry date'}
+                      </Label>
+                      <Input
+                        type="date"
+                        value={onboardingData.workPermitExpiry || ''}
+                        onChange={(e) => setOnboardingData({ workPermitExpiry: e.target.value })}
+                        className="text-lg py-4"
+                      />
+                      <p className="text-xs text-gray-500">
+                        {language === 'fr' 
+                          ? '📅 Renouvellement recommandé 90 jours avant l\'expiration'
+                          : '📅 Renewal recommended 90 days before expiry'}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Passport Expiry */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-green-500" />
+                      {language === 'fr' ? 'Date d\'expiration du passeport' : 'Passport expiry date'}
+                    </Label>
+                    <Input
+                      type="date"
+                      value={onboardingData.passportExpiry || ''}
+                      onChange={(e) => setOnboardingData({ passportExpiry: e.target.value })}
+                      className="text-lg py-4"
+                    />
+                    <p className="text-xs text-gray-500">
+                      {language === 'fr' 
+                        ? '🛂 Un passeport valide est requis pour toute demande de permis'
+                        : '🛂 A valid passport is required for all permit applications'}
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>{language === 'fr' ? '⚠️ Statut implicite' : '⚠️ Implied status'}</strong>
+                      <br />
+                      {language === 'fr' 
+                        ? 'Si vous appliquez avant l\'expiration, vous pouvez continuer à travailler/étudier pendant le traitement de votre demande.'
+                        : 'If you apply before expiry, you can continue to work/study while your application is being processed.'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Professional Sector - Dynamic position */}
+              {((isForeignStudent && onboardingStep === 5) || (isTemporaryResident && !isForeignStudent && onboardingStep === 4) || (!isTemporaryResident && onboardingStep === 3)) && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {sectors.map((sector) => {
+                    const isSelected = onboardingData.professionalSector === sector.code
+                    return (
+                      <Button
+                        key={sector.code}
+                        variant={isSelected ? 'default' : 'outline'}
+                        className="h-auto py-3"
+                        onClick={() => setOnboardingData({ professionalSector: sector.code })}
+                      >
+                        {language === 'fr' ? sector.label : sector.labelEn}
+                        {isSelected && <CheckCircle2 className="w-4 h-4 ml-2" />}
+                      </Button>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Language - Dynamic position */}
+              {((isForeignStudent && onboardingStep === 6) || (isTemporaryResident && !isForeignStudent && onboardingStep === 5) || (!isTemporaryResident && onboardingStep === 4)) && (
+                <div className="flex gap-4 justify-center">
+                  {['fr', 'en'].map((lang) => {
+                    const isSelected = onboardingData.preferredLanguage === lang
+                    return (
+                      <Card
+                        key={lang}
+                        className={`cursor-pointer transition-all hover:shadow-md flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                        onClick={() => {
+                          setOnboardingData({ preferredLanguage: lang as Language })
+                          setLanguage(lang as Language)
+                        }}
+                      >
+                        <CardContent className="p-6 text-center">
+                          <Globe className="w-12 h-12 mx-auto mb-3 text-blue-500" />
+                          <p className="font-medium text-lg">{lang === 'fr' ? 'Français' : 'English'}</p>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-500 mt-2 mx-auto" />}
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Family Status - Dynamic position */}
+              {((isForeignStudent && onboardingStep === 7) || (isTemporaryResident && !isForeignStudent && onboardingStep === 6) || (!isTemporaryResident && onboardingStep === 5)) && (
+                <div className="flex flex-col gap-3">
+                  {[
+                    { code: 'SINGLE', label: language === 'fr' ? 'Célibataire' : 'Single' },
+                    { code: 'COUPLE', label: language === 'fr' ? 'En couple' : 'In a relationship' },
+                    { code: 'FAMILY_WITH_CHILDREN', label: language === 'fr' ? 'Famille avec enfants' : 'Family with children' },
+                  ].map((status) => {
+                    const isSelected = onboardingData.familyStatus === status.code
+                    return (
+                      <Button
+                        key={status.code}
+                        variant={isSelected ? 'default' : 'outline'}
+                        className="h-auto py-4 justify-start px-6"
+                        onClick={() => setOnboardingData({ familyStatus: status.code as 'SINGLE' | 'COUPLE' | 'FAMILY_WITH_CHILDREN' })}
+                      >
+                        {status.label}
+                        {isSelected && <CheckCircle2 className="w-5 h-5 ml-auto" />}
+                      </Button>
+                    )
+                  })}
+                </div>
+              )}
+
+              <div className="flex justify-between pt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setOnboardingStep(Math.max(0, onboardingStep - 1))}
+                  disabled={onboardingStep === 0}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  {t('common.previous', language)}
+                </Button>
+                
+                {onboardingStep < totalSteps - 1 ? (
+                  <Button
+                    onClick={() => setOnboardingStep(onboardingStep + 1)}
+                    disabled={
+                      (onboardingStep === 0 && !onboardingData.immigrationStatus) ||
+                      (onboardingStep === 1 && !onboardingData.province)
+                    }
+                  >
+                    {t('common.next', language)}
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Button onClick={handleOnboardingComplete} disabled={isLoading}>
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    {t('onboarding.complete.startExploring', language)}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  // ==================== RENDER DASHBOARD ====================
+  if (currentView === 'dashboard') {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Mobile Header */}
+        <header className="lg:hidden fixed top-0 w-full bg-white/95 backdrop-blur-xl z-50 border-b border-gray-200 shadow-sm">
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30">
+                <MapPin className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
+                <Globe className="w-5 h-5 text-gray-600" />
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" onClick={() => setMobileMenuOpen(false)}>
+            <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-2xl animate-slide-in" onClick={e => e.stopPropagation()}>
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{user?.name || user?.email}</p>
+                    <p className="text-sm text-gray-500">{user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-2 space-y-1">
+                <button onClick={() => { setActiveModule(null); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <Home className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium text-gray-700">{t('dashboard.title', language)}</span>
+                </button>
+                {modules.map(m => {
+                  const Icon = m.icon
+                  return (
+                    <button key={m.id} onClick={() => { setActiveModule(m.id); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+                      <Icon className={`w-5 h-5 ${m.color}`} />
+                      <span className="font-medium text-gray-700">{t(`modules.${m.id}.title`, language)}</span>
+                    </button>
+                  )
+                })}
+                <Separator className="my-2" />
+                <button onClick={() => { setActiveModule('profile'); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium text-gray-700">{language === 'fr' ? 'Mon Profil' : 'My Profile'}</span>
+                </button>
+                <Separator className="my-2" />
+                <button onClick={() => { logout(); setCurrentView('landing') }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-50 transition-colors text-red-600">
+                  <LogOut className="w-5 h-5" />
+                  <span className="font-medium">{t('auth.signOut', language)}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex">
+          {/* Desktop Sidebar - Nouveau Design */}
+          <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-200 min-h-screen fixed">
+            {/* Logo Header */}
+            <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
+              <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30 shrink-0">
+                <MapPin className="w-6 h-6 text-white" />
+              </div>
+              <div className="overflow-hidden">
+                <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+                <p className="text-xs text-gray-500 truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
+              </div>
+            </div>
+            
+            {/* Navigation */}
+            <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+              {/* Main Section */}
+              <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{language === 'fr' ? 'Principal' : 'Main'}</p>
+              
+              <button
+                onClick={() => setActiveModule(null)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === null ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+              >
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}>
+                  <Home className="w-5 h-5" />
+                </div>
+                <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-gray-900' : 'text-gray-600'}`}>
+                  {t('dashboard.title', language)}
+                </span>
+              </button>
+              
+              {modules.filter(m => m.id !== 'admin').map(m => {
+                const Icon = m.icon
+                const gradients: Record<string, string> = {
+                  'province': 'from-cyan-500 to-teal-500',
+                  'immigration': 'from-purple-500 to-pink-500',
+                  'employment': 'from-green-500 to-emerald-500',
+                  'housing': 'from-violet-500 to-purple-500',
+                  'finance': 'from-amber-500 to-orange-500',
+                  'health': 'from-red-500 to-rose-500',
+                  'community': 'from-indigo-500 to-violet-500',
+                }
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveModule(m.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === m.id ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+                  >
+                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-gradient-to-br ${gradients[m.id] || 'from-gray-500 to-gray-600'} text-white shadow-lg` : 'bg-gray-100 text-gray-600'}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-gray-900' : 'text-gray-600'}`}>
+                      {t(`modules.${m.id}.title`, language)}
+                    </span>
+                  </button>
+                )
+              })}
+
+              {/* Tools Section */}
+              <p className="px-3 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{language === 'fr' ? 'Outils' : 'Tools'}</p>
+              
+              <button
+                onClick={() => setActiveModule('admin')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === 'admin' ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+              >
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-gradient-to-br from-gray-600 to-gray-700 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}>
+                  <Settings className="w-5 h-5" />
+                </div>
+                <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-gray-900' : 'text-gray-600'}`}>
+                  {t('modules.admin.title', language)}
+                </span>
+              </button>
+            </nav>
+            
+            {/* Premium Banner */}
+            {user?.subscriptionTier === 'FREE' && (
+              <div className="mx-3 mb-3 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Crown className="w-5 h-5 text-amber-500" />
+                  <span className="font-semibold text-amber-900">{language === 'fr' ? 'Passez Premium' : 'Go Premium'}</span>
+                </div>
+                <p className="text-xs text-amber-700 mb-3">
+                  {language === 'fr' ? 'Accédez à tous les outils et support prioritaire' : 'Access all tools and priority support'}
+                </p>
+                <Button size="sm" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                  {language === 'fr' ? 'Découvrir' : 'Discover'}
+                </Button>
+              </div>
+            )}
+            
+            {/* User Profile Footer */}
+            <div className="p-3 border-t border-gray-100">
+              <div
+                onClick={() => setActiveModule('profile')}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-gray-50 cursor-pointer ${activeModule === 'profile' ? 'bg-gray-50' : ''}`}
+              >
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shrink-0 flex items-center justify-center text-white font-semibold shadow-md">
+                  {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{user?.name || user?.email}</p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-gray-500">
+                      {user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}
+                    </span>
+                    {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-amber-500" />}
+                  </div>
+                </div>
+                <button 
+                  className="shrink-0 p-2 rounded-lg hover:bg-red-50 transition-colors" 
+                  onClick={(e) => { e.stopPropagation(); logout(); setCurrentView('landing') }}
+                  title={t('auth.signOut', language)}
+                >
+                  <LogOut className="w-4 h-4 text-gray-400" />
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 lg:ml-72 pt-16 lg:pt-0">
+            {success && (
+              <div className="fixed top-20 right-4 z-50">
+                <Alert className="bg-green-50 border-green-200">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  <AlertDescription className="text-green-700">{success}</AlertDescription>
+                </Alert>
+              </div>
+            )}
+            
+            {/* Dashboard Home */}
+            {activeModule === null && (
+              <DashboardHome
+                language={language}
+                user={user}
+                tasks={tasks}
+                progress={progress}
+                completedTasks={completedTasks}
+                onTaskClick={(task) => { setSelectedTask(task); setTaskModalOpen(true) }}
+                onTaskUpdate={handleTaskUpdate}
+                onModuleClick={setActiveModule}
+              />
+            )}
+
+            {/* Province Module */}
+            {activeModule === 'province' && (
+              <ProvinceModule
+                language={language}
+                user={user}
+              />
+            )}
+
+            {/* Immigration Module */}
+            {activeModule === 'immigration' && (
+              <ImmigrationModule
+                language={language}
+                user={user}
+                tasks={tasks}
+                onTaskUpdate={handleTaskUpdate}
+              />
+            )}
+
+            {/* Employment Module */}
+            {activeModule === 'employment' && (
+              <EmploymentModule
+                language={language}
+                user={user}
+              />
+            )}
+
+            {/* Housing Module */}
+            {activeModule === 'housing' && (
+              <HousingModule
+                language={language}
+                user={user}
+              />
+            )}
+
+            {/* Finance Module */}
+            {activeModule === 'finance' && (
+              <FinanceModule
+                language={language}
+                user={user}
+              />
+            )}
+
+            {/* Health Module */}
+            {activeModule === 'health' && (
+              <HealthModule
+                language={language}
+                user={user}
+                onNavigate={setActiveModule}
+              />
+            )}
+
+            {/* Community Module */}
+            {activeModule === 'community' && (
+              <CommunityModule
+                language={language}
+                user={user}
+              />
+            )}
+
+            {/* Admin Module */}
+            {activeModule === 'admin' && (
+              <AdminModule language={language} />
+            )}
+
+            {/* Profile Module */}
+            {activeModule === 'profile' && (
+              <ProfileModule
+                language={language}
+                user={user}
+                onUpdate={async (updatedUser) => {
+                  // Update user in store immediately for UI responsiveness
+                  useAppStore.setState({ user: updatedUser })
+                  setSuccess(language === 'fr' ? 'Profil mis à jour! Rechargement...' : 'Profile updated! Reloading...')
+                  
+                  // Reload all data from database to ensure consistency
+                  try {
+                    // 1. Reload user profile
+                    const profileRes = await fetch(`/api/user-data?action=get-profile&userId=${updatedUser.id}`)
+                    const profileData = await profileRes.json()
+                    
+                    // 2. Refresh task descriptions (in case they changed based on new profile)
+                    await fetch('/api/tasks/refresh', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ userId: updatedUser.id })
+                    })
+                    
+                    // 3. Reload tasks
+                    const tasksRes = await fetch(`/api/onboarding?userId=${updatedUser.id}`)
+                    const tasksData = await tasksRes.json()
+                    
+                    // 4. Update store with fresh data
+                    if (profileData.user) {
+                      useAppStore.setState({ user: profileData.user })
+                    }
+                    if (tasksData.tasks) {
+                      setTasks(tasksData.tasks)
+                    }
+                    
+                    setSuccess(language === 'fr' ? '✅ Profil et données rechargés avec succès!' : '✅ Profile and data reloaded successfully!')
+                  } catch (e) {
+                    console.error('Failed to reload data after profile update', e)
+                  }
+                  
+                  setTimeout(() => setSuccess(''), 3000)
+                }}
+              />
+            )}
+          </main>
+        </div>
+
+        {/* Task Detail Modal */}
+        <Dialog open={taskModalOpen} onOpenChange={setTaskModalOpen}>
+          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  selectedTask?.status === 'COMPLETED' 
+                    ? 'bg-green-500' 
+                    : selectedTask?.priority === 'HIGH' 
+                    ? 'bg-red-500' 
+                    : 'bg-blue-500'
+                }`}>
+                  {selectedTask?.status === 'COMPLETED' 
+                    ? <CheckCircle2 className="w-5 h-5 text-white" />
+                    : <ListChecks className="w-5 h-5 text-white" />
+                  }
+                </div>
+                <div>
+                  <DialogTitle className="text-xl">
+                    {language === 'fr' ? selectedTask?.title : (selectedTask?.titleEn || selectedTask?.title)}
+                  </DialogTitle>
+                  <Badge className="mt-1" variant="outline">{t(`modules.${selectedTask?.category?.toLowerCase()}.title`, language)}</Badge>
+                </div>
+              </div>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {/* Task Type Banner */}
+              <div className={`p-3 rounded-lg border ${
+                selectedTask?.status === 'COMPLETED' 
+                  ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800' 
+                  : 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
+              }`}>
+                <p className={`text-sm font-medium ${
+                  selectedTask?.status === 'COMPLETED' 
+                    ? 'text-green-700 dark:text-green-300' 
+                    : 'text-blue-700 dark:text-blue-300'
+                }`}>
+                  {selectedTask?.status === 'COMPLETED' 
+                    ? (language === 'fr' ? '✅ Cette tâche est complétée!' : '✅ This task is completed!')
+                    : (language === 'fr' 
+                      ? '📌 Action à effectuer - Consultez les informations ci-dessous, puis marquez comme terminé une fois accompli.'
+                      : '📌 Action to complete - Review the information below, then mark as done once completed.')
+                  }
+                </p>
+              </div>
+
+              {/* Description */}
+              {(selectedTask?.description || selectedTask?.descriptionEn) ? (
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-sans">
+                    {language === 'fr' 
+                      ? selectedTask?.description 
+                      : (selectedTask?.descriptionEn || selectedTask?.description)}
+                  </pre>
+                </div>
+              ) : (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    {language === 'fr' 
+                      ? '📋 Aucune description détaillée pour cette tâche. Complétez l\'action et marquez-la comme terminée.'
+                      : '📋 No detailed description for this task. Complete the action and mark it as done.'}
+                  </p>
+                </div>
+              )}
+              
+              {/* Source Link */}
+              {selectedTask?.source && (
+                <a 
+                  href={selectedTask.source} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-2 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="font-medium">{language === 'fr' ? 'Accéder à la source officielle' : 'Access official source'}</span>
+                </a>
+              )}
+              
+              {/* Priority & Required Badges */}
+              <div className="flex flex-wrap gap-2">
+                <Badge variant={selectedTask?.priority === 'HIGH' ? 'destructive' : selectedTask?.priority === 'MEDIUM' ? 'default' : 'secondary'}>
+                  {selectedTask?.priority === 'HIGH' ? (language === 'fr' ? '🔥 Haute priorité' : '🔥 High priority') : 
+                   selectedTask?.priority === 'MEDIUM' ? (language === 'fr' ? '⚡ Priorité moyenne' : '⚡ Medium priority') :
+                   (language === 'fr' ? '📋 Basse priorité' : '📋 Low priority')}
+                </Badge>
+                {selectedTask?.isRequired && (
+                  <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">
+                    {language === 'fr' ? '⚠️ Obligatoire' : '⚠️ Required'}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Due Date */}
+              {selectedTask?.dueDate && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    {language === 'fr' ? 'Échéance: ' : 'Due: '}
+                    {new Date(selectedTask.dueDate).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-2">
+              {selectedTask?.status !== 'COMPLETED' && (
+                <Button 
+                  onClick={() => { handleTaskUpdate(selectedTask!.id, 'COMPLETED'); setTaskModalOpen(false) }}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Marquer comme terminé' : 'Mark as completed'}
+                </Button>
+              )}
+              {selectedTask?.status === 'COMPLETED' && (
+                <div className="flex items-center gap-2 text-green-600 p-2">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="font-medium">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</span>
+                </div>
+              )}
+              <Button variant="outline" onClick={() => setTaskModalOpen(false)}>
+                {t('common.close', language)}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    )
+  }
+
+  return null
+}
+
+// ==================== DASHBOARD HOME COMPONENT ====================
+function DashboardHome({ language, user, tasks, progress, completedTasks, onTaskClick, onTaskUpdate, onModuleClick }: {
+  language: Language
+  user: any
+  tasks: Task[]
+  progress: number
+  completedTasks: number
+  onTaskClick: (task: Task) => void
+  onTaskUpdate: (taskId: string, status: Task['status']) => void
+  onModuleClick: (module: string | null) => void
+}) {
+  // Check if user has any permit expiry dates (temporary resident)
+  const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus)
+  const hasPermitDates = user?.studyPermitExpiry || user?.workPermitExpiry || user?.passportExpiry
+
+  return (
+    <div className="p-4 lg:p-8 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">
+            {t('dashboard.welcome', language)}, {user?.name?.split(' ')[0] || 'User'}!
+          </h1>
+          <p className="text-gray-500">{t('dashboard.progress', language)}: {completedTasks}/{tasks.length} {t('dashboard.tasksCompleted', language)}</p>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <Progress value={progress} className="flex-1 h-3" />
+            <span className="text-sm font-medium">{Math.round(progress)}%</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Permit Expiry Alerts - Show for temporary residents */}
+      {isTemporaryResident && hasPermitDates && (
+        <PermitExpiryAlerts language={language} user={user} />
+      )}
+
+      {/* Status & Province Info Card */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1">
+              {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? '🛡️ Résident Permanent' : '🛡️ Permanent Resident')}
+              {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? '🎓 Étudiant Étranger' : '🎓 Foreign Student')}
+              {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? '💼 Permis de Travail Ouvert' : '💼 Open Work Permit')}
+              {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? '🏢 Permis de Travail Fermé' : '🏢 Closed Work Permit')}
+            </Badge>
+            {user?.province && (
+              <Badge variant="outline" className="px-4 py-1">
+                📍 {language === 'fr' 
+                  ? provinces.find(p => p.code === user.province)?.name 
+                  : provinces.find(p => p.code === user.province)?.nameEn}
+              </Badge>
+            )}
+            {user?.arrivalDate && (
+              <span className="text-sm text-gray-500">
+                {language === 'fr' ? 'Arrivé le' : 'Arrived on'} {new Date(user.arrivalDate).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-CA')}
+              </span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {modules.map(m => {
+          const Icon = m.icon
+          const moduleTasks = tasks.filter(t => t.category === m.id.toUpperCase())
+          const completed = moduleTasks.filter(t => t.status === 'COMPLETED').length
+          
+          return (
+            <Card key={m.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onModuleClick(m.id)}>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 ${m.bgColor} rounded-lg flex items-center justify-center`}>
+                    <Icon className={`w-5 h-5 ${m.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">{t(`modules.${m.id}.title`, language)}</p>
+                    <p className="font-medium">{completed}/{moduleTasks.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      <div>
+        <h2 className="text-lg font-semibold mb-4">{t('dashboard.priorityActions', language)}</h2>
+        <div className="space-y-3">
+          {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').slice(0, 5).map(task => (
+            <Card key={task.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => onTaskClick(task)}>
+              <CardContent className="p-4 flex items-center gap-4">
+                <Checkbox
+                  checked={task.status === 'COMPLETED'}
+                  onCheckedChange={(checked) => {
+                    onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="flex-1">
+                  <p className="font-medium">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
+                  <Badge variant="outline" className="mt-1">{t(`modules.${task.category.toLowerCase()}.title`, language)}</Badge>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              </CardContent>
+            </Card>
+          ))}
+          
+          {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').length === 0 && (
+            <Card className="bg-green-50 dark:bg-green-950 border-green-200">
+              <CardContent className="p-4 text-center">
+                <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                <p>{language === 'fr' ? 'Toutes les tâches prioritaires sont complétées!' : 'All priority tasks are completed!'}</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* All Tasks by Category */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ListChecks className="w-5 h-5 text-blue-500" />
+            {language === 'fr' ? '📋 Toutes les tâches administratives' : '📋 All Administrative Tasks'}
+          </CardTitle>
+          <CardDescription>
+            {language === 'fr' 
+              ? `Tâches personnalisées pour votre statut (${user?.immigrationStatus === 'PERMANENT_RESIDENT' ? 'Résident Permanent' : user?.immigrationStatus === 'FOREIGN_STUDENT' ? 'Étudiant' : 'Travailleur'}) et votre province`
+              : `Tasks customized for your status and province`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {tasks.filter(t => t.status !== 'COMPLETED').map(task => (
+              <div 
+                key={task.id}
+                className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                onClick={() => onTaskClick(task)}
+              >
+                <Checkbox
+                  checked={task.status === 'COMPLETED'}
+                  onCheckedChange={(checked) => {
+                    onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="flex-1">
+                  <p className="font-medium text-sm">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-xs">
+                      {t(`modules.${task.category.toLowerCase()}.title`, language)}
+                    </Badge>
+                    {task.isRequired && (
+                      <Badge className="text-xs bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+                        {language === 'fr' ? 'Obligatoire' : 'Required'}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                {task.priority === 'HIGH' && (
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                )}
+              </div>
+            ))}
+            
+            {tasks.filter(t => t.status !== 'COMPLETED').length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <p className="font-medium">{language === 'fr' ? 'Toutes les tâches sont terminées!' : 'All tasks completed!'}</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {user?.subscriptionTier === 'FREE' && (
+        <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+          <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Crown className="w-12 h-12" />
+              <div>
+                <p className="font-bold text-lg">{language === 'fr' ? 'Passez à Premium' : 'Upgrade to Premium'}</p>
+                <p className="text-blue-100">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
+              </div>
+            </div>
+            <Button variant="secondary">
+              <Star className="w-4 h-4 mr-2" />
+              {t('subscription.choosePlan', language)}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}
+
+// ==================== PERMIT EXPIRY ALERTS COMPONENT ====================
+function PermitExpiryAlerts({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const now = new Date()
+  const alerts: Array<{
+    type: 'study' | 'work' | 'passport'
+    expiryDate: Date
+    daysUntil: number
+    status: 'critical' | 'urgent' | 'warning' | 'ok'
+  }> = []
+
+  // Calculate alerts for each permit type
+  if (user?.studyPermitExpiry) {
+    const expiryDate = new Date(user.studyPermitExpiry)
+    const daysUntil = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    const status = daysUntil <= 30 ? 'critical' : daysUntil <= 60 ? 'urgent' : daysUntil <= 90 ? 'warning' : 'ok'
+    alerts.push({ type: 'study', expiryDate, daysUntil, status })
+  }
+
+  if (user?.workPermitExpiry) {
+    const expiryDate = new Date(user.workPermitExpiry)
+    const daysUntil = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    const status = daysUntil <= 30 ? 'critical' : daysUntil <= 60 ? 'urgent' : daysUntil <= 90 ? 'warning' : 'ok'
+    alerts.push({ type: 'work', expiryDate, daysUntil, status })
+  }
+
+  if (user?.passportExpiry) {
+    const expiryDate = new Date(user.passportExpiry)
+    const daysUntil = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    const status = daysUntil <= 90 ? 'critical' : daysUntil <= 180 ? 'urgent' : daysUntil <= 365 ? 'warning' : 'ok'
+    alerts.push({ type: 'passport', expiryDate, daysUntil, status })
+  }
+
+  // Filter to show only relevant alerts (those within warning period or already expired)
+  const relevantAlerts = alerts.filter(a => a.daysUntil <= 90 || a.type === 'passport' && a.daysUntil <= 365)
+
+  if (relevantAlerts.length === 0) return null
+
+  const getAlertConfig = (alert: typeof alerts[0]) => {
+    const configs = {
+      study: {
+        icon: GraduationCap,
+        label: language === 'fr' ? 'Permis d\'études' : 'Study Permit',
+        renewalUrl: 'https://www.canada.ca/fr/immigration-refugis-citoyennete/services/demande/prolonger-permis-etudes.html',
+        fee: '$150 CAD'
+      },
+      work: {
+        icon: Briefcase,
+        label: language === 'fr' ? 'Permis de travail' : 'Work Permit',
+        renewalUrl: 'https://www.canada.ca/fr/immigration-refugis-citoyennete/services/travailler-canada/permis/pourquoi-prolonger.html',
+        fee: '$155 CAD'
+      },
+      passport: {
+        icon: FileText,
+        label: language === 'fr' ? 'Passeport' : 'Passport',
+        renewalUrl: '#',
+        fee: '-'
+      }
+    }
+    return configs[alert.type]
+  }
+
+  const getStatusConfig = (status: string) => {
+    const configs = {
+      critical: {
+        bg: 'bg-red-50 dark:bg-red-950/30',
+        border: 'border-red-200 dark:border-red-800',
+        icon: 'bg-red-500',
+        badge: 'bg-red-500 text-white',
+        text: 'text-red-800 dark:text-red-200'
+      },
+      urgent: {
+        bg: 'bg-orange-50 dark:bg-orange-950/30',
+        border: 'border-orange-200 dark:border-orange-800',
+        icon: 'bg-orange-500',
+        badge: 'bg-orange-500 text-white',
+        text: 'text-orange-800 dark:text-orange-200'
+      },
+      warning: {
+        bg: 'bg-yellow-50 dark:bg-yellow-950/30',
+        border: 'border-yellow-200 dark:border-yellow-800',
+        icon: 'bg-yellow-500',
+        badge: 'bg-yellow-500 text-white',
+        text: 'text-yellow-800 dark:text-yellow-200'
+      },
+      ok: {
+        bg: 'bg-green-50 dark:bg-green-950/30',
+        border: 'border-green-200 dark:border-green-800',
+        icon: 'bg-green-500',
+        badge: 'bg-green-500 text-white',
+        text: 'text-green-800 dark:text-green-200'
+      }
+    }
+    return configs[status as keyof typeof configs]
+  }
+
+  return (
+    <Card className="border-0 shadow-lg overflow-hidden">
+      <div className="p-4 bg-gradient-to-r from-red-500 to-orange-500">
+        <div className="flex items-center gap-2 text-white">
+          <AlertCircle className="w-5 h-5" />
+          <h3 className="font-semibold">
+            {language === 'fr' ? '⚠️ Alertes de renouvellement' : '⚠️ Renewal Alerts'}
+          </h3>
+        </div>
+        <p className="text-white/80 text-sm mt-1">
+          {language === 'fr' 
+            ? 'Vos documents nécessitent une action' 
+            : 'Your documents require action'}
+        </p>
+      </div>
+      
+      <CardContent className="p-4 space-y-3">
+        {relevantAlerts.map((alert, index) => {
+          const config = getAlertConfig(alert)
+          const statusConfig = getStatusConfig(alert.status)
+          const Icon = config.icon
+
+          return (
+            <div 
+              key={index}
+              className={`p-4 rounded-xl border ${statusConfig.bg} ${statusConfig.border} transition-all hover:shadow-md`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 ${statusConfig.icon} rounded-xl flex items-center justify-center`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-medium">{config.label}</p>
+                    <Badge className={statusConfig.badge}>
+                      {alert.daysUntil > 0 
+                        ? `${alert.daysUntil} ${language === 'fr' ? 'jours' : 'days'}`
+                        : language === 'fr' ? 'Expiré!' : 'Expired!'}
+                    </Badge>
+                  </div>
+                  
+                  <p className={`text-sm ${statusConfig.text}`}>
+                    {alert.daysUntil > 0 
+                      ? (language === 'fr' 
+                        ? `Expire le ${alert.expiryDate.toLocaleDateString('fr-CA')}`
+                        : `Expires on ${alert.expiryDate.toLocaleDateString('en-CA')}`)
+                      : (language === 'fr'
+                        ? 'Ce document est expiré!'
+                        : 'This document has expired!')}
+                  </p>
+
+                  {alert.status === 'critical' && alert.daysUntil > 0 && (
+                    <div className="mt-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-xs font-medium text-red-700 dark:text-red-300">
+                        {language === 'fr'
+                          ? '🚨 ACTION IMMÉDIATE REQUISE! Appliquez avant l\'expiration pour maintenir le statut implicite.'
+                          : '🚨 IMMEDIATE ACTION REQUIRED! Apply before expiry to maintain implied status.'}
+                      </p>
+                    </div>
+                  )}
+
+                  {alert.type !== 'passport' && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <a 
+                        href={config.renewalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium border hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        {language === 'fr' ? 'Renouveler' : 'Renew'}
+                      </a>
+                      <span className="inline-flex items-center px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs">
+                        💰 {config.fee}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+
+        {/* Info box about implied status */}
+        <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+          <p className="text-xs text-blue-800 dark:text-blue-200">
+            <strong>{language === 'fr' ? 'ℹ️ Statut implicite:' : 'ℹ️ Implied status:'}</strong>
+            <br />
+            {language === 'fr'
+              ? 'Si vous soumettez votre demande de renouvellement avant l\'expiration, vous pouvez continuer à travailler/étudier légalement pendant le traitement de votre demande.'
+              : 'If you submit your renewal application before expiry, you can continue to work/study legally while your application is being processed.'}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ==================== SPOUSAL WORK PERMIT ELIGIBILITY ====================
+function SpousalWorkPermitEligibility({ language, user }: {
+  language: Language
+  user: any
+}) {
+  // Determine eligibility based on immigration status and Canadian immigration rules
+  // Reference: https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility.html
+  
+  const getSpousalEligibility = () => {
+    const status = user?.immigrationStatus
+    
+    // Rules based on 2024-2025 Canadian immigration policies
+    if (status === 'FOREIGN_STUDENT') {
+      return {
+        eligible: true,
+        permitType: language === 'fr' ? 'Permis de travail ouvert pour conjoint' : 'Spousal Open Work Permit',
+        duration: language === 'fr' 
+          ? 'Même durée que votre permis d\'études' 
+          : 'Same duration as your study permit',
+        requirements: language === 'fr' 
+          ? [
+              'Vous devez être inscrit dans un programme d\'études à temps plein',
+              'Votre conjoint doit avoir un statut légal au Canada ou être admissible',
+              'Preuve de relation (certificat de mariage ou union de fait)',
+              'Votre établissement doit être un DLI (établissement d\'enseignement désigné)'
+            ]
+          : [
+              'You must be enrolled in a full-time study program',
+              'Your spouse must have legal status in Canada or be admissible',
+              'Proof of relationship (marriage certificate or common-law union)',
+              'Your institution must be a DLI (Designated Learning Institution)'
+            ],
+        fee: '$155 CAD',
+        processingTime: language === 'fr' ? '2-4 mois (varie)' : '2-4 months (varies)',
+        officialUrl: 'https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law.html',
+        notes: language === 'fr'
+          ? 'Le conjoint d\'un étudiant international peut obtenir un permis de travail ouvert, lui permettant de travailler pour n\'importe quel employeur au Canada.'
+          : 'The spouse of an international student can obtain an open work permit, allowing them to work for any employer in Canada.'
+      }
+    }
+    
+    if (status === 'CLOSED_WORK_PERMIT') {
+      return {
+        eligible: true,
+        permitType: language === 'fr' ? 'Permis de travail ouvert pour conjoint' : 'Spousal Open Work Permit',
+        duration: language === 'fr' 
+          ? 'Même durée que votre permis de travail' 
+          : 'Same duration as your work permit',
+        requirements: language === 'fr'
+          ? [
+              'Vous devez occuper un emploi dans les catégories TEER 0, 1, 2 ou 3',
+              'Votre permis de travail doit être valide pour au moins 6 mois',
+              'Preuve de relation (certificat de mariage ou union de fait)',
+              'Vous travaillez actuellement pour l\'employeur désigné'
+            ]
+          : [
+              'You must work in a TEER 0, 1, 2, or 3 occupation',
+              'Your work permit must be valid for at least 6 months',
+              'Proof of relationship (marriage certificate or common-law union)',
+              'You are currently working for the designated employer'
+            ],
+        fee: '$155 CAD',
+        processingTime: language === 'fr' ? '2-4 mois (varie)' : '2-4 months (varies)',
+        officialUrl: 'https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law.html',
+        notes: language === 'fr'
+          ? 'Les travailleurs qualifiés avec un permis fermé dans les catégories TEER 0-3 peuvent parrainer leur conjoint pour un permis de travail ouvert.'
+          : 'Skilled workers with a closed permit in TEER 0-3 categories can sponsor their spouse for an open work permit.'
+      }
+    }
+    
+    if (status === 'OPEN_WORK_PERMIT') {
+      return {
+        eligible: false,
+        permitType: language === 'fr' ? 'Éligibilité limitée' : 'Limited eligibility',
+        duration: '-',
+        requirements: language === 'fr'
+          ? [
+              '⚠️ Les titulaires de permis de travail ouvert ne sont PAS automatiquement éligibles',
+              'L\'éligibilité dépend du type de programme qui vous a donné votre permis ouvert',
+              'Si votre permis est basé sur un programme provincial (EII), vérifiez les critères',
+              'Les conjoints de résidents permanents en attente peuvent être éligibles'
+            ]
+          : [
+              '⚠️ Open work permit holders are NOT automatically eligible',
+              'Eligibility depends on the program type that gave you your open permit',
+              'If your permit is based on a provincial program (EII), check the criteria',
+              'Spouses of permanent resident applicants may be eligible'
+            ],
+        fee: '-',
+        processingTime: '-',
+        officialUrl: 'https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law.html',
+        notes: language === 'fr'
+          ? '⚠️ Attention: Depuis janvier 2024, les conjoints de titulaires de PGWP ne sont plus éligibles. L\'éligibilité varie selon votre situation spécifique.'
+          : '⚠️ Note: As of January 2024, spouses of PGWP holders are no longer eligible. Eligibility varies based on your specific situation.'
+      }
+    }
+    
+    return {
+      eligible: false,
+      permitType: '-',
+      duration: '-',
+      requirements: [],
+      fee: '-',
+      processingTime: '-',
+      officialUrl: '#',
+      notes: ''
+    }
+  }
+  
+  const eligibility = getSpousalEligibility()
+  
+  return (
+    <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:from-pink-950/20 dark:to-purple-950/20">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-500 rounded-lg flex items-center justify-center">
+            <Users2 className="w-4 h-4 text-white" />
+          </div>
+          {language === 'fr' ? '👥 Permis de travail pour votre conjoint' : '👥 Work Permit for Your Spouse'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'fr' 
+            ? 'Information sur l\'éligibilité de votre conjoint à un permis de travail au Canada'
+            : 'Information about your spouse\'s eligibility for a work permit in Canada'}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="space-y-5">
+        {/* Eligibility Status Banner */}
+        <div className={`relative overflow-hidden rounded-xl p-4 ${
+          eligibility.eligible 
+            ? 'bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20 border border-green-200 dark:border-green-800' 
+            : 'bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20 border border-amber-200 dark:border-amber-800'
+        }`}>
+          <div className="flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              eligibility.eligible ? 'bg-green-500' : 'bg-amber-500'
+            }`}>
+              {eligibility.eligible 
+                ? <CheckCircle2 className="w-5 h-5 text-white" />
+                : <AlertCircle className="w-5 h-5 text-white" />
+              }
+            </div>
+            <div>
+              <p className={`font-semibold text-lg ${
+                eligibility.eligible ? 'text-green-800 dark:text-green-200' : 'text-amber-800 dark:text-amber-200'
+              }`}>
+                {eligibility.eligible 
+                  ? (language === 'fr' ? '✅ Votre conjoint est éligible!' : '✅ Your spouse is eligible!')
+                  : (language === 'fr' ? '⚠️ Éligibilité conditionnelle' : '⚠️ Conditional eligibility')
+                }
+              </p>
+              <p className={`text-sm ${
+                eligibility.eligible ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'
+              }`}>
+                {eligibility.permitType}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats Grid */}
+        <div className="grid sm:grid-cols-3 gap-3">
+          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+            <p className="text-xs text-gray-500">{language === 'fr' ? 'Durée estimée' : 'Estimated duration'}</p>
+            <p className="font-bold text-purple-600">{eligibility.duration}</p>
+          </div>
+          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+            <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais' : 'Fee'}</p>
+            <p className="font-bold text-green-600">{eligibility.fee}</p>
+          </div>
+          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+            <p className="text-xs text-gray-500">{language === 'fr' ? 'Délai de traitement' : 'Processing time'}</p>
+            <p className="font-bold text-blue-600">{eligibility.processingTime}</p>
+          </div>
+        </div>
+
+        {/* Requirements Checklist */}
+        <div className="space-y-2">
+          <h4 className="font-semibold text-sm flex items-center gap-2">
+            <ListChecks className="w-4 h-4 text-purple-500" />
+            {language === 'fr' ? 'Critères d\'éligibilité:' : 'Eligibility criteria:'}
+          </h4>
+          <ul className="space-y-2">
+            {eligibility.requirements.map((req, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                {req.startsWith('⚠️') 
+                  ? <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                  : <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                }
+                <span>{req}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Important Notes */}
+        <div className="p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>{language === 'fr' ? '📌 Information importante:' : '📌 Important note:'}</strong>
+            <br />
+            {eligibility.notes}
+          </p>
+        </div>
+
+        {/* Policy Changes Alert - 2024 Changes */}
+        <div className="p-4 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            <strong>{language === 'fr' ? '🆕 Changements de politique 2024:' : '🆕 2024 Policy Changes:'}</strong>
+            <br />
+            {language === 'fr'
+              ? 'Depuis janvier 2024, les conjoints de titulaires de PGWP ne sont plus éligibles aux permis de travail ouverts. De nouvelles restrictions s\'appliquent également aux étudiants dans certains programmes.'
+              : 'As of January 2024, spouses of PGWP holders are no longer eligible for open work permits. New restrictions also apply to students in certain programs.'
+            }
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 pt-2">
+          <a 
+            href={eligibility.officialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-pink-600 hover:to-purple-700 transition-all shadow-md"
+          >
+            <ExternalLink className="w-4 h-4" />
+            {language === 'fr' ? 'Vérifier sur Canada.ca' : 'Check on Canada.ca'}
+          </a>
+          <a 
+            href="https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law/how-to-apply.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <BookOpen className="w-4 h-4" />
+            {language === 'fr' ? 'Guide de demande' : 'Application guide'}
+          </a>
+        </div>
+
+        {/* Official Sources */}
+        <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-xs text-gray-500 mb-2">
+            {language === 'fr' ? '📚 Sources officielles:' : '📚 Official sources:'}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="text-xs">
+              <a href="https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law.html" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                IRCC - Spousal Open Work Permit
+              </a>
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              <a href="https://www.canada.ca/en/immigration-refugis-citizenship/corporate/publications-manuals/operational-bulletins-manuals.html" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                IRCC Operational Manual
+              </a>
+            </Badge>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ==================== CITIZENSHIP ELIGIBILITY ====================
+function CitizenshipEligibilityCard({ language, user }: {
+  language: Language
+  user: any
+}) {
+  // Canadian citizenship eligibility requirements
+  // Reference: https://www.canada.ca/en/immigration-refugis-citizenship/services/application/application-forms-application-citizenship-certificate/adult.html
+  
+  const [yearsAsPR, setYearsAsPR] = useState(3)
+  const [daysInCanada, setDaysInCanada] = useState(1095)
+  const [filedTaxes, setFiledTaxes] = useState(true)
+  const [languageProof, setLanguageProof] = useState(true)
+  const [noCriminalRecord, setNoCriminalRecord] = useState(true)
+  const [citizenshipTest, setCitizenshipTest] = useState(false)
+  
+  // Calculate days from arrival date
+  const calculateDaysInCanada = () => {
+    if (user?.arrivalDate) {
+      const arrival = new Date(user.arrivalDate)
+      const today = new Date()
+      const diffTime = Math.abs(today.getTime() - arrival.getTime())
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      return diffDays
+    }
+    return daysInCanada
+  }
+  
+  const actualDaysInCanada = user?.arrivalDate ? calculateDaysInCanada() : daysInCanada
+  
+  // Check eligibility
+  const isEligible = yearsAsPR >= 2 && actualDaysInCanada >= 1095 && filedTaxes && languageProof && noCriminalRecord
+  
+  // Calculate progress
+  const progressPercentage = Math.min(100, Math.round((actualDaysInCanada / 1095) * 100))
+  
+  return (
+    <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+            <Crown className="w-4 h-4 text-white" />
+          </div>
+          {language === 'fr' ? '🎓 Admissibilité à la citoyenneté canadienne' : '🎓 Canadian Citizenship Eligibility'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'fr' 
+            ? 'Vérifiez si vous remplissez les conditions pour devenir citoyen canadien' 
+            : 'Check if you meet the requirements to become a Canadian citizen'}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="space-y-5">
+        {/* Eligibility Status Banner */}
+        <div className={`relative overflow-hidden rounded-xl p-4 ${
+          isEligible 
+            ? 'bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20 border border-green-200 dark:border-green-800' 
+            : 'bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20 border border-amber-200 dark:border-amber-800'
+        }`}>
+          <div className="flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              isEligible ? 'bg-green-500' : 'bg-amber-500'
+            }`}>
+              {isEligible 
+                ? <CheckCircle2 className="w-5 h-5 text-white" />
+                : <Clock className="w-5 h-5 text-white" />
+              }
+            </div>
+            <div>
+              <p className={`font-semibold text-lg ${
+                isEligible ? 'text-green-800 dark:text-green-200' : 'text-amber-800 dark:text-amber-200'
+              }`}>
+                {isEligible 
+                  ? (language === 'fr' ? '✅ Vous êtes éligible!' : '✅ You are eligible!')
+                  : (language === 'fr' ? '⏳ Pas encore éligible' : '⏳ Not yet eligible')
+                }
+              </p>
+              <p className={`text-sm ${
+                isEligible ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'
+              }`}>
+                {isEligible 
+                  ? (language === 'fr' ? 'Vous pouvez soumettre votre demande de citoyenneté' : 'You can submit your citizenship application')
+                  : (language === 'fr' ? 'Continuez à accumuler des jours de présence' : 'Continue accumulating days of presence')
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Physical Presence Progress */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <h4 className="font-semibold text-sm flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-amber-500" />
+              {language === 'fr' ? 'Jours de présence au Canada' : 'Days present in Canada'}
+            </h4>
+            <Badge variant={actualDaysInCanada >= 1095 ? 'default' : 'secondary'} className="font-mono">
+              {actualDaysInCanada} / 1095
+            </Badge>
+          </div>
+          <Progress value={progressPercentage} className="h-3" />
+          <p className="text-xs text-gray-500">
+            {language === 'fr' 
+              ? `💡 Il vous manque ${Math.max(0, 1095 - actualDaysInCanada)} jours` 
+              : `💡 You need ${Math.max(0, 1095 - actualDaysInCanada)} more days`}
+          </p>
+        </div>
+
+        {/* Requirements Checklist */}
+        <div className="space-y-3">
+          <h4 className="font-semibold text-sm flex items-center gap-2">
+            <ListChecks className="w-4 h-4 text-amber-500" />
+            {language === 'fr' ? 'Critères d\'admissibilité:' : 'Eligibility criteria:'}
+          </h4>
+          
+          <div className="space-y-2">
+            {/* Years as PR */}
+            <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+              <div className="flex items-center gap-2">
+                {yearsAsPR >= 2 
+                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  : <Circle className="w-5 h-5 text-gray-300" />
+                }
+                <span className="text-sm">{language === 'fr' ? 'Résident permanent depuis 2+ ans' : 'Permanent resident for 2+ years'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Slider 
+                  value={[yearsAsPR]} 
+                  onValueChange={([v]) => setYearsAsPR(v)} 
+                  min={0} 
+                  max={10} 
+                  step={1}
+                  className="w-20"
+                />
+                <Badge variant="outline" className="font-mono w-12 justify-center">{yearsAsPR}</Badge>
+              </div>
+            </div>
+            
+            {/* Taxes filed */}
+            <div 
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              onClick={() => setFiledTaxes(!filedTaxes)}
+            >
+              <div className="flex items-center gap-2">
+                {filedTaxes 
+                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  : <Circle className="w-5 h-5 text-gray-300" />
+                }
+                <span className="text-sm">{language === 'fr' ? 'Impôts déposés (3 des 5 dernières années)' : 'Taxes filed (3 of last 5 years)'}</span>
+              </div>
+              <Badge variant={filedTaxes ? 'default' : 'secondary'}>
+                {filedTaxes ? '✓' : '○'}
+              </Badge>
+            </div>
+            
+            {/* Language proof */}
+            <div 
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              onClick={() => setLanguageProof(!languageProof)}
+            >
+              <div className="flex items-center gap-2">
+                {languageProof 
+                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  : <Circle className="w-5 h-5 text-gray-300" />
+                }
+                <span className="text-sm">{language === 'fr' ? 'Preuve de compétences linguistiques (CLB 4+)' : 'Language skills proof (CLB 4+)'}</span>
+              </div>
+              <Badge variant={languageProof ? 'default' : 'secondary'}>
+                {languageProof ? '✓' : '○'}
+              </Badge>
+            </div>
+            
+            {/* Criminal record */}
+            <div 
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              onClick={() => setNoCriminalRecord(!noCriminalRecord)}
+            >
+              <div className="flex items-center gap-2">
+                {noCriminalRecord 
+                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  : <Circle className="w-5 h-5 text-gray-300" />
+                }
+                <span className="text-sm">{language === 'fr' ? 'Aucun casier judiciaire' : 'No criminal record'}</span>
+              </div>
+              <Badge variant={noCriminalRecord ? 'default' : 'secondary'}>
+                {noCriminalRecord ? '✓' : '○'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Important Info */}
+        <div className="p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>{language === 'fr' ? '📋 À propos du test de citoyenneté:' : '📋 About the citizenship test:'}</strong>
+            <br />
+            {language === 'fr' 
+              ? 'Si vous avez entre 18 et 54 ans, vous devez réussir un test sur vos droits, responsabilités et connaissances du Canada. Le test comporte 20 questions et vous devez en obtenir au moins 15 correctes.'
+              : 'If you are between 18 and 54 years old, you must pass a test on your rights, responsibilities, and knowledge of Canada. The test has 20 questions and you must answer at least 15 correctly.'}
+          </p>
+        </div>
+
+        {/* Application Process */}
+        <div className="space-y-2">
+          <h4 className="font-semibold text-sm flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-amber-500" />
+            {language === 'fr' ? 'Processus de demande:' : 'Application process:'}
+          </h4>
+          <div className="grid sm:grid-cols-3 gap-3">
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
+              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <p className="text-xs font-medium">{language === 'fr' ? '1. Soumettre la demande' : '1. Submit application'}</p>
+              <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Frais: $630 CAD' : 'Fee: $630 CAD'}</p>
+            </div>
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
+              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                <FileCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <p className="text-xs font-medium">{language === 'fr' ? '2. Test & entrevue' : '2. Test & interview'}</p>
+              <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Si 18-54 ans' : 'If 18-54 years'}</p>
+            </div>
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
+              <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Crown className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <p className="text-xs font-medium">{language === 'fr' ? '3. Cérémonie' : '3. Ceremony'}</p>
+              <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Délai: ~12 mois' : 'Timeline: ~12 months'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 pt-2">
+          <a 
+            href="https://www.canada.ca/en/immigration-refugis-citizenship/services/application/application-forms-application-citizenship-certificate/adult.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg text-sm font-medium hover:from-amber-600 hover:to-orange-700 transition-all shadow-md"
+          >
+            <ExternalLink className="w-4 h-4" />
+            {language === 'fr' ? 'Vérifier sur Canada.ca' : 'Check on Canada.ca'}
+          </a>
+          <a 
+            href="https://www.canada.ca/en/immigration-refugis-citizenship/corporate/publications-manuals/operational-bulletins-manuals/canadian-citizenship.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <BookOpen className="w-4 h-4" />
+            {language === 'fr' ? 'Guide officiel' : 'Official guide'}
+          </a>
+        </div>
+
+        {/* Processing Time */}
+        <div className="p-4 bg-green-50 dark:bg-green-950/50 rounded-xl border border-green-200 dark:border-green-800">
+          <p className="text-sm text-green-800 dark:text-green-200">
+            <strong>{language === 'fr' ? '⏱️ Délai de traitement actuel:' : '⏱️ Current processing time:'}</strong>
+            <br />
+            {language === 'fr' 
+              ? 'Les demandes de citoyenneté sont actuellement traitées en environ 12 mois. Commencez à préparer votre demande dès maintenant!'
+              : 'Citizenship applications are currently processed in approximately 12 months. Start preparing your application now!'}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ==================== CITIZENSHIP QUIZ COMPONENT ====================
+function CitizenshipQuizCard({ language }: { language: Language }) {
+  const [quizStarted, setQuizStarted] = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([])
+  const [quizCompleted, setQuizCompleted] = useState(false)
+  const [showExplanation, setShowExplanation] = useState(false)
+  
+  // Function to shuffle and select 20 random questions
+  const shuffleQuestions = (): CitizenshipQuestion[] => {
+    const shuffled = [...citizenshipTestQuestions]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled.slice(0, 20)
+  }
+  
+  const [shuffledQuestions, setShuffledQuestions] = useState<CitizenshipQuestion[]>(shuffleQuestions)
+  
+  const score = selectedAnswers.reduce((acc, answer, index) => {
+    if (answer === shuffledQuestions[index]?.correctAnswer) return acc + 1
+    return acc
+  }, 0)
+  
+  const passed = score >= 15
+  const currentQ = shuffledQuestions[currentQuestion]
+  
+  const handleAnswer = (answerIndex: number) => {
+    const newAnswers = [...selectedAnswers]
+    newAnswers[currentQuestion] = answerIndex
+    setSelectedAnswers(newAnswers)
+    setShowExplanation(true)
+  }
+  
+  const handleNext = () => {
+    if (currentQuestion < 19) {
+      setCurrentQuestion(currentQuestion + 1)
+      setShowExplanation(false)
+    } else {
+      setQuizCompleted(true)
+    }
+  }
+  
+  const restartQuiz = () => {
+    setQuizStarted(false)
+    setCurrentQuestion(0)
+    setSelectedAnswers([])
+    setQuizCompleted(false)
+    setShowExplanation(false)
+    // Generate new shuffled questions for the next quiz
+    setShuffledQuestions(shuffleQuestions())
+  }
+  
+  const startQuiz = () => {
+    setShuffledQuestions(shuffleQuestions())
+    setQuizStarted(true)
+  }
+  
+  const categoryLabels: Record<string, { fr: string; en: string }> = {
+    rights: { fr: 'Droits', en: 'Rights' },
+    responsibilities: { fr: 'Responsabilités', en: 'Responsibilities' },
+    history: { fr: 'Histoire', en: 'History' },
+    government: { fr: 'Gouvernement', en: 'Government' },
+    symbols: { fr: 'Symboles', en: 'Symbols' },
+    geography: { fr: 'Géographie', en: 'Geography' },
+    culture: { fr: 'Culture', en: 'Culture' }
+  }
+  
+  if (!quizStarted) {
+    return (
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-white" />
+            </div>
+            {language === 'fr' ? '📝 Quiz de citoyenneté canadienne' : '📝 Canadian Citizenship Quiz'}
+          </CardTitle>
+          <CardDescription>{language === 'fr' ? 'Pratiquez pour le test officiel' : 'Practice for the official test'}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 bg-green-50 dark:bg-green-950/50 rounded-xl border border-green-200 dark:border-green-800">
+            <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
+              <li>• {language === 'fr' ? '20 questions à choix multiples' : '20 multiple choice questions'}</li>
+              <li>• {language === 'fr' ? '15 bonnes réponses requises (75%)' : '15 correct answers required (75%)'}</li>
+              <li>• {language === 'fr' ? 'Basé sur "Découvrir le Canada"' : 'Based on "Discover Canada"'}</li>
+            </ul>
+          </div>
+          <Button onClick={startQuiz} className="w-full bg-gradient-to-r from-green-500 to-emerald-600">
+            <Target className="w-4 h-4 mr-2" />
+            {language === 'fr' ? 'Commencer le quiz' : 'Start quiz'}
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+  
+  if (quizCompleted) {
+    return (
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${passed ? 'bg-green-500' : 'bg-red-500'}`}>
+              {passed ? <CheckCircle2 className="w-4 h-4 text-white" /> : <AlertCircle className="w-4 h-4 text-white" />}
+            </div>
+            {language === 'fr' ? '📊 Résultats' : '📊 Results'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className={`p-6 rounded-xl text-center ${passed ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'}`}>
+            <div className={`text-5xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}`}>{score}/20</div>
+            <div className={`text-lg font-semibold ${passed ? 'text-green-700' : 'text-red-700'}`}>
+              {passed ? (language === 'fr' ? '🎉 Réussi!' : '🎉 Passed!') : (language === 'fr' ? '📚 Continuez!' : '📚 Keep studying!')}
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Button onClick={restartQuiz} variant="outline" className="flex-1">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              {language === 'fr' ? 'Recommencer' : 'Restart'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+  
+  return (
+    <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-white" />
+            </div>
+            {language === 'fr' ? '📝 Quiz' : '📝 Quiz'}
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{currentQuestion + 1}/20</Badge>
+            <Badge className="bg-green-500">{language === 'fr' ? 'Score:' : 'Score:'} {selectedAnswers.filter((a, i) => a === shuffledQuestions[i]?.correctAnswer).length}</Badge>
+          </div>
+        </div>
+        <Progress value={(currentQuestion / 20) * 100} className="h-2 mt-2" />
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Badge variant="outline">{language === 'fr' ? categoryLabels[currentQ.category]?.fr : categoryLabels[currentQ.category]?.en}</Badge>
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border">
+          <p className="text-lg font-medium">{language === 'fr' ? currentQ.question : currentQ.questionEn}</p>
+        </div>
+        <div className="space-y-2">
+          {(language === 'fr' ? currentQ.options : currentQ.optionsEn).map((option, index) => {
+            const isSelected = selectedAnswers[currentQuestion] === index
+            const isCorrect = index === currentQ.correctAnswer
+            const showResult = showExplanation
+            return (
+              <Button
+                key={index}
+                variant="outline"
+                className={`w-full justify-start text-left h-auto py-3 px-4 ${
+                  showResult ? isCorrect ? 'bg-green-100 border-green-500' : isSelected ? 'bg-red-100 border-red-500' : '' : isSelected ? 'bg-blue-50 border-blue-500' : ''
+                }`}
+                onClick={() => !showExplanation && handleAnswer(index)}
+                disabled={showExplanation}
+              >
+                <span className="mr-3 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold">{String.fromCharCode(65 + index)}</span>
+                <span className="flex-1">{option}</span>
+                {showResult && isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500 ml-2" />}
+                {showResult && isSelected && !isCorrect && <X className="w-5 h-5 text-red-500 ml-2" />}
+              </Button>
+            )
+          })}
+        </div>
+        {showExplanation && (
+          <div className="p-4 rounded-xl border bg-amber-50 dark:bg-amber-950/50 border-amber-200">
+            <p className="text-sm"><strong>💡 {language === 'fr' ? 'Explication:' : 'Explanation:'}</strong> {language === 'fr' ? currentQ.explanation : currentQ.explanationEn}</p>
+          </div>
+        )}
+        {showExplanation && (
+          <Button onClick={handleNext} className="w-full bg-gradient-to-r from-green-500 to-emerald-600">
+            {currentQuestion < 19 ? (language === 'fr' ? 'Question suivante' : 'Next question') : (language === 'fr' ? 'Voir les résultats' : 'See results')}
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+// ==================== PROVINCIAL INTEGRATION POLICIES DATA ====================
+const provincialPolicies: Record<string, Record<string, {
+  welcomeProgram: { name: string; nameEn: string; description: string; descriptionEn: string; url: string; services: string[]; servicesEn: string[] }
+  employment: { name: string; nameEn: string; description: string; descriptionEn: string; url: string; services: string[]; servicesEn: string[] }
+  language: { name: string; nameEn: string; description: string; descriptionEn: string; url: string; services: string[]; servicesEn: string[] }
+  settlement: { name: string; nameEn: string; description: string; descriptionEn: string; url: string; services: string[]; servicesEn: string[] }
+  financialAid?: { name: string; nameEn: string; description: string; descriptionEn: string; url: string; amount?: string }
+}>> = {
+  'QC': {
+    'PERMANENT_RESIDENT': {
+      welcomeProgram: {
+        name: 'Programme d\'accueil et d\'intégration du Québec',
+        nameEn: 'Quebec Welcome and Integration Program',
+        description: 'Services gratuits d\'accueil, d\'accompagnement et d\'intégration offerts par le Ministère de l\'Immigration, de la Francisation et de l\'Intégration (MIFI).',
+        descriptionEn: 'Free welcome, support and integration services offered by the Ministry of Immigration, Francisation and Integration (MIFI).',
+        url: 'https://www.quebec.ca/immigration/integration-quebec',
+        services: ['Accueil à l\'aéroport', 'Accompagnement personnalisé', 'Information sur la vie au Québec', 'Références vers les services'],
+        servicesEn: ['Airport welcome', 'Personalized support', 'Information on life in Quebec', 'Service referrals']
+      },
+      employment: {
+        name: 'Services d\'intégration en emploi',
+        nameEn: 'Employment Integration Services',
+        description: 'Services d\'aide à l\'emploi offerts par Québec en tête et les Carrefours d\'intégration pour les nouveaux arrivants.',
+        descriptionEn: 'Employment assistance services offered by Québec en tête and Integration Carrefours for newcomers.',
+        url: 'https://www.quebec.ca/emploi/emploi-aide-integration',
+        services: ['Évaluation des compétences', 'Aide à la recherche d\'emploi', 'Information sur les professions réglementées', 'Stages et formations'],
+        servicesEn: ['Skills assessment', 'Job search assistance', 'Information on regulated professions', 'Internships and training']
+      },
+      language: {
+        name: 'Francisation Québec',
+        nameEn: 'Quebec Francisation',
+        description: 'Cours de français gratuits pour les nouveaux arrivants, offerts par le MIFI et les centres de services scolaires.',
+        descriptionEn: 'Free French courses for newcomers, offered by MIFI and school service centers.',
+        url: 'https://www.quebec.ca/education/apprendre-francais',
+        services: ['Cours de français gratuits', 'Formation à temps plein ou partiel', 'Bourse de francisation possible', 'Cours en ligne disponibles'],
+        servicesEn: ['Free French courses', 'Full-time or part-time training', 'Possible francisation bursary', 'Online courses available']
+      },
+      settlement: {
+        name: 'Carrefours d\'intégration',
+        nameEn: 'Integration Carrefours',
+        description: 'Centres locaux offrant des services d\'accueil et d\'intégration dans toutes les régions du Québec.',
+        descriptionEn: 'Local centers offering welcome and integration services in all regions of Quebec.',
+        url: 'https://www.mifi.gouv.qc.ca/fr/carrefours-dintegration',
+        services: ['Accueil et information', 'Accompagnement social', 'Aide au logement', 'Références communautaires'],
+        servicesEn: ['Welcome and information', 'Social support', 'Housing assistance', 'Community referrals']
+      },
+      financialAid: {
+        name: 'Aide financière aux immigrants',
+        nameEn: 'Financial Aid for Immigrants',
+        description: 'Programmes d\'aide financière pour les nouveaux arrivants, incluant les prêts et bourses.',
+        descriptionEn: 'Financial assistance programs for newcomers, including loans and bursaries.',
+        url: 'https://www.quebec.ca/immigration/integration-quebec/aide-financiere',
+        amount: 'Variable selon le programme'
+      }
+    },
+    'FOREIGN_STUDENT': {
+      welcomeProgram: {
+        name: 'Services d\'accueil étudiant',
+        nameEn: 'Student Welcome Services',
+        description: 'Services d\'accueil offerts par les établissements d\'enseignement et les associations étudiantes.',
+        descriptionEn: 'Welcome services offered by educational institutions and student associations.',
+        url: 'https://www.quebec.ca/etudes',
+        services: ['Accueil à l\'aéroport', 'Journées d\'intégration', 'Buddy programs', 'Information sur le Québec'],
+        servicesEn: ['Airport welcome', 'Integration days', 'Buddy programs', 'Information on Quebec']
+      },
+      employment: {
+        name: 'Permis de travail hors campus',
+        nameEn: 'Off-campus Work Permit',
+        description: 'Droit de travailler jusqu\'à 24h/semaine pendant les sessions et à temps plein pendant les vacances.',
+        descriptionEn: 'Right to work up to 24h/week during sessions and full-time during breaks.',
+        url: 'https://www.canada.ca/fr/immigration-refugis-citoyennete/services/travailler-canada/etudiants.html',
+        services: ['Autorisation de travail', 'Accès au marché du travail', 'Expérience canadienne'],
+        servicesEn: ['Work authorization', 'Access to labor market', 'Canadian experience']
+      },
+      language: {
+        name: 'Cours de français universitaires',
+        nameEn: 'University French Courses',
+        description: 'Cours de français offerts par les universités et cégeps, souvent gratuits ou à tarif réduit pour les étudiants.',
+        descriptionEn: 'French courses offered by universities and CEGEPs, often free or at reduced rates for students.',
+        url: 'https://www.quebec.ca/education/apprendre-francais',
+        services: ['Cours de français FLE', 'Ateliers de conversation', 'Tutorat peer-to-peer'],
+        servicesEn: ['FSL French courses', 'Conversation workshops', 'Peer tutoring']
+      },
+      settlement: {
+        name: 'Services aux étudiants internationaux',
+        nameEn: 'International Student Services',
+        description: 'Bureaux d\'aide aux étudiants internationaux dans chaque établissement d\'enseignement.',
+        descriptionEn: 'International student assistance offices in each educational institution.',
+        url: 'https://www.quebec.ca/etudes',
+        services: ['Support académique', 'Aide au logement', 'Activités sociales', 'Conseils immigration'],
+        servicesEn: ['Academic support', 'Housing assistance', 'Social activities', 'Immigration advice']
+      }
+    },
+    'OPEN_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Services d\'accueil pour travailleurs',
+        nameEn: 'Worker Welcome Services',
+        description: 'Services d\'accueil et d\'intégration pour les travailleurs temporaires.',
+        descriptionEn: 'Welcome and integration services for temporary workers.',
+        url: 'https://www.quebec.ca/immigration/travailleurs-etrangers',
+        services: ['Information sur les droits', 'Orientation au Québec', 'Références aux services'],
+        servicesEn: ['Rights information', 'Quebec orientation', 'Service referrals']
+      },
+      employment: {
+        name: 'Québec en tête',
+        nameEn: 'Québec en tête',
+        description: 'Service d\'aide à l\'emploi du gouvernement du Québec pour tous les résidents.',
+        descriptionEn: 'Government of Quebec employment assistance service for all residents.',
+        url: 'https://www.quebecenete.gouv.qc.ca/',
+        services: ['Placement en emploi', 'Cours de français', 'Bilan de compétences', 'Aide au CV'],
+        servicesEn: ['Job placement', 'French courses', 'Skills assessment', 'CV assistance']
+      },
+      language: {
+        name: 'Francisation en milieu de travail',
+        nameEn: 'Workplace Francisation',
+        description: 'Programme de francisation offert en entreprise ou dans les carrefours d\'intégration.',
+        descriptionEn: 'Francisation program offered in companies or integration carrefours.',
+        url: 'https://www.quebec.ca/education/apprendre-francais',
+        services: ['Cours de français gratuits', 'Horaires flexibles', 'Formation adaptée au métier'],
+        servicesEn: ['Free French courses', 'Flexible schedules', 'Job-specific training']
+      },
+      settlement: {
+        name: 'Carrefours d\'intégration',
+        nameEn: 'Integration Carrefours',
+        description: 'Services d\'accueil et d\'accompagnement pour les travailleurs et leurs familles.',
+        descriptionEn: 'Welcome and support services for workers and their families.',
+        url: 'https://www.mifi.gouv.qc.ca/fr/carrefours-dintegration',
+        services: ['Accueil et information', 'Aide au logement', 'Scolarisation des enfants', 'Services aux familles'],
+        servicesEn: ['Welcome and information', 'Housing assistance', 'Children schooling', 'Family services']
+      }
+    },
+    'CLOSED_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Programme des travailleurs étrangers temporaires',
+        nameEn: 'Temporary Foreign Worker Program',
+        description: 'Services d\'accueil et protection des droits des travailleurs étrangers temporaires.',
+        descriptionEn: 'Welcome services and rights protection for temporary foreign workers.',
+        url: 'https://www.canada.ca/fr/emploi-developpement-social/services/travailleurs-etrangers.html',
+        services: ['Information sur vos droits', 'Protection contre l\'exploitation', 'Ligne d\'aide téléphonique'],
+        servicesEn: ['Information on your rights', 'Protection from exploitation', 'Phone helpline']
+      },
+      employment: {
+        name: 'Droits des travailleurs au Québec',
+        nameEn: 'Workers Rights in Quebec',
+        description: 'Information sur les normes du travail, les conditions de travail et les recours disponibles.',
+        descriptionEn: 'Information on labour standards, working conditions and available remedies.',
+        url: 'https://www.cnt.gouv.qc.ca/',
+        services: ['Normes du travail', 'Salaire minimum', 'Congés et repos', 'Protection contre le harcèlement'],
+        servicesEn: ['Labour standards', 'Minimum wage', 'Leaves and rest', 'Protection from harassment']
+      },
+      language: {
+        name: 'Francisation Québec',
+        nameEn: 'Quebec Francisation',
+        description: 'Cours de français gratuits disponibles pour tous les résidents du Québec.',
+        descriptionEn: 'Free French courses available to all Quebec residents.',
+        url: 'https://www.quebec.ca/education/apprendre-francais',
+        services: ['Cours de français gratuits', 'Niveaux débutant à avancé', 'Cours de soir disponibles'],
+        servicesEn: ['Free French courses', 'Beginner to advanced levels', 'Evening courses available']
+      },
+      settlement: {
+        name: 'Centres d\'aide aux immigrants',
+        nameEn: 'Immigrant Aid Centers',
+        description: 'Organismes communautaires offrant soutien et accompagnement.',
+        descriptionEn: 'Community organizations offering support and accompaniment.',
+        url: 'https://www.quebec.ca/immigration/integration-quebec',
+        services: ['Soutien social', 'Aide juridique', 'Accompagnement', 'Références'],
+        servicesEn: ['Social support', 'Legal aid', 'Accompaniment', 'Referrals']
+      }
+    }
+  },
+  'ON': {
+    'PERMANENT_RESIDENT': {
+      welcomeProgram: {
+        name: 'Ontario Immigration Program',
+        nameEn: 'Ontario Immigration Program',
+        description: 'Services d\'établissement gratuits financés par le gouvernement de l\'Ontario.',
+        descriptionEn: 'Free settlement services funded by the Government of Ontario.',
+        url: 'https://www.ontario.ca/page/newcomers-ontario',
+        services: ['Orientation à l\'arrivée', 'Services d\'interprétation', 'Information sur la vie en Ontario', 'Références communautaires'],
+        servicesEn: ['Arrival orientation', 'Interpretation services', 'Information on life in Ontario', 'Community referrals']
+      },
+      employment: {
+        name: 'Employment Ontario',
+        nameEn: 'Employment Ontario',
+        description: 'Services gratuits d\'emploi et de formation pour tous les résidents de l\'Ontario.',
+        descriptionEn: 'Free employment and training services for all Ontario residents.',
+        url: 'https://www.ontario.ca/page/employment-ontario',
+        services: ['Aide à la recherche d\'emploi', 'Ateliers de carrière', 'Formation professionnelle', 'Programmes d\'apprentissage'],
+        servicesEn: ['Job search help', 'Career workshops', 'Vocational training', 'Apprenticeship programs']
+      },
+      language: {
+        name: 'Cours de langue gratuits',
+        nameEn: 'Free Language Classes',
+        description: 'Cours d\'anglais (ESL) et de français (FSL) gratuits pour les nouveaux arrivants.',
+        descriptionEn: 'Free English (ESL) and French (FSL) classes for newcomers.',
+        url: 'https://www.ontario.ca/page/adult-language-training',
+        services: ['Cours d\'anglais gratuits', 'Cours de français gratuits', 'Classes en ligne disponibles', 'Horaires flexibles'],
+        servicesEn: ['Free English classes', 'Free French classes', 'Online classes available', 'Flexible schedules']
+      },
+      settlement: {
+        name: 'Ontario Settlement Services',
+        nameEn: 'Ontario Settlement Services',
+        description: 'Réseau d\'organismes d\'établissement dans toutes les villes ontariennes.',
+        descriptionEn: 'Network of settlement agencies in all Ontario cities.',
+        url: 'https://www.ontario.ca/page/settlement-services',
+        services: ['Accueil et orientation', 'Aide au logement', 'Soutien aux familles', 'Services aux aînés'],
+        servicesEn: ['Welcome and orientation', 'Housing assistance', 'Family support', 'Senior services']
+      },
+      financialAid: {
+        name: 'Ontario Works (aide temporaire)',
+        nameEn: 'Ontario Works (temporary assistance)',
+        description: 'Aide financière et emploi du dernier recours pour les résidents dans le besoin.',
+        descriptionEn: 'Financial assistance and employment of last resort for residents in need.',
+        url: 'https://www.ontario.ca/page/ontario-works'
+      }
+    },
+    'FOREIGN_STUDENT': {
+      welcomeProgram: {
+        name: 'Services aux étudiants internationaux',
+        nameEn: 'International Student Services',
+        description: 'Services d\'accueil offerts par les colleges et universités ontariennes.',
+        descriptionEn: 'Welcome services offered by Ontario colleges and universities.',
+        url: 'https://www.ontario.ca/page/study-ontario',
+        services: ['Orientation internationale', 'Buddy programs', 'Services de santé mentale', 'Activités sociales'],
+        servicesEn: ['International orientation', 'Buddy programs', 'Mental health services', 'Social activities']
+      },
+      employment: {
+        name: 'Career Centres universitaires',
+        nameEn: 'University Career Centres',
+        description: 'Centres de carrière dans chaque établissement pour aider à la recherche d\'emploi.',
+        descriptionEn: 'Career centers at each institution to help with job search.',
+        url: 'https://www.ontario.ca/page/work-study',
+        services: ['Ateliers CV', 'Simulations d\'entretien', 'Offres d\'emploi étudiants', 'Programmes co-op'],
+        servicesEn: ['CV workshops', 'Interview practice', 'Student job offers', 'Co-op programs']
+      },
+      language: {
+        name: 'ESL Programs',
+        nameEn: 'ESL Programs',
+        description: 'Cours d\'anglais langue seconde souvent inclus dans les programmes universitaires.',
+        descriptionEn: 'English as a Second Language courses often included in university programs.',
+        url: 'https://www.ontario.ca/page/adult-language-training',
+        services: ['Cours ESL académiques', 'Tutorat en écriture', 'Centres de langues'],
+        servicesEn: ['Academic ESL courses', 'Writing tutoring', 'Language centers']
+      },
+      settlement: {
+        name: 'Student Housing Services',
+        nameEn: 'Student Housing Services',
+        description: 'Services de logement et d\'hébergement pour les étudiants internationaux.',
+        descriptionEn: 'Housing and accommodation services for international students.',
+        url: 'https://www.ontario.ca/page/study-ontario',
+        services: ['Résidences étudiantes', 'Aide au logement hors campus', 'Services de garde d\'enfants'],
+        servicesEn: ['Student residences', 'Off-campus housing help', 'Childcare services']
+      }
+    },
+    'OPEN_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Settlement Services Ontario',
+        nameEn: 'Settlement Services Ontario',
+        description: 'Services d\'établissement pour tous les nouveaux arrivants en Ontario.',
+        descriptionEn: 'Settlement services for all newcomers in Ontario.',
+        url: 'https://www.ontario.ca/page/newcomers-ontario',
+        services: ['Information sur les droits', 'Références communautaires', 'Services d\'orientation'],
+        servicesEn: ['Rights information', 'Community referrals', 'Orientation services']
+      },
+      employment: {
+        name: 'Employment Ontario',
+        nameEn: 'Employment Ontario',
+        description: 'Services gratuits d\'emploi pour tous les résidents ontariens.',
+        descriptionEn: 'Free employment services for all Ontario residents.',
+        url: 'https://www.ontario.ca/page/employment-ontario',
+        services: ['Recherche d\'emploi', 'Évaluation des compétences', 'Formation', 'Certifications'],
+        servicesEn: ['Job search', 'Skills assessment', 'Training', 'Certifications']
+      },
+      language: {
+        name: 'Adult Language Training',
+        nameEn: 'Adult Language Training',
+        description: 'Cours de langue gratuits pour les adultes en Ontario.',
+        descriptionEn: 'Free language courses for adults in Ontario.',
+        url: 'https://www.ontario.ca/page/adult-language-training',
+        services: ['Cours ESL gratuits', 'Cours FSL gratuits', 'Classes en ligne et en personne'],
+        servicesEn: ['Free ESL courses', 'Free FSL courses', 'Online and in-person classes']
+      },
+      settlement: {
+        name: 'Community Settlement Agencies',
+        nameEn: 'Community Settlement Agencies',
+        description: 'Organismes d\'établissement communautaires dans toutes les villes.',
+        descriptionEn: 'Community settlement agencies in all cities.',
+        url: 'https://www.ontario.ca/page/settlement-services',
+        services: ['Soutien à l\'installation', 'Aide au logement', 'Services aux familles'],
+        servicesEn: ['Settlement support', 'Housing assistance', 'Family services']
+      }
+    },
+    'CLOSED_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Temporary Foreign Worker Support',
+        nameEn: 'Temporary Foreign Worker Support',
+        description: 'Services de soutien pour les travailleurs étrangers temporaires.',
+        descriptionEn: 'Support services for temporary foreign workers.',
+        url: 'https://www.canada.ca/fr/emploi-developpement-social/services/travailleurs-etrangers.html',
+        services: ['Information sur les droits', 'Ligne d\'aide', 'Ressources'],
+        servicesEn: ['Rights information', 'Helpline', 'Resources']
+      },
+      employment: {
+        name: 'Ontario Labour Relations Board',
+        nameEn: 'Ontario Labour Relations Board',
+        description: 'Protection des droits des travailleurs et recours en cas de conflit.',
+        descriptionEn: 'Workers rights protection and remedies in case of conflict.',
+        url: 'https://www.olrb.gov.on.ca/',
+        services: ['Normes du travail', 'Dépôts de plaintes', 'Protection contre les abus'],
+        servicesEn: ['Labour standards', 'Complaint filing', 'Protection from abuse']
+      },
+      language: {
+        name: 'ESL Classes',
+        nameEn: 'ESL Classes',
+        description: 'Cours d\'anglais disponibles pour les résidents ontariens.',
+        descriptionEn: 'English classes available for Ontario residents.',
+        url: 'https://www.ontario.ca/page/adult-language-training',
+        services: ['Cours ESL du soir', 'Cours de fin de semaine', 'En ligne'],
+        servicesEn: ['Evening ESL classes', 'Weekend classes', 'Online']
+      },
+      settlement: {
+        name: 'Migrant Worker Support',
+        nameEn: 'Migrant Worker Support',
+        description: 'Organismes de soutien aux travailleurs migrants.',
+        descriptionEn: 'Migrant worker support organizations.',
+        url: 'https://www.ontario.ca/page/settlement-services',
+        services: ['Soutien juridique', 'Services de santé', 'Aide sociale'],
+        servicesEn: ['Legal support', 'Health services', 'Social help']
+      }
+    }
+  },
+  'BC': {
+    'PERMANENT_RESIDENT': {
+      welcomeProgram: {
+        name: 'BC Settlement and Integration Services',
+        nameEn: 'BC Settlement and Integration Services',
+        description: 'Services gratuits d\'établissement pour les nouveaux arrivants en Colombie-Britannique.',
+        descriptionEn: 'Free settlement services for newcomers in British Columbia.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Accueil à l\'arrivée', 'Orientation communautaire', 'Services d\'interprétation', 'Références'],
+        servicesEn: ['Arrival welcome', 'Community orientation', 'Interpretation services', 'Referrals']
+      },
+      employment: {
+        name: 'WorkBC',
+        nameEn: 'WorkBC',
+        description: 'Services gratuits d\'emploi du gouvernement de la Colombie-Britannique.',
+        descriptionEn: 'Free employment services from the Government of British Columbia.',
+        url: 'https://www.workbc.ca/',
+        services: ['Centres d\'emploi', 'Ateliers de carrière', 'Programmes de formation', 'Subventions salariales'],
+        servicesEn: ['Employment centres', 'Career workshops', 'Training programs', 'Wage subsidies']
+      },
+      language: {
+        name: 'English Language Services for Adults',
+        nameEn: 'English Language Services for Adults',
+        description: 'Cours d\'anglais gratuits pour les nouveaux arrivants en C.-B.',
+        descriptionEn: 'Free English classes for newcomers in BC.',
+        url: 'https://www.welcomebc.ca/learn-english',
+        services: ['Cours ELSA gratuits', 'Tests de niveau', 'Classes en ligne et en personne', 'Garde d\'enfants disponible'],
+        servicesEn: ['Free ELSA classes', 'Level assessments', 'Online and in-person classes', 'Childcare available']
+      },
+      settlement: {
+        name: 'BC Newcomer Services',
+        nameEn: 'BC Newcomer Services',
+        description: 'Réseau d\'organismes d\'établissement dans toute la province.',
+        descriptionEn: 'Network of settlement agencies throughout the province.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Soutien à l\'installation', 'Services aux familles', 'Programmes jeunesse', 'Services aux aînés'],
+        servicesEn: ['Settlement support', 'Family services', 'Youth programs', 'Senior services']
+      }
+    },
+    'FOREIGN_STUDENT': {
+      welcomeProgram: {
+        name: 'International Student Services',
+        nameEn: 'International Student Services',
+        description: 'Services d\'accueil dans les établissements postsecondaires de C.-B.',
+        descriptionEn: 'Welcome services at BC post-secondary institutions.',
+        url: 'https://www.welcomebc.ca/study-in-bc',
+        services: ['Orientation internationale', 'Activités sociales', 'Buddy programs'],
+        servicesEn: ['International orientation', 'Social activities', 'Buddy programs']
+      },
+      employment: {
+        name: 'WorkBC Student Services',
+        nameEn: 'WorkBC Student Services',
+        description: 'Services d\'emploi pour les étudiants.',
+        descriptionEn: 'Employment services for students.',
+        url: 'https://www.workbc.ca/',
+        services: ['Emplois étudiants', 'Stages co-op', 'Programmes d\'apprentissage'],
+        servicesEn: ['Student jobs', 'Co-op internships', 'Apprenticeship programs']
+      },
+      language: {
+        name: 'ESL Programs',
+        nameEn: 'ESL Programs',
+        description: 'Cours d\'anglais disponibles dans les collèges et universités.',
+        descriptionEn: 'English courses available at colleges and universities.',
+        url: 'https://www.welcomebc.ca/learn-english',
+        services: ['ESL académique', 'Centres d\'écriture', 'Tutorat'],
+        servicesEn: ['Academic ESL', 'Writing centers', 'Tutoring']
+      },
+      settlement: {
+        name: 'Student Housing BC',
+        nameEn: 'Student Housing BC',
+        description: 'Services de logement pour les étudiants internationaux.',
+        descriptionEn: 'Housing services for international students.',
+        url: 'https://www.welcomebc.ca/study-in-bc',
+        services: ['Résidences', 'Logements homestay', 'Aide au logement'],
+        servicesEn: ['Residences', 'Homestay housing', 'Housing help']
+      }
+    },
+    'OPEN_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'WelcomeBC Services',
+        nameEn: 'WelcomeBC Services',
+        description: 'Services d\'accueil pour les travailleurs et leurs familles.',
+        descriptionEn: 'Welcome services for workers and their families.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Orientation', 'Information', 'Références'],
+        servicesEn: ['Orientation', 'Information', 'Referrals']
+      },
+      employment: {
+        name: 'WorkBC',
+        nameEn: 'WorkBC',
+        description: 'Services d\'emploi gratuits pour tous les résidents de C.-B.',
+        descriptionEn: 'Free employment services for all BC residents.',
+        url: 'https://www.workbc.ca/',
+        services: ['Recherche d\'emploi', 'Formation', 'Certifications'],
+        servicesEn: ['Job search', 'Training', 'Certifications']
+      },
+      language: {
+        name: 'ELSA Program',
+        nameEn: 'ELSA Program',
+        description: 'Cours d\'anglais gratuits pour les nouveaux arrivants.',
+        descriptionEn: 'Free English classes for newcomers.',
+        url: 'https://www.welcomebc.ca/learn-english',
+        services: ['Cours gratuits', 'Tests de niveau', 'Classes flexibles'],
+        servicesEn: ['Free classes', 'Level tests', 'Flexible classes']
+      },
+      settlement: {
+        name: 'Settlement Services BC',
+        nameEn: 'Settlement Services BC',
+        description: 'Services d\'établissement dans toutes les communautés.',
+        descriptionEn: 'Settlement services in all communities.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Installation', 'Familles', 'Références'],
+        servicesEn: ['Settlement', 'Families', 'Referrals']
+      }
+    },
+    'CLOSED_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Temporary Foreign Worker Support',
+        nameEn: 'Temporary Foreign Worker Support',
+        description: 'Services de soutien pour les travailleurs temporaires.',
+        descriptionEn: 'Support services for temporary workers.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Droits des travailleurs', 'Soutien', 'Ressources'],
+        servicesEn: ['Workers rights', 'Support', 'Resources']
+      },
+      employment: {
+        name: 'Employment Standards BC',
+        nameEn: 'Employment Standards BC',
+        description: 'Protection des droits des travailleurs en C.-B.',
+        descriptionEn: 'Workers rights protection in BC.',
+        url: 'https://www2.gov.bc.ca/gov/content/employment-business/employment-standards-advice',
+        services: ['Normes du travail', 'Plaintes', 'Protection'],
+        servicesEn: ['Labour standards', 'Complaints', 'Protection']
+      },
+      language: {
+        name: 'ESL Classes',
+        nameEn: 'ESL Classes',
+        description: 'Cours d\'anglais disponibles.',
+        descriptionEn: 'Available English classes.',
+        url: 'https://www.welcomebc.ca/learn-english',
+        services: ['Cours du soir', 'En ligne'],
+        servicesEn: ['Evening classes', 'Online']
+      },
+      settlement: {
+        name: 'Migrant Support Services',
+        nameEn: 'Migrant Support Services',
+        description: 'Soutien aux travailleurs migrants.',
+        descriptionEn: 'Support for migrant workers.',
+        url: 'https://www.welcomebc.ca/',
+        services: ['Aide', 'Ressources', 'Références'],
+        servicesEn: ['Help', 'Resources', 'Referrals']
+      }
+    }
+  },
+  'AB': {
+    'PERMANENT_RESIDENT': {
+      welcomeProgram: {
+        name: 'Alberta Newcomer Services',
+        nameEn: 'Alberta Newcomer Services',
+        description: 'Services d\'accueil et d\'établissement pour les nouveaux arrivants en Alberta.',
+        descriptionEn: 'Welcome and settlement services for newcomers in Alberta.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Accueil', 'Orientation', 'Références', 'Interprétation'],
+        servicesEn: ['Welcome', 'Orientation', 'Referrals', 'Interpretation']
+      },
+      employment: {
+        name: 'Alberta Works',
+        nameEn: 'Alberta Works',
+        description: 'Services d\'emploi et de formation du gouvernement albertain.',
+        descriptionEn: 'Employment and training services from the Alberta government.',
+        url: 'https://www.alberta.ca/alberta-works.aspx',
+        services: ['Emplois', 'Formation', 'Services aux travailleurs', 'Programmes d\'apprentissage'],
+        servicesEn: ['Jobs', 'Training', 'Worker services', 'Apprenticeship programs']
+      },
+      language: {
+        name: 'English Language Learning',
+        nameEn: 'English Language Learning',
+        description: 'Cours d\'anglais gratuits pour les nouveaux arrivants.',
+        descriptionEn: 'Free English classes for newcomers.',
+        url: 'https://www.alberta.ca/english-language-learning.aspx',
+        services: ['Cours LINC gratuits', 'Classes en ligne', 'Évaluation de niveau'],
+        servicesEn: ['Free LINC classes', 'Online classes', 'Level assessment']
+      },
+      settlement: {
+        name: 'Settlement Services Alberta',
+        nameEn: 'Settlement Services Alberta',
+        description: 'Organismes d\'établissement dans toutes les villes albertaines.',
+        descriptionEn: 'Settlement agencies in all Alberta cities.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Installation', 'Familles', 'Logement', 'Santé'],
+        servicesEn: ['Settlement', 'Families', 'Housing', 'Health']
+      }
+    },
+    'FOREIGN_STUDENT': {
+      welcomeProgram: {
+        name: 'International Student Services',
+        nameEn: 'International Student Services',
+        description: 'Services d\'accueil dans les établissements albertain.',
+        descriptionEn: 'Welcome services at Alberta institutions.',
+        url: 'https://www.alberta.ca/study-alberta.aspx',
+        services: ['Orientation', 'Activités', 'Support'],
+        servicesEn: ['Orientation', 'Activities', 'Support']
+      },
+      employment: {
+        name: 'Alberta Works for Students',
+        nameEn: 'Alberta Works for Students',
+        description: 'Services d\'emploi pour les étudiants.',
+        descriptionEn: 'Employment services for students.',
+        url: 'https://www.alberta.ca/alberta-works.aspx',
+        services: ['Emplois étudiants', 'Stages', 'Co-op'],
+        servicesEn: ['Student jobs', 'Internships', 'Co-op']
+      },
+      language: {
+        name: 'ESL Programs',
+        nameEn: 'ESL Programs',
+        description: 'Cours d\'anglais dans les établissements.',
+        descriptionEn: 'English courses at institutions.',
+        url: 'https://www.alberta.ca/english-language-learning.aspx',
+        services: ['ESL académique', 'Tutorat'],
+        servicesEn: ['Academic ESL', 'Tutoring']
+      },
+      settlement: {
+        name: 'Student Housing Alberta',
+        nameEn: 'Student Housing Alberta',
+        description: 'Logement étudiant.',
+        descriptionEn: 'Student housing.',
+        url: 'https://www.alberta.ca/study-alberta.aspx',
+        services: ['Résidences', 'Homestay'],
+        servicesEn: ['Residences', 'Homestay']
+      }
+    },
+    'OPEN_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'Alberta Newcomer Services',
+        nameEn: 'Alberta Newcomer Services',
+        description: 'Services pour les travailleurs et familles.',
+        descriptionEn: 'Services for workers and families.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Accueil', 'Information', 'Références'],
+        servicesEn: ['Welcome', 'Information', 'Referrals']
+      },
+      employment: {
+        name: 'Alberta Works',
+        nameEn: 'Alberta Works',
+        description: 'Services d\'emploi gratuits.',
+        descriptionEn: 'Free employment services.',
+        url: 'https://www.alberta.ca/alberta-works.aspx',
+        services: ['Recherche d\'emploi', 'Formation'],
+        servicesEn: ['Job search', 'Training']
+      },
+      language: {
+        name: 'LINC Classes',
+        nameEn: 'LINC Classes',
+        description: 'Cours d\'anglais gratuits.',
+        descriptionEn: 'Free English classes.',
+        url: 'https://www.alberta.ca/english-language-learning.aspx',
+        services: ['Cours gratuits', 'En ligne'],
+        servicesEn: ['Free classes', 'Online']
+      },
+      settlement: {
+        name: 'Settlement Agencies',
+        nameEn: 'Settlement Agencies',
+        description: 'Services d\'établissement.',
+        descriptionEn: 'Settlement services.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Installation', 'Familles'],
+        servicesEn: ['Settlement', 'Families']
+      }
+    },
+    'CLOSED_WORK_PERMIT': {
+      welcomeProgram: {
+        name: 'TFW Support Alberta',
+        nameEn: 'TFW Support Alberta',
+        description: 'Soutien aux travailleurs temporaires.',
+        descriptionEn: 'Support for temporary workers.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Droits', 'Soutien'],
+        servicesEn: ['Rights', 'Support']
+      },
+      employment: {
+        name: 'Employment Standards Alberta',
+        nameEn: 'Employment Standards Alberta',
+        description: 'Droits des travailleurs.',
+        descriptionEn: 'Workers rights.',
+        url: 'https://www.alberta.ca/employment-standards.aspx',
+        services: ['Normes', 'Plaintes'],
+        servicesEn: ['Standards', 'Complaints']
+      },
+      language: {
+        name: 'ESL Classes',
+        nameEn: 'ESL Classes',
+        description: 'Cours d\'anglais.',
+        descriptionEn: 'English classes.',
+        url: 'https://www.alberta.ca/english-language-learning.aspx',
+        services: ['Soir', 'En ligne'],
+        servicesEn: ['Evening', 'Online']
+      },
+      settlement: {
+        name: 'Migrant Worker Support',
+        nameEn: 'Migrant Worker Support',
+        description: 'Aide aux migrants.',
+        descriptionEn: 'Migrant help.',
+        url: 'https://www.alberta.ca/newcomer-services.aspx',
+        services: ['Aide', 'Ressources'],
+        servicesEn: ['Help', 'Resources']
+      }
+    }
+  }
+}
+
+// Default policies for other provinces (MB, SK, NS, NB, PE, NL)
+const defaultProvincialPolicies = {
+  'PERMANENT_RESIDENT': {
+    welcomeProgram: {
+      name: 'Programme d\'accueil provincial',
+      nameEn: 'Provincial Welcome Program',
+      description: 'Services d\'accueil et d\'établissement pour les nouveaux arrivants.',
+      descriptionEn: 'Welcome and settlement services for newcomers.',
+      url: '#',
+      services: ['Accueil', 'Orientation', 'Références', 'Information'],
+      servicesEn: ['Welcome', 'Orientation', 'Referrals', 'Information']
+    },
+    employment: {
+      name: 'Services d\'emploi provinciaux',
+      nameEn: 'Provincial Employment Services',
+      description: 'Services d\'aide à l\'emploi et de formation.',
+      descriptionEn: 'Employment assistance and training services.',
+      url: '#',
+      services: ['Recherche d\'emploi', 'Formation', 'Certifications'],
+      servicesEn: ['Job search', 'Training', 'Certifications']
+    },
+    language: {
+      name: 'Cours de langue gratuits',
+      nameEn: 'Free Language Classes',
+      description: 'Cours d\'anglais et/ou de français gratuits pour les nouveaux arrivants.',
+      descriptionEn: 'Free English and/or French classes for newcomers.',
+      url: '#',
+      services: ['Cours gratuits', 'Évaluation de niveau', 'Classes en ligne'],
+      servicesEn: ['Free classes', 'Level assessment', 'Online classes']
+    },
+    settlement: {
+      name: 'Services d\'établissement',
+      nameEn: 'Settlement Services',
+      description: 'Organismes d\'aide à l\'installation dans votre province.',
+      descriptionEn: 'Organizations helping with settlement in your province.',
+      url: '#',
+      services: ['Installation', 'Logement', 'Familles', 'Santé'],
+      servicesEn: ['Settlement', 'Housing', 'Families', 'Health']
+    }
+  },
+  'FOREIGN_STUDENT': {
+    welcomeProgram: {
+      name: 'Services aux étudiants internationaux',
+      nameEn: 'International Student Services',
+      description: 'Services d\'accueil dans les établissements d\'enseignement.',
+      descriptionEn: 'Welcome services at educational institutions.',
+      url: '#',
+      services: ['Orientation', 'Activités', 'Support'],
+      servicesEn: ['Orientation', 'Activities', 'Support']
+    },
+    employment: {
+      name: 'Services d\'emploi étudiants',
+      nameEn: 'Student Employment Services',
+      description: 'Aide à la recherche d\'emploi pour étudiants.',
+      descriptionEn: 'Job search help for students.',
+      url: '#',
+      services: ['Emplois étudiants', 'Stages', 'Co-op'],
+      servicesEn: ['Student jobs', 'Internships', 'Co-op']
+    },
+    language: {
+      name: 'ESL/FSL Programs',
+      nameEn: 'ESL/FSL Programs',
+      description: 'Cours de langue pour étudiants.',
+      descriptionEn: 'Language courses for students.',
+      url: '#',
+      services: ['ESL/FSL académique', 'Tutorat'],
+      servicesEn: ['Academic ESL/FSL', 'Tutoring']
+    },
+    settlement: {
+      name: 'Logement étudiant',
+      nameEn: 'Student Housing',
+      description: 'Services de logement pour étudiants.',
+      descriptionEn: 'Housing services for students.',
+      url: '#',
+      services: ['Résidences', 'Homestay', 'Aide au logement'],
+      servicesEn: ['Residences', 'Homestay', 'Housing help']
+    }
+  },
+  'OPEN_WORK_PERMIT': {
+    welcomeProgram: {
+      name: 'Services d\'accueil',
+      nameEn: 'Welcome Services',
+      description: 'Services pour les travailleurs et leurs familles.',
+      descriptionEn: 'Services for workers and their families.',
+      url: '#',
+      services: ['Accueil', 'Information', 'Références'],
+      servicesEn: ['Welcome', 'Information', 'Referrals']
+    },
+    employment: {
+      name: 'Services d\'emploi',
+      nameEn: 'Employment Services',
+      description: 'Aide à l\'emploi pour les résidents.',
+      descriptionEn: 'Employment help for residents.',
+      url: '#',
+      services: ['Recherche d\'emploi', 'Formation'],
+      servicesEn: ['Job search', 'Training']
+    },
+    language: {
+      name: 'Cours de langue',
+      nameEn: 'Language Classes',
+      description: 'Cours d\'anglais/français disponibles.',
+      descriptionEn: 'English/French classes available.',
+      url: '#',
+      services: ['Cours gratuits', 'En ligne'],
+      servicesEn: ['Free classes', 'Online']
+    },
+    settlement: {
+      name: 'Services d\'établissement',
+      nameEn: 'Settlement Services',
+      description: 'Aide à l\'installation.',
+      descriptionEn: 'Settlement help.',
+      url: '#',
+      services: ['Installation', 'Familles'],
+      servicesEn: ['Settlement', 'Families']
+    }
+  },
+  'CLOSED_WORK_PERMIT': {
+    welcomeProgram: {
+      name: 'Soutien aux travailleurs temporaires',
+      nameEn: 'Temporary Worker Support',
+      description: 'Services de soutien pour les travailleurs temporaires.',
+      descriptionEn: 'Support services for temporary workers.',
+      url: '#',
+      services: ['Droits', 'Soutien', 'Ressources'],
+      servicesEn: ['Rights', 'Support', 'Resources']
+    },
+    employment: {
+      name: 'Normes du travail',
+      nameEn: 'Employment Standards',
+      description: 'Protection des droits des travailleurs.',
+      descriptionEn: 'Workers rights protection.',
+      url: '#',
+      services: ['Normes', 'Plaintes', 'Protection'],
+      servicesEn: ['Standards', 'Complaints', 'Protection']
+    },
+    language: {
+      name: 'Cours d\'anglais',
+      nameEn: 'English Classes',
+      description: 'Cours disponibles.',
+      descriptionEn: 'Classes available.',
+      url: '#',
+      services: ['Soir', 'En ligne'],
+      servicesEn: ['Evening', 'Online']
+    },
+    settlement: {
+      name: 'Aide aux migrants',
+      nameEn: 'Migrant Support',
+      description: 'Services de soutien.',
+      descriptionEn: 'Support services.',
+      url: '#',
+      services: ['Aide', 'Ressources'],
+      servicesEn: ['Help', 'Resources']
+    }
+  }
+}
+
+// ==================== PROVINCE MODULE ====================
+function ProvinceModule({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const userProvince = user?.province || 'ON'
+  const userStatus = user?.immigrationStatus || 'PERMANENT_RESIDENT'
+  
+  // Get policies for user's province and status
+  const provinceName = provinces.find(p => p.code === userProvince)?.name || userProvince
+  const provinceNameEn = provinces.find(p => p.code === userProvince)?.nameEn || userProvince
+  
+  // Get policies - use specific data if available, otherwise use defaults
+  const policies = provincialPolicies[userProvince]?.[userStatus] || 
+                   defaultProvincialPolicies[userStatus as keyof typeof defaultProvincialPolicies]
+  
+  const sections = [
+    { key: 'welcomeProgram', icon: HeartHandshake, label: language === 'fr' ? 'Programme d\'accueil' : 'Welcome Program', color: 'from-pink-500 to-rose-500' },
+    { key: 'employment', icon: Briefcase, label: language === 'fr' ? 'Emploi et formation' : 'Employment & Training', color: 'from-blue-500 to-cyan-500' },
+    { key: 'language', icon: Globe, label: language === 'fr' ? 'Cours de langue' : 'Language Classes', color: 'from-green-500 to-emerald-500' },
+    { key: 'settlement', icon: Home, label: language === 'fr' ? 'Services d\'établissement' : 'Settlement Services', color: 'from-purple-500 to-violet-500' },
+  ]
+  
+  const statusLabel = t(`status.${userStatus}`, language)
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-cyan-50/50 to-white dark:from-cyan-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-200 dark:shadow-cyan-900/30">
+              <MapPin className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {t('modules.province.title', language)} - {language === 'fr' ? provinceName : provinceNameEn}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">
+                {language === 'fr' 
+                  ? `Programmes d'accueil et d'intégration pour ${statusLabel.toLowerCase()}`
+                  : `Welcome and integration programs for ${statusLabel.toLowerCase()}`}
+              </p>
+            </div>
+          </div>
+          
+          {/* Quick Info */}
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Province' : 'Province'}</p>
+              <Badge variant="default" className="mt-0.5 bg-gradient-to-r from-cyan-500 to-teal-500">{provinceNameEn}</Badge>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+              <Badge variant="outline" className="mt-0.5">{statusLabel}</Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Province Info Banner */}
+        <div className="bg-gradient-to-r from-cyan-500/10 via-teal-500/10 to-emerald-500/10 rounded-2xl p-6 border border-cyan-200 dark:border-cyan-800">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                {language === 'fr' ? '📋 Vos droits et services provinciaux' : '📋 Your Provincial Rights and Services'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
+                {language === 'fr' 
+                  ? `En tant que ${statusLabel.toLowerCase()} en ${provinceName}, vous avez accès à divers programmes et services d'intégration financés par le gouvernement provincial. Ces services sont généralement gratuits et conçus pour faciliter votre établissement.`
+                  : `As a ${statusLabel.toLowerCase()} in ${provinceNameEn}, you have access to various government-funded integration programs and services. These services are generally free and designed to facilitate your settlement.`}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {sections.map((section) => {
+            const Icon = section.icon
+            const data = policies[section.key as keyof typeof policies]
+            if (!data) return null
+            
+            return (
+              <Card key={section.key} className="border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className={`h-2 bg-gradient-to-r ${section.color}`} />
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <div className={`w-8 h-8 bg-gradient-to-br ${section.color} rounded-lg flex items-center justify-center`}>
+                      <Icon className="w-4 h-4 text-white" />
+                    </div>
+                    {language === 'fr' ? data.name : data.nameEn}
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    {language === 'fr' ? data.description : data.descriptionEn}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Services List */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? 'Services offerts:' : 'Services offered:'}
+                    </h4>
+                    <ul className="space-y-2">
+                      {(language === 'fr' ? data.services : data.servicesEn).map((service: string, i: number) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          {service}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Link */}
+                  {data.url && data.url !== '#' && (
+                    <a 
+                      href={data.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-600 text-white rounded-lg text-sm font-medium hover:from-cyan-600 hover:to-teal-700 transition-all shadow-md"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      {language === 'fr' ? 'Accéder au programme' : 'Access program'}
+                    </a>
+                  )}
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+
+        {/* Financial Aid Section (if available) */}
+        {policies.financialAid && (
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                  <PiggyBank className="w-4 h-4 text-white" />
+                </div>
+                {language === 'fr' ? policies.financialAid.name : policies.financialAid.nameEn}
+              </CardTitle>
+              <CardDescription>
+                {language === 'fr' ? policies.financialAid.description : policies.financialAid.descriptionEn}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {policies.financialAid.amount && (
+                <div className="flex items-center gap-2 mb-4">
+                  <DollarSign className="w-5 h-5 text-amber-600" />
+                  <span className="font-semibold text-amber-700 dark:text-amber-300">
+                    {language === 'fr' ? 'Montant: ' : 'Amount: '}{policies.financialAid.amount}
+                  </span>
+                </div>
+              )}
+              {policies.financialAid.url && (
+                <a 
+                  href={policies.financialAid.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg text-sm font-medium hover:from-amber-600 hover:to-orange-700 transition-all shadow-md"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  {language === 'fr' ? 'En savoir plus' : 'Learn more'}
+                </a>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Important Notes */}
+        <Card className="border-0 shadow-lg bg-blue-50/50 dark:bg-blue-950/20">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="w-5 h-5 text-white" />
+              </div>
+              <div className="space-y-3">
+                <h4 className="font-semibold text-gray-900 dark:text-white">
+                  {language === 'fr' ? '📌 Points importants à retenir' : '📌 Important points to remember'}
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    {language === 'fr' 
+                      ? 'La plupart des services sont gratuits pour les résidents de la province.'
+                      : 'Most services are free for provincial residents.'}
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    {language === 'fr' 
+                      ? 'Apportez vos documents d\'identité et de statut d\'immigration lors de vos rendez-vous.'
+                      : 'Bring your identity documents and immigration status paperwork to your appointments.'}
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    {language === 'fr' 
+                      ? 'Les services d\'interprétation sont souvent disponibles sur demande.'
+                      : 'Interpretation services are often available upon request.'}
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    {language === 'fr' 
+                      ? 'Certains programmes peuvent avoir des critères d\'admissibilité spécifiques.'
+                      : 'Some programs may have specific eligibility criteria.'}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Links */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ExternalLink className="w-5 h-5 text-cyan-500" />
+              {language === 'fr' ? 'Liens utiles' : 'Useful Links'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <a 
+                href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/nouveaux-arrivants.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-colors border hover:border-cyan-300"
+              >
+                <p className="font-medium text-sm">{language === 'fr' ? '🇨🇦 Canada.ca Nouveaux arrivants' : '🇨🇦 Canada.ca Newcomers'}</p>
+              </a>
+              <a 
+                href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/nouveaux-arrivants/services-etablissement.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-colors border hover:border-cyan-300"
+              >
+                <p className="font-medium text-sm">{language === 'fr' ? '🏛️ Services d\'établissement' : '🏛️ Settlement Services'}</p>
+              </a>
+              <a 
+                href="https://ircc.canada.ca/francais/travailler/index.asp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-colors border hover:border-cyan-300"
+              >
+                <p className="font-medium text-sm">{language === 'fr' ? '💼 Travailler au Canada' : '💼 Work in Canada'}</p>
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+// ==================== IMMIGRATION MODULE ====================
+function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
+  language: Language
+  user: any
+  tasks: Task[]
+  onTaskUpdate: (taskId: string, status: Task['status']) => void
+}) {
+  // CRS Calculator state
+  const [age, setAge] = useState(30)
+  const [education, setEducation] = useState('bachelors')
+  const [clbLevel, setClbLevel] = useState(7)
+  const [canadaExperience, setCanadaExperience] = useState(0)
+  const [outsideCanadaExperience, setOutsideCanadaExperience] = useState(3)
+  const [calculatedScore, setCalculatedScore] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState<'tasks' | 'simulator' | 'pgwp' | 'citizenship'>('tasks')
+
+  // Determine if user is a temporary resident (needs CRS) or permanent resident (needs citizenship)
+  const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus)
+  const isPermanentResident = user?.immigrationStatus === 'PERMANENT_RESIDENT'
+
+  // Calculate age from dateOfBirth
+  const calculateAgeFromDOB = (dob: string | undefined): number | null => {
+    if (!dob) return null
+    const birthDate = new Date(dob)
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    return age
+  }
+
+  // Get age from profile or state
+  const profileAge = calculateAgeFromDOB(user?.dateOfBirth)
+  const displayAge = profileAge !== null ? profileAge : age
+
+  // PGWP Calculator state
+  const [pgwpProgramDuration, setPgwpProgramDuration] = useState(12)
+  const [pgwpProgramType, setPgwpProgramType] = useState<'degree' | 'diploma' | 'certificate'>('degree')
+  const [pgwpIsDLI, setPgwpIsDLI] = useState(true)
+  const [pgwpIsFullTime, setPgwpIsFullTime] = useState(true)
+  const [pgwpIsDistance, setPgwpIsDistance] = useState(false)
+  const [pgwpIsFSL, setPgwpIsFSL] = useState(false)
+  const [pgwpResult, setPgwpResult] = useState<{eligible: boolean; duration: string; message: string} | null>(null)
+
+  const immigrationTasks = tasks.filter(t => t.category === 'IMMIGRATION')
+  const completedCount = immigrationTasks.filter(t => t.status === 'COMPLETED').length
+
+  const calculateCRS = () => {
+    let score = 0
+    const calculatedAge = displayAge
+    
+    // Age points (max 110) - Based on Express Entry CRS age factor
+    // Maximum points at age 20-29, decreases after
+    if (calculatedAge <= 17) score += 0
+    else if (calculatedAge <= 19) score += 90
+    else if (calculatedAge <= 29) score += 110  // Maximum
+    else if (calculatedAge === 30) score += 105
+    else if (calculatedAge === 31) score += 99
+    else if (calculatedAge === 32) score += 94
+    else if (calculatedAge === 33) score += 88
+    else if (calculatedAge === 34) score += 83
+    else if (calculatedAge === 35) score += 77
+    else if (calculatedAge === 36) score += 72
+    else if (calculatedAge === 37) score += 66
+    else if (calculatedAge === 38) score += 61
+    else if (calculatedAge === 39) score += 55
+    else if (calculatedAge === 40) score += 50
+    else if (calculatedAge === 41) score += 39
+    else if (calculatedAge === 42) score += 28
+    else if (calculatedAge === 43) score += 17
+    else if (calculatedAge === 44) score += 6
+    else score += 0  // 45+ gets 0 points
+
+    // Education points (max 150)
+    if (education === 'phd') score += 150
+    else if (education === 'masters') score += 135
+    else if (education === 'bachelors') score += 120
+    else if (education === 'diploma') score += 90
+    else score += 30
+
+    // Language points (max 160)
+    if (clbLevel >= 9) score += 160
+    else if (clbLevel >= 7) score += 100
+    else score += 50
+
+    // Canada experience (max 80)
+    if (canadaExperience >= 5) score += 80
+    else if (canadaExperience >= 3) score += 64
+    else if (canadaExperience >= 1) score += 40
+
+    // Outside Canada experience (max 50)
+    if (outsideCanadaExperience >= 3) score += 50
+    else if (outsideCanadaExperience >= 1) score += 25
+
+    // Base points
+    score += 100
+
+    setCalculatedScore(score)
+  }
+
+  const calculatePGWP = () => {
+    // Check eligibility
+    if (!pgwpIsDLI) {
+      setPgwpResult({
+        eligible: false,
+        duration: '0',
+        message: language === 'fr' 
+          ? '❌ Votre établissement doit être un établissement d\'enseignement désigné (DLI) pour être éligible au PGWP.'
+          : '❌ Your institution must be a Designated Learning Institution (DLI) to be eligible for PGWP.'
+      })
+      return
+    }
+
+    if (pgwpIsDistance) {
+      setPgwpResult({
+        eligible: false,
+        duration: '0',
+        message: language === 'fr'
+          ? '❌ Les programmes complètement à distance ne sont PAS éligibles au PGWP. Vous devez avoir complété au moins 50% de vos études en personne au Canada.'
+          : '❌ Distance learning programs are NOT eligible for PGWP. You must have completed at least 50% of your studies in person in Canada.'
+      })
+      return
+    }
+
+    if (pgwpIsFSL && pgwpProgramDuration < 12) {
+      setPgwpResult({
+        eligible: false,
+        duration: '0',
+        message: language === 'fr'
+          ? '❌ Les programmes de français langue seconde (FLS) de moins de 12 mois ne sont PAS éligibles au PGWP.'
+          : '❌ French as a Second Language (FSL) programs under 12 months are NOT eligible for PGWP.'
+      })
+      return
+    }
+
+    if (pgwpProgramDuration < 8) {
+      setPgwpResult({
+        eligible: false,
+        duration: '0',
+        message: language === 'fr'
+          ? '❌ Votre programme doit durer minimum 8 mois pour être éligible au PGWP.'
+          : '❌ Your program must be at least 8 months long to be eligible for PGWP.'
+      })
+      return
+    }
+
+    if (!pgwpIsFullTime) {
+      setPgwpResult({
+        eligible: false,
+        duration: '0',
+        message: language === 'fr'
+          ? '❌ Vous devez avoir été inscrit à temps plein pendant vos études pour être éligible (sauf exception pour le dernier semestre).'
+          : '❌ You must have been enrolled full-time during your studies to be eligible (except for the final semester).'
+      })
+      return
+    }
+
+    // Calculate duration
+    let duration = ''
+    if (pgwpProgramDuration >= 8 && pgwpProgramDuration < 12) {
+      duration = language === 'fr' 
+        ? `${pgwpProgramDuration} mois (même durée que votre programme)`
+        : `${pgwpProgramDuration} months (same length as your program)`
+    } else if (pgwpProgramDuration >= 12) {
+      duration = language === 'fr' ? '3 ans' : '3 years'
+    }
+
+    const programTypeLabel = language === 'fr'
+      ? pgwpProgramType === 'degree' ? 'diplôme' : pgwpProgramType === 'diploma' ? 'diplôme collégial' : 'certificat'
+      : pgwpProgramType
+
+    setPgwpResult({
+      eligible: true,
+      duration,
+      message: language === 'fr'
+        ? `✅ Félicitations! Vous êtes éligible au PGWP! Votre ${programTypeLabel} d'une durée de ${pgwpProgramDuration} mois vous donne droit à un permis de travail de ${duration}.`
+        : `✅ Congratulations! You are eligible for PGWP! Your ${programTypeLabel} of ${pgwpProgramDuration} months gives you a work permit of ${duration}.`
+    })
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-200 dark:shadow-green-900/30">
+              <Shield className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {t('modules.immigration.title', language)}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">{t('modules.immigration.description', language)}</p>
+            </div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Progression' : 'Progress'}</p>
+              <p className="font-bold text-green-600">{completedCount}/{immigrationTasks.length}</p>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+              <Badge variant="default" className="mt-0.5">{t(`status.${user?.immigrationStatus}`, language)}</Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className="flex lg:hidden bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+          <button
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tasks' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            onClick={() => setActiveTab('tasks')}
+          >
+            <ListChecks className="w-4 h-4 inline mr-2" />
+            {language === 'fr' ? 'Tâches' : 'Tasks'}
+          </button>
+          {user?.immigrationStatus === 'FOREIGN_STUDENT' && (
+            <button
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'pgwp' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setActiveTab('pgwp')}
+            >
+              <GraduationCap className="w-4 h-4 inline mr-2" />
+              PGWP
+            </button>
+          )}
+          {/* CRS only for temporary residents */}
+          {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus) && (
+            <button
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'simulator' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setActiveTab('simulator')}
+            >
+              <Calculator className="w-4 h-4 inline mr-2" />
+              CRS
+            </button>
+          )}
+          {/* Citizenship for permanent residents */}
+          {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (
+            <button
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'citizenship' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setActiveTab('citizenship')}
+            >
+              <Crown className="w-4 h-4 inline mr-2" />
+              {language === 'fr' ? 'Citoyenneté' : 'Citizenship'}
+            </button>
+          )}
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Tasks Checklist - Left Side */}
+          <div className={`lg:col-span-2 ${activeTab !== 'tasks' ? 'hidden lg:block' : ''}`}>
+            <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                      <ListChecks className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    {language === 'fr' ? 'Mes tâches' : 'My Tasks'}
+                  </CardTitle>
+                  <Badge variant="secondary" className="text-xs">
+                    {completedCount} {language === 'fr' ? 'complétées' : 'completed'}
+                  </Badge>
+                </div>
+                {/* Progress Bar */}
+                <div className="mt-3">
+                  <Progress value={(completedCount / Math.max(immigrationTasks.length, 1)) * 100} className="h-2" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+                  {immigrationTasks.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-green-300" />
+                      <p>{language === 'fr' ? 'Aucune tâche pour le moment' : 'No tasks at the moment'}</p>
+                    </div>
+                  ) : (
+                    immigrationTasks.map((task, index) => (
+                      <div 
+                        key={task.id} 
+                        className={`group flex items-start gap-3 p-3 rounded-xl border transition-all duration-300 cursor-pointer hover:shadow-md ${
+                          task.status === 'COMPLETED' 
+                            ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800' 
+                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-700'
+                        }`}
+                        onClick={() => onTaskUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
+                      >
+                        <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                          task.status === 'COMPLETED' 
+                            ? 'bg-green-500 border-green-500' 
+                            : 'border-gray-300 group-hover:border-green-400'
+                        }`}>
+                          {task.status === 'COMPLETED' && (
+                            <CheckCircle2 className="w-3 h-3 text-white" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-medium text-sm transition-all ${
+                            task.status === 'COMPLETED' 
+                              ? 'text-gray-400 line-through' 
+                              : 'text-gray-700 dark:text-gray-200'
+                          }`}>
+                            {language === 'fr' ? task.title : (task.titleEn || task.title)}
+                          </p>
+                          {task.isRequired && (
+                            <Badge variant="outline" className="text-[10px] mt-1 bg-orange-50 text-orange-600 border-orange-200">
+                              {language === 'fr' ? 'Obligatoire' : 'Required'}
+                            </Badge>
+                          )}
+                        </div>
+                        <Badge 
+                          variant={task.priority === 'HIGH' ? 'destructive' : task.priority === 'MEDIUM' ? 'default' : 'secondary'}
+                          className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          {task.priority === 'HIGH' ? '!' : task.priority === 'MEDIUM' ? '•' : '○'}
+                        </Badge>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CRS Simulator - Right Side - Only for Temporary Residents */}
+          {isTemporaryResident && (
+            <div className={`lg:col-span-3 ${activeTab !== 'simulator' ? 'hidden lg:block' : ''}`}>
+              <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                      <Calculator className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    {language === 'fr' ? 'Simulateur CRS Entrée Express' : 'CRS Express Entry Simulator'}
+                  </CardTitle>
+                  <CardDescription>
+                    {language === 'fr' ? 'Estimez votre score pour Entrée Express' : 'Estimate your Express Entry score'}
+                  </CardDescription>
+                </CardHeader>
+              
+              <CardContent className="space-y-5">
+                {/* Age from Profile Info */}
+                {profileAge !== null && (
+                  <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span className="text-sm font-medium">
+                        {language === 'fr' 
+                          ? `🎂 Âge calculé depuis votre profil: ${profileAge} ans`
+                          : `🎂 Age calculated from your profile: ${profileAge} years old`}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Input Grid */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {/* Age */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-sm font-medium">
+                        {language === 'fr' ? 'Âge' : 'Age'}
+                        {profileAge !== null && <span className="ml-2 text-xs text-green-600">({language === 'fr' ? 'depuis profil' : 'from profile'})</span>}
+                      </Label>
+                      <Badge variant="outline" className="font-mono">{displayAge} {language === 'fr' ? 'ans' : 'y.o'}</Badge>
+                    </div>
+                    {profileAge === null ? (
+                      <Slider 
+                        value={[age]} 
+                        onValueChange={([v]) => setAge(v)} 
+                        min={18} 
+                        max={50} 
+                        step={1}
+                        className="py-2"
+                      />
+                    ) : (
+                      <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm text-gray-600 dark:text-gray-400">
+                        {language === 'fr' 
+                          ? '💡 Ajoutez votre date de naissance dans votre profil pour un calcul précis'
+                          : '💡 Add your date of birth in your profile for accurate calculation'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Education */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'éducation' : 'Education level'}</Label>
+                    <Select value={education} onValueChange={setEducation}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="phd">{language === 'fr' ? '🎓 Doctorat' : '🎓 PhD'}</SelectItem>
+                        <SelectItem value="masters">{language === 'fr' ? '📚 Maîtrise' : '📚 Masters'}</SelectItem>
+                        <SelectItem value="bachelors">{language === 'fr' ? '📖 Baccalauréat' : '📖 Bachelors'}</SelectItem>
+                        <SelectItem value="diploma">{language === 'fr' ? '📋 Diplôme collégial' : '📋 College Diploma'}</SelectItem>
+                        <SelectItem value="highschool">{language === 'fr' ? '🏫 Secondaire' : '🏫 High School'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* CLB Level */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau CLB' : 'CLB Level'}</Label>
+                    <Select value={clbLevel.toString()} onValueChange={(v) => setClbLevel(parseInt(v))}>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">CLB 10+ ⭐</SelectItem>
+                        <SelectItem value="9">CLB 9</SelectItem>
+                        <SelectItem value="8">CLB 8</SelectItem>
+                        <SelectItem value="7">CLB 7</SelectItem>
+                        <SelectItem value="6">CLB 6</SelectItem>
+                        <SelectItem value="5">CLB 5</SelectItem>
+                        <SelectItem value="4">CLB 4 (Min)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Canada Experience */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-sm font-medium">{language === 'fr' ? 'Expérience Canada' : 'Canada Exp.'}</Label>
+                      <Badge variant="outline" className="font-mono">{canadaExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
+                    </div>
+                    <Slider 
+                      value={[canadaExperience]} 
+                      onValueChange={([v]) => setCanadaExperience(v)} 
+                      min={0} 
+                      max={6} 
+                      step={1}
+                      className="py-2"
+                    />
+                  </div>
+                </div>
+
+                {/* Outside Canada Experience - Full Width */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-sm font-medium">{language === 'fr' ? 'Expérience hors Canada' : 'Outside Canada Exp.'}</Label>
+                    <Badge variant="outline" className="font-mono">{outsideCanadaExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
+                  </div>
+                  <Slider 
+                    value={[outsideCanadaExperience]} 
+                    onValueChange={([v]) => setOutsideCanadaExperience(v)} 
+                    min={0} 
+                    max={6} 
+                    step={1}
+                    className="py-2"
+                  />
+                </div>
+
+                {/* Calculate Button */}
+                <Button 
+                  onClick={calculateCRS} 
+                  className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-200 dark:shadow-green-900/30 transition-all duration-300"
+                >
+                  <Calculator className="w-5 h-5 mr-2" />
+                  {language === 'fr' ? 'Calculer mon score CRS' : 'Calculate my CRS score'}
+                </Button>
+
+                {/* Score Result */}
+                {calculatedScore !== null && (
+                  <div className={`relative overflow-hidden rounded-2xl p-6 text-center transition-all duration-500 ${
+                    calculatedScore >= 450 
+                      ? 'bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20' 
+                      : calculatedScore >= 350 
+                      ? 'bg-gradient-to-br from-yellow-100 to-yellow-50 dark:from-yellow-900/30 dark:to-yellow-800/20'
+                      : 'bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20'
+                  }`}>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30" />
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <span className={`text-6xl font-black tracking-tight ${
+                        calculatedScore >= 450 ? 'text-green-600' : calculatedScore >= 350 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {calculatedScore}
+                      </span>
+                      <span className="text-gray-500 text-lg">{language === 'fr' ? 'points' : 'points'}</span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">{language === 'fr' ? 'Score CRS estimé' : 'Estimated CRS score'}</p>
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+                      calculatedScore >= 450 
+                        ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200' 
+                        : calculatedScore >= 350 
+                        ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200'
+                        : 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200'
+                    }`}>
+                      {calculatedScore >= 450 
+                        ? (<>✨ {language === 'fr' ? 'Excellent! Score compétitif' : 'Excellent! Competitive score'} ✨</>)
+                        : calculatedScore >= 350
+                        ? (<>⚡ {language === 'fr' ? 'Score moyen - envisagez les PNP' : 'Average score - consider PNP'} ⚡</>)
+                        : (<>🔍 {language === 'fr' ? 'Score bas - explorez les options' : 'Low score - explore options'} 🔍</>)
+                      }
+                    </div>
+                    
+                    {/* Score Tips */}
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-xs text-gray-500">
+                        {language === 'fr' 
+                          ? '💡 Conseil: Améliorez votre score en augmentant votre niveau CLB ou en accumulant plus d\'expérience.'
+                          : '💡 Tip: Improve your score by increasing your CLB level or gaining more experience.'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+          )}
+
+          {/* Citizenship Eligibility - For Permanent Residents Only */}
+          {isPermanentResident && (
+            <div className={`lg:col-span-3 ${activeTab !== 'citizenship' ? 'hidden lg:block' : ''}`}>
+              <CitizenshipEligibilityCard language={language} user={user} />
+            </div>
+          )}
+
+          {/* Citizenship Quiz - For Permanent Residents Only */}
+          {isPermanentResident && (
+            <div className={`lg:col-span-3 ${activeTab !== 'citizenship' ? 'hidden lg:block' : ''}`}>
+              <CitizenshipQuizCard language={language} />
+            </div>
+          )}
+        </div>
+
+        {/* PGWP Eligibility Checker - Only for Students */}
+        {user?.immigrationStatus === 'FOREIGN_STUDENT' && (
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4 text-white" />
+                </div>
+                {language === 'fr' ? '🎓 Vérificateur d\'éligibilité PGWP' : '🎓 PGWP Eligibility Checker'}
+              </CardTitle>
+              <CardDescription>
+                {language === 'fr' 
+                  ? 'Vérifiez votre éligibilité au Permis de Travail Post-Diplôme' 
+                  : 'Check your eligibility for the Post-Graduation Work Permit'}
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-5">
+              {/* Quick Info Banner */}
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl border border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>{language === 'fr' ? '📌 Qu\'est-ce que le PGWP?' : '📌 What is PGWP?'}</strong>
+                  <br />
+                  {language === 'fr' 
+                    ? 'Le Permis de Travail Post-Diplôme permet aux diplômés internationaux de travailler au Canada après leurs études. C\'est souvent une étape clé vers la résidence permanente.'
+                    : 'The Post-Graduation Work Permit allows international graduates to work in Canada after their studies. It\'s often a key step toward permanent residence.'}
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Program Duration */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{language === 'fr' ? 'Durée du programme' : 'Program duration'}</Label>
+                  <div className="flex items-center gap-2">
+                    <Slider 
+                      value={[pgwpProgramDuration]} 
+                      onValueChange={([v]) => setPgwpProgramDuration(v)} 
+                      min={6} 
+                      max={48} 
+                      step={1}
+                      className="flex-1"
+                    />
+                    <Badge variant="outline" className="font-mono w-20 justify-center">
+                      {pgwpProgramDuration} {language === 'fr' ? 'mois' : 'months'}
+                    </Badge>
+                  </div>
+                  {pgwpProgramDuration < 8 && (
+                    <p className="text-xs text-red-500">{language === 'fr' ? '⚠️ Minimum 8 mois requis' : '⚠️ Minimum 8 months required'}</p>
+                  )}
+                </div>
+
+                {/* Program Type */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{language === 'fr' ? 'Type de programme' : 'Program type'}</Label>
+                  <Select value={pgwpProgramType} onValueChange={(v: any) => setPgwpProgramType(v)}>
+                    <SelectTrigger className="bg-white dark:bg-gray-800">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="degree">{language === 'fr' ? '🎓 Diplôme universitaire' : '🎓 University Degree'}</SelectItem>
+                      <SelectItem value="diploma">{language === 'fr' ? '📋 Diplôme collégial' : '📋 College Diploma'}</SelectItem>
+                      <SelectItem value="certificate">{language === 'fr' ? '📜 Certificat' : '📜 Certificate'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* DLI Status */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{language === 'fr' ? 'Établissement désigné (DLI)?' : 'Designated institution (DLI)?'}</Label>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant={pgwpIsDLI ? 'default' : 'outline'} 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => setPgwpIsDLI(true)}
+                    >
+                      {language === 'fr' ? '✅ Oui' : '✅ Yes'}
+                    </Button>
+                    <Button 
+                      variant={!pgwpIsDLI ? 'destructive' : 'outline'} 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => setPgwpIsDLI(false)}
+                    >
+                      {language === 'fr' ? '❌ Non' : '❌ No'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Criteria */}
+              <div className="grid sm:grid-cols-3 gap-4">
+                {/* Full-time Status */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                  <div>
+                    <p className="text-sm font-medium">{language === 'fr' ? 'Temps plein' : 'Full-time'}</p>
+                    <p className="text-xs text-gray-500">{language === 'fr' ? 'Pendant vos études' : 'During your studies'}</p>
+                  </div>
+                  <Checkbox 
+                    checked={pgwpIsFullTime} 
+                    onCheckedChange={(v) => setPgwpIsFullTime(!!v)}
+                    className="data-[state=checked]:bg-green-500"
+                  />
+                </div>
+
+                {/* Distance Learning */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                  <div>
+                    <p className="text-sm font-medium">{language === 'fr' ? 'À distance' : 'Distance learning'}</p>
+                    <p className="text-xs text-gray-500">{language === 'fr' ? '100% en ligne' : '100% online'}</p>
+                  </div>
+                  <Checkbox 
+                    checked={pgwpIsDistance} 
+                    onCheckedChange={(v) => setPgwpIsDistance(!!v)}
+                    className="data-[state=checked]:bg-red-500"
+                  />
+                </div>
+
+                {/* FSL Program */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                  <div>
+                    <p className="text-sm font-medium">{language === 'fr' ? 'Programme FLS' : 'FSL Program'}</p>
+                    <p className="text-xs text-gray-500">{language === 'fr' ? 'Français langue seconde' : 'French as Second Language'}</p>
+                  </div>
+                  <Checkbox 
+                    checked={pgwpIsFSL} 
+                    onCheckedChange={(v) => setPgwpIsFSL(!!v)}
+                  />
+                </div>
+              </div>
+
+              {/* Calculate Button */}
+              <Button 
+                onClick={calculatePGWP} 
+                className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+              >
+                <GraduationCap className="w-5 h-5 mr-2" />
+                {language === 'fr' ? 'Vérifier mon éligibilité PGWP' : 'Check my PGWP eligibility'}
+              </Button>
+
+              {/* Result */}
+              {pgwpResult && (
+                <div className={`relative overflow-hidden rounded-2xl p-6 transition-all duration-500 ${
+                  pgwpResult.eligible 
+                    ? 'bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20' 
+                    : 'bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20'
+                }`}>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30" />
+                  
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                      pgwpResult.eligible ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      {pgwpResult.eligible 
+                        ? <CheckCircle2 className="w-6 h-6 text-white" />
+                        : <AlertCircle className="w-6 h-6 text-white" />
+                      }
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-lg mb-2">
+                        {pgwpResult.eligible 
+                          ? (language === 'fr' ? '✅ Vous êtes éligible!' : '✅ You are eligible!')
+                          : (language === 'fr' ? '❌ Non éligible' : '❌ Not eligible')
+                        }
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                        {pgwpResult.message}
+                      </p>
+                      
+                      {pgwpResult.eligible && (
+                        <div className="flex items-center gap-3">
+                          <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+                            <p className="text-xs text-gray-500">{language === 'fr' ? 'Durée du PGWP' : 'PGWP Duration'}</p>
+                            <p className="font-bold text-lg text-green-600">{pgwpResult.duration}</p>
+                          </div>
+                          <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+                            <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais' : 'Fee'}</p>
+                            <p className="font-bold text-lg">$255 CAD</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Links */}
+                  {pgwpResult.eligible && (
+                    <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-800 flex flex-wrap gap-2">
+                      <a 
+                        href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/travailler-canada/permis/post-diplome/commencer.html" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        {language === 'fr' ? 'Demander maintenant' : 'Apply now'}
+                      </a>
+                      <a 
+                        href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/travailler-canada/permis/post-diplome.html" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <BookOpen className="w-4 h-4" />
+                        {language === 'fr' ? 'Guide officiel' : 'Official guide'}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Timeline Info */}
+              <div className="grid sm:grid-cols-3 gap-3 text-center">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600">180</p>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Jours pour appliquer après les études' : 'Days to apply after graduation'}</p>
+                </div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600">80-100</p>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Jours de traitement' : 'Processing days'}</p>
+                </div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <p className="text-2xl font-bold text-purple-600">3</p>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Ans max (selon programme)' : 'Years max (based on program)'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Spousal Work Permit Eligibility - For temporary residents in a relationship */}
+        {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus) && 
+         (user?.familyStatus === 'COUPLE' || user?.familyStatus === 'FAMILY_WITH_CHILDREN') && (
+          <SpousalWorkPermitEligibility language={language} user={user} />
+        )}
+
+        {/* Permit Expiry Alerts for Temporary Residents */}
+        {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus) && (
+          <PermitExpiryAlerts language={language} user={user} />
+        )}
+
+        {/* Permit Tracking Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Status Card */}
+          <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/50 dark:to-blue-900/30 hover:shadow-lg transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+                  <p className="font-semibold text-sm">{t(`status.${user?.immigrationStatus}`, language)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Province Card */}
+          <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/50 dark:to-purple-900/30 hover:shadow-lg transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Province' : 'Province'}</p>
+                  <p className="font-semibold text-sm">{provinces.find(p => p.code === user?.province)?.name || '-'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Arrival Date Card */}
+          <Card className="border-0 shadow-md bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/50 dark:to-amber-900/30 hover:shadow-lg transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Arrivée' : 'Arrival'}</p>
+                  <p className="font-semibold text-sm">{user?.arrivalDate ? new Date(user.arrivalDate).toLocaleDateString() : '-'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Next Steps Card */}
+          <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/50 dark:to-green-900/30 hover:shadow-lg transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Tâches en attente' : 'Pending tasks'}</p>
+                  <p className="font-semibold text-sm">{immigrationTasks.filter(t => t.status === 'PENDING').length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==================== EMPLOYMENT MODULE ====================
+function EmploymentModule({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const [cvContent, setCvContent] = useState('')
+  const [targetJob, setTargetJob] = useState('')
+  const [jobUrl, setJobUrl] = useState('')
+  const [extractedKeywords, setExtractedKeywords] = useState<string[]>([])
+  const [extractedJobInfo, setExtractedJobInfo] = useState<{title?: string; company?: string; requirements?: string[]} | null>(null)
+  const [extractingUrl, setExtractingUrl] = useState(false)
+  const [aiResult, setAiResult] = useState<any>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [applications, setApplications] = useState<any[]>([])
+  const [showAddApplication, setShowAddApplication] = useState(false)
+  const [newApp, setNewApp] = useState({ company: '', position: '', notes: '' })
+  const [activeTab, setActiveTab] = useState<'cv' | 'tracker'>('cv')
+  const [uploadingFile, setUploadingFile] = useState(false)
+  const [fileName, setFileName] = useState('')
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/user-data?action=get-job-applications&userId=${user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.applications) setApplications(data.applications)
+        })
+    }
+  }, [user?.id])
+
+  // Extract ATS keywords from job posting URL
+  const handleExtractFromUrl = async () => {
+    if (!jobUrl.trim()) return
+    setExtractingUrl(true)
+    setExtractedKeywords([])
+    setExtractedJobInfo(null)
+    
+    try {
+      const res = await fetch('/api/extract-job-keywords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: jobUrl, language })
+      })
+      
+      const data = await res.json()
+      
+      if (data.keywords) {
+        setExtractedKeywords(data.keywords)
+      }
+      if (data.jobInfo) {
+        setExtractedJobInfo(data.jobInfo)
+        if (data.jobInfo.title && !targetJob) {
+          setTargetJob(data.jobInfo.title)
+        }
+      }
+    } catch (e) {
+      console.error('URL extraction error', e)
+    }
+    
+    setExtractingUrl(false)
+  }
+
+  // Handle file upload
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setUploadingFile(true)
+    setFileName(file.name)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/extract-cv-text', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await res.json()
+      
+      if (data.text) {
+        setCvContent(data.text)
+      } else if (data.error) {
+        console.error('Extract error:', data.error)
+      }
+    } catch (e) {
+      console.error('File upload error:', e)
+    }
+
+    setUploadingFile(false)
+    event.target.value = ''
+  }
+
+  const handleCvOptimize = async () => {
+    if (!cvContent.trim()) return
+    setAiLoading(true)
+    setAiResult(null)
+    
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'optimize-cv',
+          data: { 
+            cvContent, 
+            targetJob, 
+            language,
+            jobKeywords: extractedKeywords,
+            jobRequirements: extractedJobInfo?.requirements
+          }
+        })
+      })
+      
+      const data = await res.json()
+      setAiResult(data)
+      
+      if (user?.id) {
+        await fetch('/api/user-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save-document',
+            data: {
+              userId: user.id,
+              name: `CV Optimisé - ${new Date().toLocaleDateString()}`,
+              type: 'CV',
+              content: JSON.stringify(data),
+              aiOptimized: true
+            }
+          })
+        })
+      }
+    } catch (e) {
+      console.error('AI error', e)
+    }
+    
+    setAiLoading(false)
+  }
+
+  const handleAddApplication = async () => {
+    if (!user?.id || !newApp.company || !newApp.position) return
+    
+    try {
+      const res = await fetch('/api/user-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'save-job-application',
+          data: {
+            userId: user.id,
+            ...newApp,
+            status: 'APPLIED'
+          }
+        })
+      })
+      
+      const data = await res.json()
+      if (data.success) {
+        setApplications([data.application, ...applications])
+        setNewApp({ company: '', position: '', notes: '' })
+        setShowAddApplication(false)
+      }
+    } catch (e) {
+      console.error('Error adding application', e)
+    }
+  }
+
+  const updateApplicationStatus = async (appId: string, status: string) => {
+    try {
+      await fetch('/api/user-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update-job-application',
+          data: { applicationId: appId, status }
+        })
+      })
+      
+      setApplications(applications.map(a => a.id === appId ? { ...a, status } : a))
+    } catch (e) {
+      console.error('Error updating application', e)
+    }
+  }
+
+  const statusConfig: Record<string, { bg: string; text: string; icon: string }> = {
+    APPLIED: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', icon: '📤' },
+    INTERVIEW: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', icon: '🎤' },
+    OFFER: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-300', icon: '🎉' },
+    REJECTED: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', icon: '❌' },
+  }
+
+  const appliedCount = applications.filter(a => a.status === 'APPLIED').length
+  const interviewCount = applications.filter(a => a.status === 'INTERVIEW').length
+  const offerCount = applications.filter(a => a.status === 'OFFER').length
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50/50 to-white dark:from-blue-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-blue-900/30">
+              <Briefcase className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {t('modules.employment.title', language)}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">{t('modules.employment.description', language)}</p>
+            </div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Candidatures' : 'Applications'}</p>
+              <p className="font-bold text-blue-600">{applications.length}</p>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Entretiens' : 'Interviews'}</p>
+              <p className="font-bold text-amber-600">{interviewCount}</p>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Offres' : 'Offers'}</p>
+              <p className="font-bold text-green-600">{offerCount}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className="flex lg:hidden bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+          <button
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'cv' ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            onClick={() => setActiveTab('cv')}
+          >
+            <Brain className="w-4 h-4 inline mr-2" />
+            {language === 'fr' ? 'CV IA' : 'AI CV'}
+          </button>
+          <button
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tracker' ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            onClick={() => setActiveTab('tracker')}
+          >
+            <Target className="w-4 h-4 inline mr-2" />
+            {language === 'fr' ? 'Suivi' : 'Tracker'}
+          </button>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* AI CV Optimizer */}
+          <div className={`${activeTab !== 'cv' ? 'hidden lg:block' : ''}`}>
+            <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                    <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  {language === 'fr' ? 'Optimisation CV avec IA' : 'AI CV Optimization'}
+                </CardTitle>
+                <CardDescription>
+                  {language === 'fr' ? 'Optimisez votre CV pour le marché canadien' : 'Optimize your CV for the Canadian market'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Job URL Input */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4 text-blue-500" />
+                    {language === 'fr' ? '🔗 Lien de l\'offre d\'emploi (optionnel)' : '🔗 Job posting URL (optional)'}
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder={language === 'fr' ? 'https://indeed.com/... ou https://linkedin.com/jobs/...' : 'https://indeed.com/... or https://linkedin.com/jobs/...'}
+                      value={jobUrl}
+                      onChange={(e) => setJobUrl(e.target.value)}
+                      className="bg-white dark:bg-gray-800 flex-1"
+                    />
+                    <Button 
+                      onClick={handleExtractFromUrl}
+                      disabled={extractingUrl || !jobUrl.trim()}
+                      variant="outline"
+                      className="shrink-0"
+                    >
+                      {extractingUrl ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Search className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {language === 'fr' 
+                      ? '💡 Collez le lien pour extraire automatiquement les mots-clés ATS'
+                      : '💡 Paste the link to automatically extract ATS keywords'}
+                  </p>
+                </div>
+
+                {/* Extracted Keywords */}
+                {extractedKeywords.length > 0 && (
+                  <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                        🏷️ {language === 'fr' ? 'Mots-clés ATS détectés' : 'ATS Keywords detected'} ({extractedKeywords.length})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {extractedKeywords.map((keyword, i) => (
+                        <Badge key={i} variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs">
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CV Input */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{language === 'fr' ? '📋 Votre CV' : '📋 Your CV'}</Label>
+                  
+                  {/* File Upload */}
+                  <div className="flex gap-2">
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx,.txt"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="cv-file-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('cv-file-upload')?.click()}
+                      disabled={uploadingFile}
+                      className="flex-1 border-dashed border-2 h-11"
+                    >
+                      {uploadingFile ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <Download className="w-4 h-4 mr-2" />
+                      )}
+                      {uploadingFile 
+                        ? (language === 'fr' ? 'Extraction...' : 'Extracting...')
+                        : (language === 'fr' ? '📁 Charger PDF, DOCX, TXT' : '📁 Upload PDF, DOCX, TXT')
+                      }
+                    </Button>
+                  </div>
+                  
+                  {fileName && (
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-sm">
+                      <FileCheck className="w-4 h-4 text-blue-500" />
+                      <span className="text-blue-700 dark:text-blue-300">{fileName}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-auto h-5 w-5 p-0"
+                        onClick={() => { setFileName(''); setCvContent('') }}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  <Textarea
+                    placeholder={language === 'fr' ? 'Ou collez le contenu de votre CV ici...' : 'Or paste your CV content here...'}
+                    value={cvContent}
+                    onChange={(e) => setCvContent(e.target.value)}
+                    rows={5}
+                    className="resize-none bg-white dark:bg-gray-800"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{language === 'fr' ? '🎯 Poste visé' : '🎯 Target job'}</Label>
+                  <Input
+                    placeholder={language === 'fr' ? 'Ex: Développeur Full Stack' : 'E.g., Full Stack Developer'}
+                    value={targetJob}
+                    onChange={(e) => setTargetJob(e.target.value)}
+                    className="bg-white dark:bg-gray-800"
+                  />
+                </div>
+                <Button 
+                  onClick={handleCvOptimize} 
+                  disabled={aiLoading || !cvContent.trim()}
+                  className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+                >
+                  {aiLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  ) : (
+                    <Sparkles className="w-5 h-5 mr-2" />
+                  )}
+                  {language === 'fr' ? 'Optimiser avec l\'IA' : 'Optimize with AI'}
+                </Button>
+                
+                {aiResult && (
+                  <div className="space-y-4 mt-4 p-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-xl border border-purple-100 dark:border-purple-800">
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center gap-2">
+                        <FileCheck className="w-4 h-4 text-green-500" />
+                        {language === 'fr' ? 'CV Optimisé' : 'Optimized CV'}
+                      </h4>
+                      <pre className="whitespace-pre-wrap text-sm bg-white dark:bg-gray-900 p-4 rounded-lg border max-h-40 overflow-auto">
+                        {aiResult.optimizedCv}
+                      </pre>
+                    </div>
+                    {aiResult.suggestions?.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">💡 {language === 'fr' ? 'Suggestions' : 'Suggestions'}</h4>
+                        <ul className="list-disc list-inside text-sm space-y-1">
+                          {aiResult.suggestions.map((s: string, i: number) => (
+                            <li key={i} className="text-gray-700 dark:text-gray-300">{s}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {aiResult.keywords?.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">🏷️ {language === 'fr' ? 'Mots-clés ATS' : 'ATS Keywords'}</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {aiResult.keywords.map((k: string, i: number) => (
+                            <Badge key={i} variant="secondary" className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">{k}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Job Applications Tracker */}
+          <div className={`${activeTab !== 'tracker' ? 'hidden lg:block' : ''}`}>
+            <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                      <Target className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    {language === 'fr' ? 'Suivi des candidatures' : 'Application Tracker'}
+                  </CardTitle>
+                  <Button size="sm" onClick={() => setShowAddApplication(true)} className="bg-gradient-to-r from-blue-500 to-blue-600">
+                    <Plus className="w-4 h-4 mr-1" />
+                    {language === 'fr' ? 'Ajouter' : 'Add'}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2">
+                  {applications.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Briefcase className="w-8 h-8 text-gray-300" />
+                      </div>
+                      <p className="font-medium">{language === 'fr' ? 'Aucune candidature' : 'No applications'}</p>
+                      <p className="text-sm text-gray-400 mt-1">{language === 'fr' ? 'Ajoutez votre première candidature' : 'Add your first application'}</p>
+                      <Button variant="outline" className="mt-4" onClick={() => setShowAddApplication(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        {language === 'fr' ? 'Ajouter' : 'Add'}
+                      </Button>
+                    </div>
+                  ) : (
+                    applications.map(app => {
+                      const config = statusConfig[app.status]
+                      return (
+                        <div 
+                          key={app.id} 
+                          className="group p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-all duration-300 bg-white dark:bg-gray-800"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{config.icon}</span>
+                                <p className="font-semibold">{app.position}</p>
+                              </div>
+                              <p className="text-sm text-gray-500 mt-1">{app.company}</p>
+                              {app.notes && <p className="text-xs text-gray-400 mt-2 italic">"{app.notes}"</p>}
+                              <p className="text-xs text-gray-400 mt-2">
+                                📅 {language === 'fr' ? 'Ajouté le' : 'Added on'} {new Date(app.createdAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <Select value={app.status} onValueChange={(v) => updateApplicationStatus(app.id, v)}>
+                              <SelectTrigger className={`w-28 h-8 ${config.bg} ${config.text} border-0 font-medium`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="APPLIED">{language === 'fr' ? '📤 Postulé' : '📤 Applied'}</SelectItem>
+                                <SelectItem value="INTERVIEW">{language === 'fr' ? '🎤 Entretien' : '🎤 Interview'}</SelectItem>
+                                <SelectItem value="OFFER">{language === 'fr' ? '🎉 Offre' : '🎉 Offer'}</SelectItem>
+                                <SelectItem value="REJECTED">{language === 'fr' ? '❌ Refusé' : '❌ Rejected'}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Add Application Dialog */}
+        <Dialog open={showAddApplication} onOpenChange={setShowAddApplication}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-blue-500" />
+                {language === 'fr' ? 'Nouvelle candidature' : 'New Application'}
+              </DialogTitle>
+              <DialogDescription>
+                {language === 'fr' ? 'Enregistrez une nouvelle candidature' : 'Record a new job application'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>{language === 'fr' ? '🏢 Entreprise' : '🏢 Company'}</Label>
+                <Input value={newApp.company} onChange={(e) => setNewApp({...newApp, company: e.target.value})} placeholder={language === 'fr' ? 'Nom de l\'entreprise' : 'Company name'} />
+              </div>
+              <div className="space-y-2">
+                <Label>{language === 'fr' ? '💼 Poste' : '💼 Position'}</Label>
+                <Input value={newApp.position} onChange={(e) => setNewApp({...newApp, position: e.target.value})} placeholder={language === 'fr' ? 'Titre du poste' : 'Job title'} />
+              </div>
+              <div className="space-y-2">
+                <Label>{language === 'fr' ? '📝 Notes' : '📝 Notes'}</Label>
+                <Textarea value={newApp.notes} onChange={(e) => setNewApp({...newApp, notes: e.target.value})} placeholder={language === 'fr' ? 'Détails supplémentaires...' : 'Additional details...'} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAddApplication(false)}>{language === 'fr' ? 'Annuler' : 'Cancel'}</Button>
+              <Button onClick={handleAddApplication} className="bg-gradient-to-r from-blue-500 to-blue-600">{language === 'fr' ? 'Enregistrer' : 'Save'}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* In-Demand Jobs by Province */}
+        {user?.province && inDemandJobsByProvince[user.province as Province]?.length > 0 && (
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-white" />
+                </div>
+                {language === 'fr' ? '💼 Métiers en demande' : '💼 In-Demand Jobs'}
+              </CardTitle>
+              <CardDescription>
+                {language === 'fr' 
+                  ? `Les emplois les plus recherchés en ${provinces.find(p => p.code === user.province)?.name}`
+                  : `Most sought-after jobs in ${provinces.find(p => p.code === user.province)?.nameEn}`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                {inDemandJobsByProvince[user.province as Province]?.slice(0, 8).map((job, i) => {
+                  const getDemandBadge = (demand: string) => {
+                    switch (demand) {
+                      case 'VERY_HIGH':
+                        return { 
+                          label: language === 'fr' ? 'Très forte demande' : 'Very High Demand',
+                          className: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
+                        }
+                      case 'HIGH':
+                        return { 
+                          label: language === 'fr' ? 'Forte demande' : 'High Demand',
+                          className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300'
+                        }
+                      default:
+                        return { 
+                          label: language === 'fr' ? 'Demande modérée' : 'Moderate Demand',
+                          className: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                        }
+                    }
+                  }
+                  
+                  const demandBadge = getDemandBadge(job.demand)
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm">
+                              {language === 'fr' ? job.title : job.titleEn}
+                            </h4>
+                            <Badge className={demandBadge.className}>
+                              {demandBadge.label}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">
+                              {language === 'fr' ? job.sector : job.sectorEn}
+                            </Badge>
+                            {job.nocCode && (
+                              <span className="text-xs text-gray-500">
+                                NOC {job.nocCode}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                        {language === 'fr' ? job.description : job.descriptionEn}
+                      </p>
+                      
+                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3 text-green-500" />
+                          <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                            {job.avgSalary}
+                          </span>
+                        </div>
+                        {job.immigrationBonus && (
+                          <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                            ✨ {job.immigrationBonus}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              {/* Province Info Banner */}
+              <div className="mt-4 p-4 bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm text-blue-800 dark:text-blue-200">
+                      {language === 'fr' 
+                        ? `💡 Ces métiers en demande à ${provinces.find(p => p.code === user.province)?.name} peuvent faciliter votre immigration`
+                        : `💡 These in-demand jobs in ${provinces.find(p => p.code === user.province)?.nameEn} can facilitate your immigration`}
+                    </h4>
+                    <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                      {language === 'fr'
+                        ? 'Les programmes provinciaux de nomination (PNP) accordent souvent la priorité aux candidats dans ces métiers.'
+                        : 'Provincial Nominee Programs (PNP) often prioritize candidates in these occupations.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Link to job bank */}
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => window.open('https://www.jobbank.gc.ca/jobsearch/jobsearch?sort=D', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Rechercher sur Guichet-Emplois' : 'Search on Job Bank'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => window.open(`https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring=${encodeURIComponent(language === 'fr' ? 'infirmier' : 'nurse')}&locationstring=${provinces.find(p => p.code === user.province)?.nameEn}`, '_blank')}
+                >
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Voir les offres d\'emploi' : 'View Job Postings'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Resources */}
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            { icon: FileText, title: language === 'fr' ? 'Lettre de motivation' : 'Cover Letter', desc: language === 'fr' ? 'Modèles canadiens' : 'Canadian templates', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950' },
+            { icon: Award, title: language === 'fr' ? 'Reconnaissance diplômes' : 'Credential Recognition', desc: 'WES, IQAS, etc.', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950' },
+            { icon: TrendingUp, title: language === 'fr' ? 'Guide salarial' : 'Salary Guide', desc: language === 'fr' ? 'Par secteur et région' : 'By sector and region', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950' },
+          ].map((item, i) => (
+            <Card key={i} className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 group">
+              <CardContent className={`p-5 ${item.bg} rounded-lg`}>
+                <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==================== HOUSING MODULE ====================
+// ==================== HOUSING MODULE ====================
+function HousingModule({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const [monthlyIncome, setMonthlyIncome] = useState(5000)
+  const [rent, setRent] = useState(1800)
+  const [utilities, setUtilities] = useState(150)
+  const [insurance, setInsurance] = useState(30)
+  const [transport, setTransport] = useState(200)
+
+  const totalHousingCost = rent + utilities + insurance
+  const disposableIncome = monthlyIncome - totalHousingCost - transport
+  const housingRatio = (totalHousingCost / monthlyIncome) * 100
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-white dark:from-purple-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-200 dark:shadow-purple-900/30">
+              <Building className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {t('modules.housing.title', language)}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">{t('modules.housing.description', language)}</p>
+            </div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Coût total' : 'Total Cost'}</p>
+              <p className="font-bold text-purple-600">${totalHousingCost}</p>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable'}</p>
+              <p className="font-bold text-green-600">${disposableIncome}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Budget Calculator */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                <Calculator className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </div>
+              {language === 'fr' ? 'Calculateur de Budget Logement' : 'Housing Budget Calculator'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' ? 'Planifiez votre budget logement' : 'Plan your housing budget'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Sliders */}
+              <div className="space-y-5">
+                {[
+                  { label: language === 'fr' ? 'Revenu mensuel' : 'Monthly Income', value: monthlyIncome, setter: setMonthlyIncome, min: 1000, max: 15000, step: 100, emoji: '💰' },
+                  { label: language === 'fr' ? 'Loyer mensuel' : 'Monthly Rent', value: rent, setter: setRent, min: 500, max: 5000, step: 50, emoji: '🏠' },
+                  { label: language === 'fr' ? 'Services publics' : 'Utilities', value: utilities, setter: setUtilities, min: 0, max: 500, step: 10, emoji: '💡' },
+                  { label: language === 'fr' ? 'Assurance locataire' : 'Tenant Insurance', value: insurance, setter: setInsurance, min: 0, max: 100, step: 5, emoji: '🛡️' },
+                  { label: language === 'fr' ? 'Transport' : 'Transport', value: transport, setter: setTransport, min: 0, max: 500, step: 10, emoji: '🚗' },
+                ].map((item, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-sm font-medium">{item.emoji} {item.label}</Label>
+                      <Badge variant="outline" className="font-mono text-base">${item.value}</Badge>
+                    </div>
+                    <Slider 
+                      value={[item.value]} 
+                      onValueChange={([v]) => item.setter(v)} 
+                      min={item.min} 
+                      max={item.max} 
+                      step={item.step}
+                      className="py-2"
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Results */}
+              <div className="space-y-4">
+                <div className="p-5 bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                      <Home className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Coût total logement' : 'Total Housing Cost'}</p>
+                      <p className="text-4xl font-bold text-purple-600">${totalHousingCost}</p>
+                      <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois' : 'per month'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`p-5 rounded-xl transition-all duration-300 ${
+                  housingRatio > 30 
+                    ? 'bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20' 
+                    : housingRatio > 25 
+                    ? 'bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20'
+                    : 'bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                      housingRatio > 30 ? 'bg-red-500' : housingRatio > 25 ? 'bg-amber-500' : 'bg-green-500'
+                    }`}>
+                      <Percent className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Ratio logement/revenu' : 'Housing/Income Ratio'}</p>
+                      <p className={`text-4xl font-bold ${housingRatio > 30 ? 'text-red-600' : housingRatio > 25 ? 'text-amber-600' : 'text-green-600'}`}>
+                        {housingRatio.toFixed(1)}%
+                      </p>
+                      <p className={`text-sm font-medium ${housingRatio > 30 ? 'text-red-600' : housingRatio > 25 ? 'text-amber-600' : 'text-green-600'}`}>
+                        {housingRatio > 30 
+                          ? (language === 'fr' ? '⚠️ Trop élevé (>30%)' : '⚠️ Too high (>30%)')
+                          : housingRatio > 25
+                          ? (language === 'fr' ? '⚡ Limite acceptable' : '⚡ Acceptable limit')
+                          : (language === 'fr' ? '✓ Excellent ratio' : '✓ Excellent ratio')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-5 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                      <PiggyBank className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable Income'}</p>
+                      <p className="text-4xl font-bold text-blue-600">${disposableIncome}</p>
+                      <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois après logement' : 'per month after housing'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tenant Rights by Province - Comprehensive */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              {language === 'fr' ? 'Droits des locataires par province' : 'Tenant Rights by Province'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Informations essentielles avec sources officielles canadiennes'
+                : 'Essential information with official Canadian sources'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Ontario */}
+              <Card className={`overflow-hidden ${user?.province === 'ON' ? 'ring-2 ring-blue-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-blue-400 to-blue-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 Ontario</h4>
+                        <Badge variant="outline" className="text-xs">ON</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Landlord and Tenant Board (LTB)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium text-green-600">{language === 'fr' ? '❌ Illégal (interdit)' : '❌ Illegal (prohibited)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">60 {language === 'fr' ? 'jours' : 'days'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
+                          <p className="font-medium text-blue-600">2.5%</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.sjto.gov.on.ca/ltb/" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        LTB Official
+                      </a>
+                      <a href="https://www.ontario.ca/page/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        Ontario.ca
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Québec */}
+              <Card className={`overflow-hidden ${user?.province === 'QC' ? 'ring-2 ring-purple-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-purple-400 to-purple-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 Québec</h4>
+                        <Badge variant="outline" className="text-xs">QC</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Tribunal administratif du logement (TAL)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '1er mois max (intérêt payable)' : '1st month max (interest payable)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">3 {language === 'fr' ? 'mois (appartement)' : 'months (apartment)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Raisonnable (doit être justifiée)' : 'Reasonable (must be justified)'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://tal.gouv.qc.ca/" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        TAL Official
+                      </a>
+                      <a href="https://tal.gouv.qc.ca/fr/etre-locataire/loyer-et-augmentation" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        {language === 'fr' ? 'Calcul augmentation' : 'Increase calculator'}
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Colombie-Britannique */}
+              <Card className={`overflow-hidden ${user?.province === 'BC' ? 'ring-2 ring-green-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-green-400 to-green-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 {language === 'fr' ? 'Colombie-Britannique' : 'British Columbia'}</h4>
+                        <Badge variant="outline" className="text-xs">BC</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Residential Tenancy Branch (RTB)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '½ mois de loyer max' : '½ month rent max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
+                          <p className="font-medium text-blue-600">3.5%</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies" target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        BC Gov RTB
+                      </a>
+                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        {language === 'fr' ? 'Règles augmentation' : 'Increase rules'}
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Alberta */}
+              <Card className={`overflow-hidden ${user?.province === 'AB' ? 'ring-2 ring-amber-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-amber-400 to-amber-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 Alberta</h4>
+                        <Badge variant="outline" className="text-xs">AB</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">RTDRS (Residential Tenancy Dispute Resolution Service)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">1 {language === 'fr' ? 'mois (mois au mois)' : 'month (month-to-month)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 3 mois préavis' : 'No cap, 3 months notice'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.alberta.ca/rtdrs.aspx" target="_blank" rel="noopener noreferrer" className="text-xs text-amber-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        RTDRS Alberta
+                      </a>
+                      <a href="https://www.alberta.ca/landlord-tenants" target="_blank" rel="noopener noreferrer" className="text-xs text-amber-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        Alberta.ca
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Manitoba */}
+              <Card className={`overflow-hidden ${user?.province === 'MB' ? 'ring-2 ring-sky-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-sky-400 to-sky-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 Manitoba</h4>
+                        <Badge variant="outline" className="text-xs">MB</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Residential Tenancies Branch</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '½ mois max' : '½ month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-blue-600">{language === 'fr' ? 'Limitée par guideline annuel' : 'Limited by annual guideline'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.gov.mb.ca/cca/rtb/" target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        MB Gov RTB
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Saskatchewan */}
+              <Card className={`overflow-hidden ${user?.province === 'SK' ? 'ring-2 ring-emerald-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 Saskatchewan</h4>
+                        <Badge variant="outline" className="text-xs">SK</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Office of Residential Tenancies (ORT)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 6 mois entre augmentations' : 'No cap, 6 months between increases'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.saskatchewan.ca/business/housing-development-construction-and-property-management/renting-property/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        SK Gov
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Nouvelle-Écosse */}
+              <Card className={`overflow-hidden ${user?.province === 'NS' ? 'ring-2 ring-indigo-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-indigo-400 to-indigo-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 {language === 'fr' ? 'Nouvelle-Écosse' : 'Nova Scotia'}</h4>
+                        <Badge variant="outline" className="text-xs">NS</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Residential Tenancies Program</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '½ mois max' : '½ month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">3 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 4 mois préavis' : 'No cap, 4 months notice'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://novascotia.ca/sns/access/landlords-tenants.asp" target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        NS Gov
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Nouveau-Brunswick */}
+              <Card className={`overflow-hidden ${user?.province === 'NB' ? 'ring-2 border-rose-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-rose-400 to-rose-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 {language === 'fr' ? 'Nouveau-Brunswick' : 'New Brunswick'}</h4>
+                        <Badge variant="outline" className="text-xs">NB</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">{language === 'fr' ? 'Tribunal de la location résidentielle' : 'Residential Tenancies Tribunal'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 6 mois préavis' : 'No cap, 6 months notice'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www2.gnb.ca/content/gnb/en/departments/social_development/tenancies.html" target="_blank" rel="noopener noreferrer" className="text-xs text-rose-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        NB Gov
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Île-du-Prince-Édouard */}
+              <Card className={`overflow-hidden ${user?.province === 'PE' ? 'ring-2 ring-teal-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-teal-400 to-teal-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 {language === 'fr' ? 'Île-du-Prince-Édouard' : 'Prince Edward Island'}</h4>
+                        <Badge variant="outline" className="text-xs">PE</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">IRAC (Island Regulatory and Appeals Commission)</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? 'Aucun maximum légal' : 'No legal maximum'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">2 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-blue-600">{language === 'fr' ? 'Doit être approuvée par IRAC' : 'Must be approved by IRAC'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.princeedwardisland.ca/en/topic/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-teal-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        PEI Gov
+                      </a>
+                      <a href="https://irac.pe.ca/rental" target="_blank" rel="noopener noreferrer" className="text-xs text-teal-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        IRAC Rental
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Terre-Neuve-et-Labrador */}
+              <Card className={`overflow-hidden ${user?.province === 'NL' ? 'ring-2 border-cyan-500' : ''}`}>
+                <div className="h-1 bg-gradient-to-r from-cyan-400 to-cyan-600" />
+                <CardContent className="p-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-lg">🇨🇦 {language === 'fr' ? 'Terre-Neuve-et-Labrador' : 'Newfoundland and Labrador'}</h4>
+                        <Badge variant="outline" className="text-xs">NL</Badge>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="font-medium">Residential Tenancies</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="font-medium">{language === 'fr' ? '¾ mois max' : '¾ month max'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="font-medium">2 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond' : 'No cap'}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a href="https://www.gov.nl.ca/servicenl/landlord/" target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-600 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3" />
+                        NL Gov
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Important Notice */}
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                <strong>{language === 'fr' ? '⚠️ Important:' : '⚠️ Important:'}</strong> {language === 'fr' 
+                  ? 'Ces informations sont fournies à titre indicatif. Pour les informations les plus récentes, consultez toujours les sites officiels provinciaux. Les règles peuvent changer.'
+                  : 'This information is provided for guidance only. Always check official provincial websites for the most current information. Rules may change.'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Letter Templates */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          {[
+            { 
+              icon: FileText, 
+              title: language === 'fr' ? 'Candidature locataire' : 'Tenant Application', 
+              desc: language === 'fr' ? 'Sans historique de crédit' : 'Without credit history',
+              color: 'text-blue-500',
+              bg: 'bg-blue-50 dark:bg-blue-950'
+            },
+            { 
+              icon: FileText, 
+              title: language === 'fr' ? 'Lettre de garant' : 'Guarantor Letter', 
+              desc: language === 'fr' ? 'Pour les nouveaux arrivants' : 'For newcomers',
+              color: 'text-purple-500',
+              bg: 'bg-purple-50 dark:bg-purple-950'
+            },
+          ].map((item, i) => (
+            <Card key={i} className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 group">
+              <CardContent className={`p-5 ${item.bg} rounded-lg`}>
+                <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+                <Button size="sm" className="mt-3">
+                  <Download className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Télécharger' : 'Download'}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==================== FINANCE MODULE ====================
+function FinanceModule({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const [selectedBank, setSelectedBank] = useState<any>(null)
+
+  // Get user's province
+  const userProvince = user?.province || 'ON'
+
+  // Province-specific recommendations and notes
+  const provinceBankInfo: Record<string, { recommended: string[]; notes: string; notesFr: string }> = {
+    'QC': {
+      recommended: ['desjardins', 'nbc', 'bmo', 'rbc', 'td'],
+      notes: 'Desjardins and National Bank are highly recommended for Quebec residents due to their strong French services and local presence.',
+      notesFr: 'Desjardins et Banque Nationale sont fortement recommandés pour les résidents du Québec grâce à leurs services en français et leur présence locale.'
+    },
+    'ON': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'All major Canadian banks have excellent coverage in Ontario. RBC and TD are particularly recommended for their newcomer programs.',
+      notesFr: 'Toutes les grandes banques canadiennes offrent une excellente couverture en Ontario. RBC et TD sont particulièrement recommandés pour leurs programmes nouveaux arrivants.'
+    },
+    'BC': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'British Columbia has excellent coverage from all major banks. Scotiabank has a strong presence in Vancouver.',
+      notesFr: 'La Colombie-Britannique bénéficie d\'une excellente couverture de toutes les grandes banques. Scotiabank a une forte présence à Vancouver.'
+    },
+    'AB': {
+      recommended: ['td', 'rbc', 'scotia', 'bmo', 'cibc'],
+      notes: 'Alberta has good coverage from all major banks. ATB Financial is also a local option for Alberta residents.',
+      notesFr: 'L\'Alberta bénéficie d\'une bonne couverture de toutes les grandes banques. ATB Financial est également une option locale pour les résidents albertain.'
+    },
+    'MB': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'Manitoba has good coverage from all major Canadian banks.',
+      notesFr: 'Le Manitoba bénéficie d\'une bonne couverture de toutes les grandes banques canadiennes.'
+    },
+    'SK': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'Saskatchewan has good coverage from all major Canadian banks.',
+      notesFr: 'La Saskatchewan bénéficie d\'une bonne couverture de toutes les grandes banques canadiennes.'
+    },
+    'NS': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'Nova Scotia has good coverage from all major banks.',
+      notesFr: 'La Nouvelle-Écosse bénéficie d\'une bonne couverture de toutes les grandes banques.'
+    },
+    'NB': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'New Brunswick has excellent coverage from all major banks.',
+      notesFr: 'Le Nouveau-Brunswick bénéficie d\'une excellente couverture de toutes les grandes banques.'
+    },
+    'PE': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'Prince Edward Island has coverage from all major Canadian banks.',
+      notesFr: 'L\'Île-du-Prince-Édouard est couverte par toutes les grandes banques canadiennes.'
+    },
+    'NL': {
+      recommended: ['rbc', 'td', 'scotia', 'bmo', 'cibc'],
+      notes: 'Newfoundland and Labrador has coverage from all major Canadian banks.',
+      notesFr: 'Terre-Neuve-et-Labrador est couverte par toutes les grandes banques canadiennes.'
+    }
+  }
+
+  // Canadian banks with newcomer programs - real data with province recommendations
+  const newcomerBanks = [
+    {
+      id: 'rbc',
+      name: 'RBC Royal Bank',
+      nameFr: 'RBC Banque Royale',
+      logo: '🦁',
+      color: 'from-blue-600 to-blue-800',
+      accountName: 'RBC Newcomer Account',
+      accountNameFr: 'Compte Nouvel Arrivant RBC',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$300 bonus',
+      bonusOfferFr: 'Bonus de 300 $',
+      features: ['Unlimited transactions', 'No minimum balance', 'Credit card without history', 'Safe deposit box discount'],
+      featuresFr: ['Transactions illimitées', 'Aucun solde minimum', 'Carte de crédit sans historique', 'Réduction coffre-fort'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.rbc.com/newcomers/',
+      recommended: true,
+      recommendedProvinces: ['ON', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL', 'QC'],
+      provinceNote: '',
+      provinceNoteFr: ''
+    },
+    {
+      id: 'td',
+      name: 'TD Canada Trust',
+      nameFr: 'TD Canada Trust',
+      logo: '🟢',
+      color: 'from-green-600 to-green-800',
+      accountName: 'TD New to Canada',
+      accountNameFr: 'TD Nouveau au Canada',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$350 bonus',
+      bonusOfferFr: 'Bonus de 350 $',
+      features: ['Unlimited transactions', 'No minimum balance', 'Free small safety deposit box', 'Credit card options'],
+      featuresFr: ['Transactions illimitées', 'Aucun solde minimum', 'Petit coffre-fort gratuit', 'Options de carte de crédit'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.td.com/ca/en/personal-banking/new-to-canada/',
+      recommended: true,
+      recommendedProvinces: ['ON', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL', 'QC'],
+      provinceNote: '',
+      provinceNoteFr: ''
+    },
+    {
+      id: 'scotia',
+      name: 'Scotiabank',
+      nameFr: 'Banque Scotia',
+      logo: '🔴',
+      color: 'from-red-600 to-red-800',
+      accountName: 'Scotiabank StartRight',
+      accountNameFr: 'Scotiabank StartRight',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$350 bonus + SCENE points',
+      bonusOfferFr: 'Bonus 350 $ + points SCENE',
+      features: ['No monthly fee for 1 year', 'No credit history required', 'Unlimited debits', 'Safety deposit box'],
+      featuresFr: ['Aucuns frais pendant 1 an', 'Pas d\'historique de crédit requis', 'Débits illimités', 'Coffre-fort'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.scotiabank.com/ca/en/personal/banking/new-to-canada.html',
+      recommended: false,
+      recommendedProvinces: ['ON', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL'],
+      provinceNote: 'Strong presence in Vancouver',
+      provinceNoteFr: 'Forte présence à Vancouver'
+    },
+    {
+      id: 'bmo',
+      name: 'BMO Bank of Montreal',
+      nameFr: 'BMO Banque de Montréal',
+      logo: '🔵',
+      color: 'from-blue-500 to-blue-700',
+      accountName: 'BMO NewStart',
+      accountNameFr: 'BMO Nouveau Départ',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$350 bonus',
+      bonusOfferFr: 'Bonus de 350 $',
+      features: ['Performance Plan waived for 1 year', 'No credit history needed', 'Unlimited transactions', 'BMO rewards'],
+      featuresFr: ['Forfait Performance gratuit 1 an', 'Pas d\'historique de crédit', 'Transactions illimitées', 'Récompenses BMO'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.bmo.com/main/personal/newcomers/',
+      recommended: false,
+      recommendedProvinces: ['ON', 'QC', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL'],
+      provinceNote: 'Excellent French services for Quebec',
+      provinceNoteFr: 'Excellents services en français pour le Québec'
+    },
+    {
+      id: 'cibc',
+      name: 'CIBC',
+      nameFr: 'CIBC',
+      logo: '🟠',
+      color: 'from-amber-500 to-amber-700',
+      accountName: 'CIBC Newcomer',
+      accountNameFr: 'CIBC Nouvel Arrivant',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$250 bonus',
+      bonusOfferFr: 'Bonus de 250 $',
+      features: ['Smart Account free for 1 year', 'No credit history required', 'Global money transfer', 'Student options'],
+      featuresFr: ['Compte Smart gratuit 1 an', 'Pas d\'historique de crédit', 'Transfert d\'argent mondial', 'Options étudiants'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.cibc.com/en/new-to-canada.html',
+      recommended: false,
+      recommendedProvinces: ['ON', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL', 'QC'],
+      provinceNote: '',
+      provinceNoteFr: ''
+    },
+    {
+      id: 'nbc',
+      name: 'National Bank',
+      nameFr: 'Banque Nationale',
+      logo: '🟣',
+      color: 'from-purple-600 to-purple-800',
+      accountName: 'NBC Newcomer Package',
+      accountNameFr: 'Forfait Nouvel Arrivant NBC',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$200 bonus',
+      bonusOfferFr: 'Bonus de 200 $',
+      features: ['No fees for 2 years', 'Credit card included', 'Unlimited transactions', 'Preferred for Quebec residents'],
+      featuresFr: ['Aucuns frais 2 ans', 'Carte de crédit incluse', 'Transactions illimitées', 'Idéal pour résidents QC'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.nbc.ca/personal/accounts/newcomers.html',
+      recommended: false,
+      recommendedProvinces: ['QC'],
+      provinceNote: '🌟 #1 recommended for Quebec',
+      provinceNoteFr: '🌟 #1 recommandé pour le Québec'
+    },
+    {
+      id: 'desjardins',
+      name: 'Desjardins',
+      nameFr: 'Desjardins',
+      logo: '🟤',
+      color: 'from-emerald-600 to-emerald-800',
+      accountName: 'Desjardins Newcomer',
+      accountNameFr: 'Desjardins Nouvel Arrivant',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: 'Varies by region',
+      bonusOfferFr: 'Variable selon région',
+      features: ['Quebec focused', 'French services', 'Credit building program', 'Insurance bundles'],
+      featuresFr: ['Axé sur le Québec', 'Services en français', 'Programme construction crédit', 'Forfaits assurance'],
+      processingTime: 'Same day',
+      processingTimeFr: 'Même jour',
+      newcomersUrl: 'https://www.desjardins.com/ca/personal-accounts/newcomers/',
+      recommended: false,
+      recommendedProvinces: ['QC'],
+      provinceNote: '🌟 Largest French cooperative in Canada',
+      provinceNoteFr: '🌟 Plus grande coopérative francophone au Canada'
+    },
+    {
+      id: 'tangerine',
+      name: 'Tangerine (Online)',
+      nameFr: 'Tangerine (En ligne)',
+      logo: '🟡',
+      color: 'from-orange-500 to-orange-700',
+      accountName: 'Tangerine No-Fee Daily Chequing',
+      accountNameFr: 'Compte-chèques sans frais Tangerine',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$50 referral bonus',
+      bonusOfferFr: 'Bonus de parrainage 50 $',
+      features: ['No monthly fees ever', 'Free unlimited transactions', 'Online only', 'Owned by Scotiabank'],
+      featuresFr: ['Aucuns frais mensuels', 'Transactions illimitées gratuites', 'En ligne uniquement', 'Propriété Scotia'],
+      processingTime: '2-3 days',
+      processingTimeFr: '2-3 jours',
+      newcomersUrl: 'https://www.tangerine.ca/',
+      recommended: false,
+      recommendedProvinces: ['ON', 'QC', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL'],
+      provinceNote: 'Online only - ABMs via Scotiabank network',
+      provinceNoteFr: 'En ligne uniquement - GAB via réseau Scotiabank'
+    },
+    {
+      id: 'simpli',
+      name: 'Simpli Financial',
+      nameFr: 'Simpli Financial',
+      logo: '⭐',
+      color: 'from-pink-500 to-pink-700',
+      accountName: 'Simpli No Fee Chequing',
+      accountNameFr: 'Compte-chèques sans frais Simpli',
+      monthlyFee: 0,
+      firstYearFree: true,
+      bonusOffer: '$300 bonus',
+      bonusOfferFr: 'Bonus de 300 $',
+      features: ['No monthly fees', 'Unlimited e-Transfers', 'Online banking', 'Owned by CIBC'],
+      featuresFr: ['Aucuns frais mensuels', 'e-Transferts illimités', 'Banque en ligne', 'Propriété CIBC'],
+      processingTime: '2-3 days',
+      processingTimeFr: '2-3 jours',
+      newcomersUrl: 'https://www.simpli.ca/',
+      recommended: false,
+      recommendedProvinces: ['ON', 'QC', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB', 'PE', 'NL'],
+      provinceNote: 'Online only - ABMs via CIBC network',
+      provinceNoteFr: 'En ligne uniquement - GAB via réseau CIBC'
+    }
+  ]
+
+  // Sort banks based on province recommendations
+  const sortedBanks = [...newcomerBanks].sort((a, b) => {
+    const aRecommended = a.recommendedProvinces?.includes(userProvince) ? 1 : 0
+    const bRecommended = b.recommendedProvinces?.includes(userProvince) ? 1 : 0
+    const provinceRecs = provinceBankInfo[userProvince]?.recommended || []
+    const aIndex = provinceRecs.indexOf(a.id)
+    const bIndex = provinceRecs.indexOf(b.id)
+    
+    // Banks specifically recommended for this province come first
+    if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex
+    if (aIndex !== -1) return -1
+    if (bIndex !== -1) return 1
+    
+    // Then banks that serve this province
+    if (aRecommended && !bRecommended) return -1
+    if (!aRecommended && bRecommended) return 1
+    
+    return 0
+  })
+
+  // Check if a bank is specifically recommended for user's province
+  const isProvinceRecommended = (bankId: string) => {
+    return provinceBankInfo[userProvince]?.recommended?.includes(bankId) || false
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white dark:from-amber-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-200 dark:shadow-amber-900/30">
+            <Wallet className="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              {t('modules.finance.title', language)}
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">{t('modules.finance.description', language)}</p>
+          </div>
+        </div>
+
+        {/* Bank Comparator Table */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-b">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <Landmark className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              {language === 'fr' ? '🏦 Comparateur Bancaire Nouveaux Arrivants' : '🏦 Newcomer Bank Comparator'}
+            </CardTitle>
+            <p className="text-sm text-gray-500 mt-1">
+              {language === 'fr' 
+                ? 'Comparez les meilleures offres bancaires pour nouveaux arrivants au Canada' 
+                : 'Compare the best banking offers for newcomers to Canada'}
+            </p>
+          </CardHeader>
+          
+          {/* Province-specific banner */}
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 px-6 py-4 border-b">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-purple-800 dark:text-purple-200">
+                  {language === 'fr' 
+                    ? `📍 Recommandations pour votre province: ${provinces.find(p => p.code === userProvince)?.name || userProvince}`
+                    : `📍 Recommendations for your province: ${provinces.find(p => p.code === userProvince)?.nameEn || userProvince}`}
+                </p>
+                <p className="text-sm text-purple-600 dark:text-purple-300">
+                  {language === 'fr' 
+                    ? provinceBankInfo[userProvince]?.notesFr 
+                    : provinceBankInfo[userProvince]?.notes}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <CardContent className="p-0">
+            {/* Mobile Cards View */}
+            <div className="lg:hidden divide-y">
+              {sortedBanks.map((bank) => (
+                <div 
+                  key={bank.id} 
+                  className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${selectedBank?.id === bank.id ? 'bg-amber-50 dark:bg-amber-900/20' : ''}`}
+                  onClick={() => setSelectedBank(bank)}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 bg-gradient-to-br ${bank.color} rounded-xl flex items-center justify-center text-white text-xl`}>
+                        {bank.logo}
+                      </div>
+                      <div>
+                        <p className="font-bold text-lg">{language === 'fr' ? bank.nameFr : bank.name}</p>
+                        <p className="text-sm text-gray-500">{language === 'fr' ? bank.accountNameFr : bank.accountName}</p>
+                      </div>
+                    </div>
+                    {bank.recommended && (
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+                        ⭐ {language === 'fr' ? 'Recommandé' : 'Recommended'}
+                      </Badge>
+                    )}
+                    {isProvinceRecommended(bank.id) && !bank.recommended && (
+                      <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-xs">
+                        🎯 {language === 'fr' ? 'Top pour votre province' : 'Top for your province'}
+                      </Badge>
+                    )}
+                    {bank.provinceNote && bank.recommendedProvinces?.includes(userProvince) && (
+                      <span className="text-xs text-purple-600 dark:text-purple-400 ml-2">
+                        {language === 'fr' ? bank.provinceNoteFr : bank.provinceNote}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2 text-center">
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais/mois' : 'Fee/month'}</p>
+                      <p className="font-bold text-green-600">${bank.monthlyFee}</p>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 text-center">
+                      <p className="text-xs text-gray-500">{language === 'fr' ? '1ère année' : '1st year'}</p>
+                      <p className="font-bold text-blue-600">{language === 'fr' ? 'Gratuite' : 'Free'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 rounded-lg p-2 mb-3">
+                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                      🎁 {language === 'fr' ? bank.bonusOfferFr : bank.bonusOffer}
+                    </p>
+                  </div>
+                  
+                  <a 
+                    href={bank.newcomersUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    {language === 'fr' ? 'Visiter la page Nouveaux Arrivants' : 'Visit Newcomer Page'}
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                  <tr>
+                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '🏦 Banque' : '🏦 Bank'}
+                    </th>
+                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '📦 Compte' : '📦 Account'}
+                    </th>
+                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '💰 Frais/mois' : '💰 Fee/month'}
+                    </th>
+                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '🎁 Bonus' : '🎁 Bonus'}
+                    </th>
+                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '✨ Avantages clés' : '✨ Key benefits'}
+                    </th>
+                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '⏱️ Délai' : '⏱️ Time'}
+                    </th>
+                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                      {language === 'fr' ? '🔗 Lien' : '🔗 Link'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {sortedBanks.map((bank, index) => (
+                    <tr 
+                      key={bank.id}
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
+                        selectedBank?.id === bank.id ? 'bg-amber-50 dark:bg-amber-900/20' : ''
+                      } ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50/50 dark:bg-gray-800/30'}`}
+                      onClick={() => setSelectedBank(bank)}
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 bg-gradient-to-br ${bank.color} rounded-xl flex items-center justify-center text-white text-lg shadow-md`}>
+                            {bank.logo}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-bold">{language === 'fr' ? bank.nameFr : bank.name}</p>
+                              {bank.recommended && (
+                                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-1.5 py-0">
+                                  ⭐ TOP
+                                </Badge>
+                              )}
+                              {isProvinceRecommended(bank.id) && !bank.recommended && (
+                                <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-[10px] px-1.5 py-0">
+                                  🎯 {language === 'fr' ? 'Province' : 'Province'}
+                                </Badge>
+                              )}
+                            </div>
+                            {bank.provinceNote && bank.recommendedProvinces?.includes(userProvince) && (
+                              <p className="text-xs text-purple-600 dark:text-purple-400 mt-0.5">
+                                {language === 'fr' ? bank.provinceNoteFr : bank.provinceNote}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <p className="text-sm font-medium">{language === 'fr' ? bank.accountNameFr : bank.accountName}</p>
+                      </td>
+                      <td className="p-4 text-center">
+                        <div className="inline-flex flex-col items-center">
+                          <span className="text-2xl font-bold text-green-600">${bank.monthlyFee}</span>
+                          <span className="text-xs text-gray-500">
+                            {bank.firstYearFree ? (language === 'fr' ? '(1ère année gratuite)' : '(1st year free)') : ''}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-center">
+                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-amber-700 dark:text-amber-300 px-3 py-1.5 rounded-full text-sm font-semibold">
+                          🎁 {language === 'fr' ? bank.bonusOfferFr : bank.bonusOffer}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <ul className="space-y-1">
+                          {(language === 'fr' ? bank.featuresFr : bank.features).slice(0, 3).map((feature, i) => (
+                            <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td className="p-4 text-center">
+                        <Badge variant="outline" className="text-xs">
+                          {language === 'fr' ? bank.processingTimeFr : bank.processingTime}
+                        </Badge>
+                      </td>
+                      <td className="p-4 text-center">
+                        <a 
+                          href={bank.newcomersUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          {language === 'fr' ? 'Visiter' : 'Visit'}
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+          <CardFooter className="bg-gray-50 dark:bg-gray-800/50 border-t px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 w-full">
+              <p className="text-sm text-gray-500">
+                {language === 'fr' 
+                  ? '💡 Conseil: Les 5 grandes banques (RBC, TD, Scotia, BMO, CIBC) offrent toutes des programmes spéciaux nouveaux arrivants avec des bonus compétitifs.'
+                  : '💡 Tip: The Big 5 banks (RBC, TD, Scotia, BMO, CIBC) all offer special newcomer programs with competitive bonuses.'}
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">{language === 'fr' ? 'Dernière mise à jour:' : 'Last updated:'}</span>
+                <span className="text-xs font-medium">2025</span>
+              </div>
+            </div>
+          </CardFooter>
+        </Card>
+
+        {/* Selected Bank Details Modal */}
+        {selectedBank && (
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 bg-gradient-to-br ${selectedBank.color} rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg`}>
+                    {selectedBank.logo}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">{language === 'fr' ? selectedBank.nameFr : selectedBank.name}</h3>
+                    <p className="text-gray-500">{language === 'fr' ? selectedBank.accountNameFr : selectedBank.accountName}</p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedBank(null)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4 mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    {language === 'fr' ? 'Avantages complets' : 'Full benefits'}
+                  </h4>
+                  <ul className="space-y-2">
+                    {(language === 'fr' ? selectedBank.featuresFr : selectedBank.features).map((feature: string, i: number) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-blue-500" />
+                    {language === 'fr' ? 'Détails de l\'offre' : 'Offer details'}
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{language === 'fr' ? 'Frais mensuels:' : 'Monthly fee:'}</span>
+                      <span className="font-semibold text-green-600">${selectedBank.monthlyFee}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{language === 'fr' ? '1ère année:' : '1st year:'}</span>
+                      <span className="font-semibold text-green-600">{language === 'fr' ? 'Gratuite' : 'Free'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{language === 'fr' ? 'Bonus:' : 'Bonus:'}</span>
+                      <span className="font-semibold text-amber-600">{language === 'fr' ? selectedBank.bonusOfferFr : selectedBank.bonusOffer}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{language === 'fr' ? 'Ouverture:' : 'Opening:'}</span>
+                      <span className="font-medium">{language === 'fr' ? selectedBank.processingTimeFr : selectedBank.processingTime}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <a 
+                href={selectedBank.newcomersUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-xl font-medium shadow-lg transition-all"
+              >
+                <ExternalLink className="w-5 h-5" />
+                {language === 'fr' ? `Ouvrir un compte chez ${selectedBank.nameFr}` : `Open an account with ${selectedBank.name}`}
+              </a>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Credit & Tax Guides */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-green-600 dark:text-green-400" />
+                </div>
+                {language === 'fr' ? '📈 Construire votre crédit' : '📈 Build Your Credit'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { step: 1, title: language === 'fr' ? 'Obtenir une carte sécurisée' : 'Get a secured card', desc: language === 'fr' ? 'Carte avec dépôt de garantie' : 'Card with security deposit', emoji: '💳' },
+                { step: 2, title: language === 'fr' ? 'Payer à temps' : 'Pay on time', desc: language === 'fr' ? 'Toujours payer le minimum' : 'Always pay at least the minimum', emoji: '📅' },
+                { step: 3, title: language === 'fr' ? 'Maintenir l\'utilisation basse' : 'Keep utilization low', desc: language === 'fr' ? '<30% de votre limite' : '<30% of your limit', emoji: '📊' },
+                { step: 4, title: language === 'fr' ? 'Vérifier votre score' : 'Check your score', desc: language === 'fr' ? 'Equifax ou TransUnion' : 'Equifax or TransUnion', emoji: '🔍' },
+              ].map((item) => (
+                <div key={item.step} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {item.step}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">{item.emoji} {item.title}</p>
+                    <p className="text-sm text-gray-500">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                  <Receipt className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                {language === 'fr' ? '🧾 Guide fiscal simplifié' : '🧾 Simplified Tax Guide'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { title: 'T4', desc: language === 'fr' ? 'Revenu d\'emploi' : 'Employment income', emoji: '💼' },
+                { title: 'T1 General', desc: language === 'fr' ? 'Déclaration de revenus' : 'Tax return form', emoji: '📝' },
+                { title: 'GST/HST Credit', desc: language === 'fr' ? 'Crédit TPS/TVH' : 'GST/HST credit', emoji: '💰' },
+                { title: 'Canada Child Benefit', desc: language === 'fr' ? 'Allocation canadienne enfants' : 'Canada Child Benefit', emoji: '👨‍👩‍👧' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{item.emoji}</span>
+                    <div>
+                      <p className="font-medium">{item.title}</p>
+                      <p className="text-sm text-gray-500">{item.desc}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Money Transfer */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              {language === 'fr' ? '💸 Transferts d\'argent internationaux' : '💸 International Money Transfers'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { name: 'Wise', fee: '~0.5%', time: language === 'fr' ? '1-2 jours' : '1-2 days', color: 'from-green-400 to-green-600', rating: '⭐⭐⭐⭐⭐', note: language === 'fr' ? 'Meilleurs taux' : 'Best rates' },
+                { name: 'Remitly', fee: '~1%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-blue-400 to-blue-600', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Rapide' : 'Fast' },
+                { name: 'Tap Tap Send', fee: '~0-2%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-purple-400 to-pink-600', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Populaire pour Afrique' : 'Popular for Africa' },
+                { name: 'Western Union', fee: '~3%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-yellow-400 to-yellow-600', rating: '⭐⭐⭐', note: language === 'fr' ? 'Partout' : 'Everywhere' },
+              ].map((service, i) => (
+                <Card key={i} className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+                  <div className={`h-2 bg-gradient-to-r ${service.color}`} />
+                  <CardContent className="p-5 text-center">
+                    <p className="font-bold text-xl">{service.name}</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mt-1">{service.note}</p>
+                    <p className="text-sm text-gray-500 mt-1">{language === 'fr' ? 'Frais' : 'Fee'}: {service.fee}</p>
+                    <Badge className="mt-2">{service.time}</Badge>
+                    <p className="text-xs mt-2">{service.rating}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+// ==================== HEALTH MODULE ====================
+// Health eligibility rules by province and immigration status
+const healthEligibilityRules: Record<string, Record<string, {
+  eligible: boolean
+  conditional: boolean
+  waitPeriod: string
+  waitPeriodEn: string
+  conditions: string[]
+  conditionsEn: string[]
+  documents: { name: string; nameEn: string; required: boolean; notes?: string; notesEn?: string }[]
+  applyUrl: string
+  planName: string
+  planNameEn: string
+  specialNote?: string
+  specialNoteEn?: string
+}>> = {
+  'ON': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '0 jour',
+      waitPeriodEn: '0 days',
+      conditions: [
+        'Résident de l\'Ontario (intention de résider)',
+        'Présent physiquement en Ontario minimum 153 jours par année',
+        'Statut de résident permanent valide'
+      ],
+      conditionsEn: [
+        'Ontario resident (intention to reside)',
+        'Physically present in Ontario minimum 153 days per year',
+        'Valid permanent resident status'
+      ],
+      documents: [
+        { name: 'Carte de résident permanent (IMM 5445)', nameEn: 'Permanent Resident Card (IMM 5445)', required: true },
+        { name: 'Confirmation de résidence permanente (IMM 5292)', nameEn: 'Confirmation of Permanent Residence (IMM 5292)', required: true, notes: 'Si carte PR pas encore reçue', notesEn: 'If PR card not yet received' },
+        { name: 'Preuve de résidence en Ontario', nameEn: 'Proof of Ontario residence', required: true, notes: 'Bail, facture d\'utilities, relevé bancaire', notesEn: 'Lease, utility bill, bank statement' },
+        { name: 'Permis de conduire ontarien (si disponible)', nameEn: 'Ontario driver\'s license (if available)', required: false },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true },
+        { name: 'Preuve d\'identité avec photo', nameEn: 'Photo identity proof', required: true }
+      ],
+      applyUrl: 'https://www.ontario.ca/page/apply-ohip-and-get-health-card',
+      planName: 'OHIP (Ontario Health Insurance Plan)',
+      planNameEn: 'OHIP (Ontario Health Insurance Plan)',
+      specialNote: '✅ Pas de période d\'attente pour les résidents permanents!',
+      specialNoteEn: '✅ No waiting period for permanent residents!'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: [
+        '❌ Les étudiants internationaux ne sont PAS admissibles à OHIP',
+        'Une assurance santé privée est OBLIGATOIRE',
+        'Vérifiez si votre établissement offre une assurance groupe'
+      ],
+      conditionsEn: [
+        '❌ International students are NOT eligible for OHIP',
+        'Private health insurance is MANDATORY',
+        'Check if your institution offers group insurance'
+      ],
+      documents: [
+        { name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true, notes: 'Obligatoire pendant vos études', notesEn: 'Mandatory during your studies' },
+        { name: 'Permis d\'études valide', nameEn: 'Valid study permit', required: true },
+        { name: 'Lettre d\'admission', nameEn: 'Letter of admission', required: false }
+      ],
+      applyUrl: 'https://www.ontario.ca/page/ohip-coverage-international-students',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required',
+      specialNote: '⚠️ Vous devez souscrire une assurance privée avant votre arrivée!',
+      specialNoteEn: '⚠️ You must purchase private insurance before arrival!'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide pour minimum 6 mois',
+        'Emploi à temps plein (minimum 30 heures/semaine)',
+        'Intention de résider en Ontario',
+        'Présent en Ontario pendant la demande'
+      ],
+      conditionsEn: [
+        'Valid work permit for minimum 6 months',
+        'Full-time employment (minimum 30 hours/week)',
+        'Intention to reside in Ontario',
+        'Present in Ontario during application'
+      ],
+      documents: [
+        { name: 'Permis de travail valide', nameEn: 'Valid work permit', required: true, notes: 'Minimum 6 mois de validité', notesEn: 'Minimum 6 months validity' },
+        { name: 'Lettre de l\'employeur', nameEn: 'Employer letter', required: true, notes: 'Confirmant l\'emploi à temps plein', notesEn: 'Confirming full-time employment' },
+        { name: 'Preuve de résidence en Ontario', nameEn: 'Proof of Ontario residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true },
+        { name: 'Contrat de travail (si disponible)', nameEn: 'Employment contract (if available)', required: false }
+      ],
+      applyUrl: 'https://www.ontario.ca/page/apply-ohip-and-get-health-card',
+      planName: 'OHIP (Ontario Health Insurance Plan)',
+      planNameEn: 'OHIP (Ontario Health Insurance Plan)',
+      specialNote: '⏱️ Période d\'attente de 3 mois - Prévoyez une assurance privée!',
+      specialNoteEn: '⏱️ 3-month waiting period - Plan for private insurance!'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide pour minimum 6 mois',
+        'Emploi à temps plein',
+        'Intention de résider en Ontario'
+      ],
+      conditionsEn: [
+        'Valid work permit for minimum 6 months',
+        'Full-time employment',
+        'Intention to reside in Ontario'
+      ],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true, notes: 'Avec nom de l\'employeur', notesEn: 'With employer name' },
+        { name: 'Lettre d\'offre d\'emploi', nameEn: 'Job offer letter', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.ontario.ca/page/apply-ohip-and-get-health-card',
+      planName: 'OHIP (Ontario Health Insurance Plan)',
+      planNameEn: 'OHIP (Ontario Health Insurance Plan)',
+      specialNote: '⏱️ Assurez-vous que votre permis couvre au moins 6 mois',
+      specialNoteEn: '⏱️ Ensure your permit covers at least 6 months'
+    }
+  },
+  'QC': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '0 à 3 mois',
+      waitPeriodEn: '0 to 3 months',
+      conditions: [
+        'Résident du Québec (intention de s\'y établir)',
+        'Présent au Québec minimum 183 jours par année',
+        'Inscription dans les 3 mois suivant l\'arrivée recommandée'
+      ],
+      conditionsEn: [
+        'Quebec resident (intention to settle)',
+        'Present in Quebec minimum 183 days per year',
+        'Registration within 3 months of arrival recommended'
+      ],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence au Québec', nameEn: 'Proof of Quebec residence', required: true, notes: 'Bail, facture Hydro-Québec', notesEn: 'Lease, Hydro-Québec bill' },
+        { name: 'Acte de naissance avec traduction certifiée', nameEn: 'Birth certificate with certified translation', required: true, notes: 'Traduit par un traducteur agréé', notesEn: 'Translated by certified translator' },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true },
+        { name: 'CSQ (si applicable)', nameEn: 'CSQ (if applicable)', required: false, notes: 'Certificat de sélection du Québec', notesEn: 'Quebec Selection Certificate' }
+      ],
+      applyUrl: 'https://www.ramq.gouv.qc.ca/fr/citoyens/assurance-maladie/inscription',
+      planName: 'RAMQ (Régie de l\'assurance maladie du Québec)',
+      planNameEn: 'RAMQ (Quebec Health Insurance Board)',
+      specialNote: '📄 L\'acte de naissance doit être traduit par un traducteur agréé au Québec',
+      specialNoteEn: '📄 Birth certificate must be translated by a certified translator in Quebec'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: 'Variable',
+      waitPeriodEn: 'Variable',
+      conditions: [
+        '✅ Pays avec entente de sécurité sociale: France, Belgique, Danemark, Finlande, Grèce, Luxembourg, Norvège, Portugal, Roumanie, Suède',
+        '❌ Autres pays: Non admissible à la RAMQ',
+        'Inscription obligatoire dès l\'arrivée'
+      ],
+      conditionsEn: [
+        '✅ Countries with social security agreement: France, Belgium, Denmark, Finland, Greece, Luxembourg, Norway, Portugal, Romania, Sweden',
+        '❌ Other countries: Not eligible for RAMQ',
+        'Mandatory registration upon arrival'
+      ],
+      documents: [
+        { name: 'Permis d\'études valide', nameEn: 'Valid study permit', required: true },
+        { name: 'Attestation d\'inscription universitaire', nameEn: 'University enrollment certificate', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true },
+        { name: 'Certificat d\'assurance du pays d\'origine (si pays avec entente)', nameEn: 'Insurance certificate from home country (if country with agreement)', required: false },
+        { name: 'Preuve de résidence au Québec', nameEn: 'Proof of Quebec residence', required: true }
+      ],
+      applyUrl: 'https://www.ramq.gouv.qc.ca/fr/citoyens/assurance-maladie/inscription',
+      planName: 'RAMQ (si pays avec entente)',
+      planNameEn: 'RAMQ (if country with agreement)',
+      specialNote: '🇫🇷 Les étudiants français sont couverts automatiquement!',
+      specialNoteEn: '🇫🇷 French students are automatically covered!'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois max',
+      waitPeriodEn: '3 months max',
+      conditions: [
+        'Permis de travail valide',
+        'Résident du Québec',
+        'Inscription recommandée dès l\'arrivée'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'Quebec resident',
+        'Recommended registration upon arrival'
+      ],
+      documents: [
+        { name: 'Permis de travail valide', nameEn: 'Valid work permit', required: true },
+        { name: 'Preuve de résidence au Québec', nameEn: 'Proof of Quebec residence', required: true },
+        { name: 'Acte de naissance avec traduction certifiée', nameEn: 'Birth certificate with certified translation', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.ramq.gouv.qc.ca/fr/citoyens/assurance-maladie/inscription',
+      planName: 'RAMQ (Régie de l\'assurance maladie du Québec)',
+      planNameEn: 'RAMQ (Quebec Health Insurance Board)'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois max',
+      waitPeriodEn: '3 months max',
+      conditions: [
+        'Permis de travail valide',
+        'Résident du Québec'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'Quebec resident'
+      ],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence au Québec', nameEn: 'Proof of Quebec residence', required: true },
+        { name: 'Acte de naissance traduit', nameEn: 'Translated birth certificate', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.ramq.gouv.qc.ca/fr/citoyens/assurance-maladie/inscription',
+      planName: 'RAMQ',
+      planNameEn: 'RAMQ'
+    }
+  },
+  'BC': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Résident de la Colombie-Britannique',
+        'Citoyen canadien ou résident permanent',
+        'Présent minimum 6 mois par année'
+      ],
+      conditionsEn: [
+        'British Columbia resident',
+        'Canadian citizen or permanent resident',
+        'Present minimum 6 months per year'
+      ],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence en C.-B.', nameEn: 'Proof of B.C. residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gov.bc.ca/gov/content/health/health-drug-coverage/msp/bc-residents',
+      planName: 'MSP (Medical Services Plan)',
+      planNameEn: 'MSP (Medical Services Plan)',
+      specialNote: '💰 GRATUIT depuis janvier 2020 (anciennement $64/mois)',
+      specialNoteEn: '💰 FREE since January 2020 (previously $64/month)'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: [
+        '❌ Les étudiants internationaux ne sont PAS admissibles au MSP',
+        'Assurance privée OBLIGATOIRE',
+        'La plupart des universités offrent une assurance groupe'
+      ],
+      conditionsEn: [
+        '❌ International students are NOT eligible for MSP',
+        'Private insurance MANDATORY',
+        'Most universities offer group insurance'
+      ],
+      documents: [
+        { name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true },
+        { name: 'Permis d\'études', nameEn: 'Study permit', required: true }
+      ],
+      applyUrl: 'https://www2.gov.bc.ca/gov/content/health/health-drug-coverage/msp/bc-residents',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide',
+        'Résident de la C.-B.',
+        'Présent minimum 6 mois par année'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'B.C. resident',
+        'Present minimum 6 months per year'
+      ],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence en C.-B.', nameEn: 'Proof of B.C. residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gov.bc.ca/gov/content/health/health-drug-coverage/msp/bc-residents',
+      planName: 'MSP (Medical Services Plan)',
+      planNameEn: 'MSP (Medical Services Plan)'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide',
+        'Résident de la C.-B.'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'B.C. resident'
+      ],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gov.bc.ca/gov/content/health/health-drug-coverage/msp/bc-residents',
+      planName: 'MSP',
+      planNameEn: 'MSP'
+    }
+  },
+  'AB': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Résident de l\'Alberta',
+        'Présent minimum 183 jours par année',
+        'Intention de résider en Alberta'
+      ],
+      conditionsEn: [
+        'Alberta resident',
+        'Present minimum 183 days per year',
+        'Intention to reside in Alberta'
+      ],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence en Alberta', nameEn: 'Proof of Alberta residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.alberta.ca/ahcip.aspx',
+      planName: 'AHCIP (Alberta Health Care Insurance Plan)',
+      planNameEn: 'AHCIP (Alberta Health Care Insurance Plan)',
+      specialNote: '💰 Couverture gratuite',
+      specialNoteEn: '💰 Free coverage'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: 'Variable',
+      waitPeriodEn: 'Variable',
+      conditions: [
+        'Permis d\'études valide pour 12 mois ou plus',
+        'Intention de résider en Alberta 12 mois',
+        'Sinon: assurance privée requise'
+      ],
+      conditionsEn: [
+        'Valid study permit for 12 months or more',
+        'Intention to reside in Alberta 12 months',
+        'Otherwise: private insurance required'
+      ],
+      documents: [
+        { name: 'Permis d\'études (12+ mois)', nameEn: 'Study permit (12+ months)', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Lettre d\'admission', nameEn: 'Admission letter', required: true }
+      ],
+      applyUrl: 'https://www.alberta.ca/ahcip.aspx',
+      planName: 'AHCIP (si éligible)',
+      planNameEn: 'AHCIP (if eligible)',
+      specialNote: '⚠️ Vérifiez votre admissibilité - permis de 12+ mois requis',
+      specialNoteEn: '⚠️ Check eligibility - 12+ month permit required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide',
+        'Résident de l\'Alberta'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'Alberta resident'
+      ],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.alberta.ca/ahcip.aspx',
+      planName: 'AHCIP',
+      planNameEn: 'AHCIP'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide',
+        'Résident de l\'Alberta'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'Alberta resident'
+      ],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.alberta.ca/ahcip.aspx',
+      planName: 'AHCIP',
+      planNameEn: 'AHCIP'
+    }
+  },
+  'MB': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Résident du Manitoba',
+        'Présent minimum 183 jours par année'
+      ],
+      conditionsEn: [
+        'Manitoba resident',
+        'Present minimum 183 days per year'
+      ],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence au Manitoba', nameEn: 'Proof of Manitoba residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.mb.ca/health/mhsip/',
+      planName: 'Manitoba Health',
+      planNameEn: 'Manitoba Health'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: [
+        '❌ Étudiants internationaux non admissibles',
+        'Assurance privée obligatoire'
+      ],
+      conditionsEn: [
+        '❌ International students not eligible',
+        'Private insurance mandatory'
+      ],
+      documents: [
+        { name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }
+      ],
+      applyUrl: 'https://www.gov.mb.ca/health/mhsip/',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide 12+ mois',
+        'Résident du Manitoba'
+      ],
+      conditionsEn: [
+        'Valid work permit 12+ months',
+        'Manitoba resident'
+      ],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.mb.ca/health/mhsip/',
+      planName: 'Manitoba Health',
+      planNameEn: 'Manitoba Health'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: [
+        'Permis de travail valide',
+        'Résident du Manitoba'
+      ],
+      conditionsEn: [
+        'Valid work permit',
+        'Manitoba resident'
+      ],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.mb.ca/health/mhsip/',
+      planName: 'Manitoba Health',
+      planNameEn: 'Manitoba Health'
+    }
+  },
+  // Saskatchewan
+  'SK': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Résident de la Saskatchewan', 'Présent minimum 183 jours par année'],
+      conditionsEn: ['Saskatchewan resident', 'Present minimum 183 days per year'],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.saskatchewan.ca/residents/health/free-health-coverage',
+      planName: 'Saskatchewan Health Card',
+      planNameEn: 'Saskatchewan Health Card'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: ['❌ Étudiants non admissibles', 'Assurance privée obligatoire'],
+      conditionsEn: ['❌ Students not eligible', 'Private insurance mandatory'],
+      documents: [{ name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }],
+      applyUrl: '#',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de la Saskatchewan'],
+      conditionsEn: ['Valid work permit', 'Saskatchewan resident'],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.saskatchewan.ca/residents/health/free-health-coverage',
+      planName: 'Saskatchewan Health Card',
+      planNameEn: 'Saskatchewan Health Card'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de la Saskatchewan'],
+      conditionsEn: ['Valid work permit', 'Saskatchewan resident'],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.saskatchewan.ca/residents/health/free-health-coverage',
+      planName: 'Saskatchewan Health Card',
+      planNameEn: 'Saskatchewan Health Card'
+    }
+  },
+  // Nova Scotia
+  'NS': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Résident de la Nouvelle-Écosse', 'Présent minimum 183 jours par année'],
+      conditionsEn: ['Nova Scotia resident', 'Present minimum 183 days per year'],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://novascotia.ca/dhw/msi/',
+      planName: 'MSI (Medical Services Insurance)',
+      planNameEn: 'MSI (Medical Services Insurance)'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: ['❌ Étudiants non admissibles', 'Assurance privée obligatoire'],
+      conditionsEn: ['❌ Students not eligible', 'Private insurance mandatory'],
+      documents: [{ name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }],
+      applyUrl: '#',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de la Nouvelle-Écosse'],
+      conditionsEn: ['Valid work permit', 'Nova Scotia resident'],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://novascotia.ca/dhw/msi/',
+      planName: 'MSI',
+      planNameEn: 'MSI'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de la Nouvelle-Écosse'],
+      conditionsEn: ['Valid work permit', 'Nova Scotia resident'],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://novascotia.ca/dhw/msi/',
+      planName: 'MSI',
+      planNameEn: 'MSI'
+    }
+  },
+  // New Brunswick
+  'NB': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Résident du Nouveau-Brunswick', 'Présent minimum 183 jours par année'],
+      conditionsEn: ['New Brunswick resident', 'Present minimum 183 days per year'],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gnb.ca/content/gnb/en/departments/health/Medicare.html',
+      planName: 'Medicare NB',
+      planNameEn: 'Medicare NB'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: ['❌ Étudiants non admissibles', 'Assurance privée obligatoire'],
+      conditionsEn: ['❌ Students not eligible', 'Private insurance mandatory'],
+      documents: [{ name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }],
+      applyUrl: '#',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident du Nouveau-Brunswick'],
+      conditionsEn: ['Valid work permit', 'New Brunswick resident'],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gnb.ca/content/gnb/en/departments/health/Medicare.html',
+      planName: 'Medicare NB',
+      planNameEn: 'Medicare NB'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident du Nouveau-Brunswick'],
+      conditionsEn: ['Valid work permit', 'New Brunswick resident'],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www2.gnb.ca/content/gnb/en/departments/health/Medicare.html',
+      planName: 'Medicare NB',
+      planNameEn: 'Medicare NB'
+    }
+  },
+  // Prince Edward Island
+  'PE': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Résident de l\'Île-du-Prince-Édouard', 'Présent minimum 183 jours par année'],
+      conditionsEn: ['Prince Edward Island resident', 'Present minimum 183 days per year'],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.princeedwardisland.ca/en/information/health-pei/health-card',
+      planName: 'PEI Health Card',
+      planNameEn: 'PEI Health Card'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: ['❌ Étudiants non admissibles', 'Assurance privée obligatoire'],
+      conditionsEn: ['❌ Students not eligible', 'Private insurance mandatory'],
+      documents: [{ name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }],
+      applyUrl: '#',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de l\'Île-du-Prince-Édouard'],
+      conditionsEn: ['Valid work permit', 'Prince Edward Island resident'],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.princeedwardisland.ca/en/information/health-pei/health-card',
+      planName: 'PEI Health Card',
+      planNameEn: 'PEI Health Card'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de l\'Île-du-Prince-Édouard'],
+      conditionsEn: ['Valid work permit', 'Prince Edward Island resident'],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.princeedwardisland.ca/en/information/health-pei/health-card',
+      planName: 'PEI Health Card',
+      planNameEn: 'PEI Health Card'
+    }
+  },
+  // Newfoundland and Labrador
+  'NL': {
+    'PERMANENT_RESIDENT': {
+      eligible: true,
+      conditional: false,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Résident de Terre-Neuve-et-Labrador', 'Présent minimum 183 jours par année'],
+      conditionsEn: ['Newfoundland and Labrador resident', 'Present minimum 183 days per year'],
+      documents: [
+        { name: 'Carte de résident permanent', nameEn: 'Permanent Resident Card', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.nl.ca/hcs/mcp/',
+      planName: 'MCP (Medical Care Plan)',
+      planNameEn: 'MCP (Medical Care Plan)'
+    },
+    'FOREIGN_STUDENT': {
+      eligible: false,
+      conditional: false,
+      waitPeriod: 'Non admissible',
+      waitPeriodEn: 'Not eligible',
+      conditions: ['❌ Étudiants non admissibles', 'Assurance privée obligatoire'],
+      conditionsEn: ['❌ Students not eligible', 'Private insurance mandatory'],
+      documents: [{ name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true }],
+      applyUrl: '#',
+      planName: 'Assurance privée requise',
+      planNameEn: 'Private insurance required'
+    },
+    'OPEN_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de Terre-Neuve-et-Labrador'],
+      conditionsEn: ['Valid work permit', 'Newfoundland and Labrador resident'],
+      documents: [
+        { name: 'Permis de travail', nameEn: 'Work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.nl.ca/hcs/mcp/',
+      planName: 'MCP',
+      planNameEn: 'MCP'
+    },
+    'CLOSED_WORK_PERMIT': {
+      eligible: true,
+      conditional: true,
+      waitPeriod: '3 mois',
+      waitPeriodEn: '3 months',
+      conditions: ['Permis de travail valide', 'Résident de Terre-Neuve-et-Labrador'],
+      conditionsEn: ['Valid work permit', 'Newfoundland and Labrador resident'],
+      documents: [
+        { name: 'Permis de travail fermé', nameEn: 'Closed work permit', required: true },
+        { name: 'Preuve de résidence', nameEn: 'Proof of residence', required: true },
+        { name: 'Passeport valide', nameEn: 'Valid passport', required: true }
+      ],
+      applyUrl: 'https://www.gov.nl.ca/hcs/mcp/',
+      planName: 'MCP',
+      planNameEn: 'MCP'
+    }
+  }
+}
+
+function HealthModule({ language, user, onNavigate }: {
+  language: Language
+  user: any
+  onNavigate: (module: string | null) => void
+}) {
+  const [provinceHealthInfo, setProvinceHealthInfo] = useState<any>(null)
+  const [showAllDocuments, setShowAllDocuments] = useState(false)
+  const [postalCode, setPostalCode] = useState(user?.postalCode || '')
+  const [clinicFilter, setClinicFilter] = useState<'ALL' | 'WALK_IN' | 'CLSC' | 'HOSPITAL' | 'PRIVATE'>('ALL')
+
+  // Get eligibility for user's situation - with special handling for Quebec foreign students
+  const getEligibility = () => {
+    if (!user?.province || !user?.immigrationStatus) return null
+    
+    const baseEligibility = healthEligibilityRules[user.province]?.[user.immigrationStatus]
+    
+    // Special case: Quebec foreign students - check country of origin
+    if (user.province === 'QC' && user.immigrationStatus === 'FOREIGN_STUDENT' && user.countryOfOrigin) {
+      const country = countries.find(c => c.code === user.countryOfOrigin)
+      const hasAgreement = country?.quebecAgreement || false
+      
+      if (hasAgreement) {
+        // Country has agreement with Quebec - student is eligible for RAMQ
+        return {
+          eligible: true,
+          conditional: false,
+          waitPeriod: language === 'fr' ? 'Immédiat' : 'Immediate',
+          waitPeriodEn: 'Immediate',
+          conditions: [
+            `✅ ${country?.flag} ${language === 'fr' ? country.name : (country.nameEn || country.name)} a une entente de sécurité sociale avec le Québec`,
+            'Inscription à la RAMQ obligatoire dès l\'arrivée',
+            'Présenter le certificat d\'assurance de votre pays d\'origine',
+            'Permis d\'études valide'
+          ],
+          conditionsEn: [
+            `✅ ${country?.flag} ${country.nameEn || country.name} has a social security agreement with Quebec`,
+            'Mandatory RAMQ registration upon arrival',
+            'Present insurance certificate from your home country',
+            'Valid study permit'
+          ],
+          documents: [
+            { name: 'Certificat d\'assurance du pays d\'origine', nameEn: 'Insurance certificate from home country', required: true },
+            { name: 'Permis d\'études valide', nameEn: 'Valid study permit', required: true },
+            { name: 'Attestation d\'inscription universitaire', nameEn: 'University enrollment certificate', required: true },
+            { name: 'Passeport valide', nameEn: 'Valid passport', required: true },
+            { name: 'Preuve de résidence au Québec', nameEn: 'Proof of Quebec residence', required: true }
+          ],
+          applyUrl: 'https://www.ramq.gouv.qc.ca/fr/citoyens/assurance-maladie/inscription',
+          planName: `RAMQ - ${country?.flag} ${language === 'fr' ? country.name : (country.nameEn || country.name)}`,
+          planNameEn: `RAMQ - ${country?.flag} ${country.nameEn || country.name}`,
+          specialNote: `✅ ${country?.flag} Excellente nouvelle! Vous êtes admissible à la RAMQ grâce à l'entente avec votre pays.`,
+          specialNoteEn: `✅ ${country?.flag} Great news! You are eligible for RAMQ thanks to the agreement with your country.`
+        }
+      } else {
+        // Country does NOT have agreement - need private insurance
+        return {
+          eligible: false,
+          conditional: false,
+          waitPeriod: language === 'fr' ? 'Non admissible' : 'Not eligible',
+          waitPeriodEn: 'Not eligible',
+          conditions: [
+            `❌ ${country?.flag} ${language === 'fr' ? country.name : (country.nameEn || country.name)} n'a PAS d'entente de sécurité sociale avec le Québec`,
+            'Une assurance santé privée est OBLIGATOIRE',
+            'Vérifiez si votre établissement offre une assurance groupe',
+            'Vous pouvez souscrire une assurance privée (Guard.me, MSH, etc.)'
+          ],
+          conditionsEn: [
+            `❌ ${country?.flag} ${country.nameEn || country.name} does NOT have a social security agreement with Quebec`,
+            'Private health insurance is MANDATORY',
+            'Check if your institution offers group insurance',
+            'You can purchase private insurance (Guard.me, MSH, etc.)'
+          ],
+          documents: [
+            { name: 'Assurance santé privée', nameEn: 'Private health insurance', required: true, notes: 'Obligatoire pendant vos études', notesEn: 'Mandatory during your studies' },
+            { name: 'Permis d\'études valide', nameEn: 'Valid study permit', required: true },
+            { name: 'Lettre d\'admission', nameEn: 'Letter of admission', required: false }
+          ],
+          applyUrl: '#',
+          planName: `Assurance privée requise - ${country?.flag}`,
+          planNameEn: `Private insurance required - ${country?.flag}`,
+          specialNote: `⚠️ ${country?.flag} Votre pays n'a pas d'entente avec le Québec. Souscrivez une assurance privée avant votre arrivée!`,
+          specialNoteEn: `⚠️ ${country?.flag} Your country has no agreement with Quebec. Purchase private insurance before arrival!`
+        }
+      }
+    }
+    
+    return baseEligibility
+  }
+  
+  const eligibility = getEligibility()
+
+  useEffect(() => {
+    if (user?.province) {
+      fetch(`/api/user-data?action=get-province-info&province=${user.province}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.info) {
+            const healthData = data.info.healthInsurance ? JSON.parse(data.info.healthInsurance) : null
+            setProvinceHealthInfo(healthData)
+          }
+        })
+    }
+  }, [user?.province])
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-red-50/50 to-white dark:from-red-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-200 dark:shadow-red-900/30">
+            <Heart className="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              {t('modules.health.title', language)}
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">{t('modules.health.description', language)}</p>
+          </div>
+        </div>
+
+        {/* ELIGIBILITY CHECKER */}
+        {eligibility ? (
+          <Card className="border-0 shadow-lg overflow-hidden">
+            <div className={`p-4 ${eligibility.eligible 
+              ? (eligibility.conditional 
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500' 
+                : 'bg-gradient-to-r from-green-500 to-emerald-500')
+              : 'bg-gradient-to-r from-red-500 to-rose-500'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-white">
+                  {eligibility.eligible ? (
+                    eligibility.conditional ? (
+                      <AlertCircle className="w-6 h-6" />
+                    ) : (
+                      <CheckCircle2 className="w-6 h-6" />
+                    )
+                  ) : (
+                    <X className="w-6 h-6" />
+                  )}
+                  <div>
+                    <h3 className="font-bold text-lg">
+                      {eligibility.eligible 
+                        ? (eligibility.conditional
+                          ? (language === 'fr' ? '⚠️ Admissible sous conditions' : '⚠️ Eligible with conditions')
+                          : (language === 'fr' ? '✅ Admissible' : '✅ Eligible'))
+                        : (language === 'fr' ? '❌ Non admissible' : '❌ Not eligible')}
+                    </h3>
+                    <p className="text-white/90 text-sm">{language === 'fr' ? eligibility.planName : eligibility.planNameEn}</p>
+                  </div>
+                </div>
+                <Badge className="bg-white/20 text-white text-sm px-3 py-1">
+                  {language === 'fr' ? eligibility.waitPeriod : eligibility.waitPeriodEn}
+                </Badge>
+              </div>
+            </div>
+
+            <CardContent className="p-6 space-y-6">
+              {/* Status & Province Info */}
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-blue-100 text-blue-800">
+                  {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? '🛡️ Résident Permanent' : '🛡️ Permanent Resident')}
+                  {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? '🎓 Étudiant' : '🎓 Student')}
+                  {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? '💼 Permis Ouvert' : '💼 Open Permit')}
+                  {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? '🏢 Permis Fermé' : '🏢 Closed Permit')}
+                </Badge>
+                <Badge variant="outline">
+                  📍 {language === 'fr' 
+                    ? provinces.find(p => p.code === user?.province)?.name 
+                    : provinces.find(p => p.code === user?.province)?.nameEn}
+                </Badge>
+                {/* Country of origin badge for students */}
+                {user?.immigrationStatus === 'FOREIGN_STUDENT' && user?.countryOfOrigin && (() => {
+                  const country = countries.find(c => c.code === user.countryOfOrigin)
+                  return (
+                    <Badge className={`${country?.quebecAgreement ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                      {country?.flag} {language === 'fr' ? country?.name : (country?.nameEn || country?.name)}
+                      {country?.quebecAgreement && ' 🏥'}
+                    </Badge>
+                  )
+                })()}
+              </div>
+
+              {/* Special Note */}
+              {eligibility.specialNote && (
+                <div className={`p-4 rounded-xl ${eligibility.eligible ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800'}`}>
+                  <p className={`text-sm font-medium ${eligibility.eligible ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`}>
+                    {language === 'fr' ? eligibility.specialNote : eligibility.specialNoteEn}
+                  </p>
+                </div>
+              )}
+
+              {/* Conditions */}
+              <div>
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <ListChecks className="w-5 h-5 text-blue-500" />
+                  {language === 'fr' ? '📋 Conditions d\'admissibilité' : '📋 Eligibility Conditions'}
+                </h4>
+                <div className="space-y-2">
+                  {(language === 'fr' ? eligibility.conditions : eligibility.conditionsEn).map((condition, i) => (
+                    <div key={i} className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        condition.startsWith('✅') ? 'bg-green-100 text-green-600' : 
+                        condition.startsWith('❌') ? 'bg-red-100 text-red-600' : 
+                        'bg-blue-100 text-blue-600'
+                      }`}>
+                        {condition.startsWith('✅') ? '✓' : condition.startsWith('❌') ? '!' : '•'}
+                      </div>
+                      <span className="text-sm">{condition}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Required Documents */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-purple-500" />
+                    {language === 'fr' ? '📄 Documents requis' : '📄 Required Documents'}
+                  </h4>
+                  <Button variant="ghost" size="sm" onClick={() => setShowAllDocuments(!showAllDocuments)}>
+                    {showAllDocuments 
+                      ? (language === 'fr' ? 'Voir moins' : 'Show less')
+                      : (language === 'fr' ? 'Voir plus' : 'Show more')}
+                  </Button>
+                </div>
+                
+                <div className="space-y-2">
+                  {eligibility.documents.slice(0, showAllDocuments ? undefined : 4).map((doc, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        doc.required ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {doc.required ? '!' : '?'}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{language === 'fr' ? doc.name : doc.nameEn}</span>
+                          {doc.required && (
+                            <Badge className="text-xs bg-red-100 text-red-700">{language === 'fr' ? 'Obligatoire' : 'Required'}</Badge>
+                          )}
+                        </div>
+                        {(doc.notes || doc.notesEn) && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            💡 {language === 'fr' ? doc.notes : doc.notesEn}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                {eligibility.applyUrl && eligibility.applyUrl !== '#' && (
+                  <Button 
+                    className="flex-1 py-6 text-lg font-semibold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
+                    onClick={() => window.open(eligibility.applyUrl, '_blank')}
+                  >
+                    <ExternalLink className="w-5 h-5 mr-2" />
+                    {language === 'fr' ? 'Demander maintenant' : 'Apply now'}
+                  </Button>
+                )}
+                {!eligibility.eligible && (
+                  <Button 
+                    variant="outline"
+                    className="flex-1 py-6 text-lg"
+                    onClick={() => onNavigate('finance')}
+                  >
+                    <Shield className="w-5 h-5 mr-2" />
+                    {language === 'fr' ? 'Voir les assurances privées' : 'View private insurance'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-0 shadow-lg bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+            <CardContent className="p-6 text-center">
+              <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+              <h3 className="font-bold text-lg text-amber-800 dark:text-amber-200">
+                {language === 'fr' ? '⚠️ Informations manquantes' : '⚠️ Missing Information'}
+              </h3>
+              <p className="text-amber-700 dark:text-amber-300 mt-2">
+                {language === 'fr' 
+                  ? 'Complétez votre profil avec votre statut d\'immigration et votre province pour connaître votre admissibilité.'
+                  : 'Complete your profile with your immigration status and province to check your eligibility.'}
+              </p>
+              <Button 
+                className="mt-4" 
+                onClick={() => onNavigate('profile')}
+              >
+                <User className="w-4 h-4 mr-2" />
+                {language === 'fr' ? 'Compléter mon profil' : 'Complete my profile'}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Private Insurance */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </div>
+              {language === 'fr' ? '🛡️ Assurance privée (période d\'attente)' : '🛡️ Private Insurance (Waiting Period)'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' ? 'Pendant le délai de carence, une assurance privée est recommandée' : 'During the waiting period, private insurance is recommended'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                { name: 'Manulife', coverage: language === 'fr' ? 'Visite médicale, médicaments' : 'Doctor visits, medication', price: '~$150/mois', color: 'from-blue-400 to-blue-600' },
+                { name: 'Sun Life', coverage: language === 'fr' ? 'Complète nouveaux arrivants' : 'Complete newcomer coverage', price: '~$200/mois', color: 'from-amber-400 to-amber-600' },
+                { name: 'GMS', coverage: language === 'fr' ? 'Couverture de base' : 'Basic coverage', price: '~$100/mois', color: 'from-green-400 to-green-600' },
+              ].map((ins, i) => (
+                <Card key={i} className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                  <div className={`h-2 bg-gradient-to-r ${ins.color}`} />
+                  <CardContent className="p-5">
+                    <h4 className="font-bold text-lg">{ins.name}</h4>
+                    <p className="text-sm text-gray-500 mt-2">{ins.coverage}</p>
+                    <p className="text-green-600 font-bold mt-3">{ins.price}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Clinic Directory */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              {language === 'fr' ? '📍 Trouver une clinique' : '📍 Find a Clinic'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Entrez votre code postal pour trouver les cliniques près de chez vous'
+                : 'Enter your postal code to find clinics near you'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Postal Code Input */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <Label className="text-sm font-medium mb-2 block">
+                  {language === 'fr' ? 'Code postal' : 'Postal Code'}
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder={language === 'fr' ? 'Ex: H2X 1Y4' : 'E.g.: H2X 1Y4'}
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
+                    className="pl-10 uppercase"
+                    maxLength={7}
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {language === 'fr' 
+                    ? '💡 Entrez les 3 premiers caractères pour une recherche par région'
+                    : '💡 Enter the first 3 characters for a regional search'}
+                </p>
+              </div>
+              
+              {/* Filter Buttons */}
+              <div className="sm:w-auto">
+                <Label className="text-sm font-medium mb-2 block">
+                  {language === 'fr' ? 'Type de clinique' : 'Clinic Type'}
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant={clinicFilter === 'ALL' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setClinicFilter('ALL')}
+                  >
+                    {language === 'fr' ? 'Tous' : 'All'}
+                  </Button>
+                  <Button
+                    variant={clinicFilter === 'WALK_IN' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setClinicFilter('WALK_IN')}
+                  >
+                    {language === 'fr' ? 'Sans RDV' : 'Walk-in'}
+                  </Button>
+                  <Button
+                    variant={clinicFilter === 'CLSC' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setClinicFilter('CLSC')}
+                  >
+                    CLSC
+                  </Button>
+                  <Button
+                    variant={clinicFilter === 'HOSPITAL' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setClinicFilter('HOSPITAL')}
+                  >
+                    {language === 'fr' ? 'Hôpital' : 'Hospital'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Province Info Banner */}
+            {user?.province && (
+              <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                <MapPin className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-blue-700 dark:text-blue-300">
+                  {language === 'fr' 
+                    ? `Recherche dans la province: ${provinces.find(p => p.code === user.province)?.name}`
+                    : `Searching in: ${provinces.find(p => p.code === user.province)?.nameEn}`}
+                </span>
+              </div>
+            )}
+
+            {/* Clinics List */}
+            <div className="space-y-3">
+              {(() => {
+                const userProvince = (user?.province || 'QC') as Province
+                let clinics = getClinicsByPostalCode(userProvince, postalCode, 8)
+                
+                // Apply filter
+                if (clinicFilter !== 'ALL') {
+                  clinics = clinics.filter(c => c.type === clinicFilter)
+                }
+                
+                if (clinics.length === 0) {
+                  return (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <MapPin className="w-8 h-8 text-gray-300" />
+                      </div>
+                      <p className="font-medium">
+                        {language === 'fr' ? 'Aucune clinique trouvée' : 'No clinics found'}
+                      </p>
+                      <p className="text-sm mt-1">
+                        {language === 'fr' 
+                          ? 'Essayez un autre code postal ou filtre'
+                          : 'Try a different postal code or filter'}
+                      </p>
+                    </div>
+                  )
+                }
+
+                const getTypeLabel = (type: string) => {
+                  switch (type) {
+                    case 'WALK_IN': return language === 'fr' ? 'Sans rendez-vous' : 'Walk-in'
+                    case 'CLSC': return 'CLSC'
+                    case 'HOSPITAL': return language === 'fr' ? 'Hôpital' : 'Hospital'
+                    case 'PRIVATE': return language === 'fr' ? 'Privé' : 'Private'
+                    case 'COMMUNITY': return language === 'fr' ? 'Communautaire' : 'Community'
+                    default: return type
+                  }
+                }
+
+                const getTypeEmoji = (type: string) => {
+                  switch (type) {
+                    case 'WALK_IN': return '🏥'
+                    case 'CLSC': return '🏛️'
+                    case 'HOSPITAL': return '🏨'
+                    case 'PRIVATE': return '💼'
+                    case 'COMMUNITY': return '🤝'
+                    default: return '🏥'
+                  }
+                }
+
+                const getTypeColor = (type: string) => {
+                  switch (type) {
+                    case 'WALK_IN': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    case 'CLSC': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                    case 'HOSPITAL': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    case 'PRIVATE': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                    case 'COMMUNITY': return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
+                    default: return 'bg-gray-100 text-gray-800'
+                  }
+                }
+
+                const formatDistance = (distance: number) => {
+                  if (distance === 0) return language === 'fr' ? 'Très proche' : 'Very close'
+                  if (distance <= 5) return language === 'fr' ? `~${distance} km` : `~${distance} km`
+                  if (distance <= 20) return language === 'fr' ? `~${distance} km` : `~${distance} km`
+                  return language === 'fr' ? 'Dans votre province' : 'In your province'
+                }
+
+                return clinics.map((clinic, i) => (
+                  <div 
+                    key={i} 
+                    className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">{getTypeEmoji(clinic.type)}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{language === 'fr' ? clinic.name : (clinic.nameEn || clinic.name)}</p>
+                          {clinic.distance === 0 && (
+                            <Badge className="bg-green-500 text-white text-xs">
+                              {language === 'fr' ? 'Le plus proche' : 'Closest'}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {language === 'fr' ? clinic.address : (clinic.addressEn || clinic.address)}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 mt-1">
+                          <div className="flex items-center gap-1">
+                            <Phone className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs text-gray-500">{clinic.phone}</span>
+                          </div>
+                          {clinic.hours && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-gray-400" />
+                              <span className="text-xs text-gray-500">
+                                {language === 'fr' ? clinic.hours : (clinic.hoursEn || clinic.hours)}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs text-gray-500">
+                              {language === 'fr' ? clinic.city : (clinic.cityEn || clinic.city)}
+                            </span>
+                          </div>
+                        </div>
+                        {clinic.services && clinic.services.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {(language === 'fr' ? clinic.services : (clinic.servicesEn || clinic.services)).map((service, si) => (
+                              <Badge key={si} variant="outline" className="text-xs">
+                                {service}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Badge className={getTypeColor(clinic.type)}>
+                        {getTypeLabel(clinic.type)}
+                      </Badge>
+                      <span className="text-xs text-gray-500">
+                        {formatDistance(clinic.distance)}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              })()}
+            </div>
+
+            {/* Google Maps Link */}
+            {postalCode && (
+              <div className="pt-4 border-t">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    const query = encodeURIComponent(`${postalCode}, Canada clinics`)
+                    window.open(`https://www.google.com/maps/search/${query}`, '_blank')
+                  }}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Voir sur Google Maps' : 'View on Google Maps'}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+// ==================== COMMUNITY MODULE ====================
+function CommunityModule({ language, user }: {
+  language: Language
+  user: any
+}) {
+  const [events, setEvents] = useState<any[]>([])
+  const [registeredEvents, setRegisteredEvents] = useState<string[]>([])
+
+  useEffect(() => {
+    fetch('/api/user-data?action=get-events')
+      .then(res => res.json())
+      .then(data => {
+        if (data.events) setEvents(data.events)
+      })
+  }, [])
+
+  const handleRegister = (eventId: string) => {
+    if (registeredEvents.includes(eventId)) {
+      setRegisteredEvents(registeredEvents.filter(id => id !== eventId))
+    } else {
+      setRegisteredEvents([...registeredEvents, eventId])
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30">
+              <Users className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {t('modules.community.title', language)}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">{t('modules.community.description', language)}</p>
+            </div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Inscriptions' : 'Registered'}</p>
+              <p className="font-bold text-indigo-600">{registeredEvents.length}</p>
+            </div>
+            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+              <p className="text-xs text-gray-500">{language === 'fr' ? 'Événements' : 'Events'}</p>
+              <p className="font-bold text-green-600">{events.length}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming Events */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                <CalendarDays className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              {language === 'fr' ? '📅 Événements à venir' : '📅 Upcoming Events'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {events.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <CalendarDays className="w-8 h-8 text-gray-300" />
+                  </div>
+                  <p className="font-medium">{language === 'fr' ? 'Aucun événement à venir' : 'No upcoming events'}</p>
+                </div>
+              ) : (
+                events.map((event) => {
+                  const isRegistered = registeredEvents.includes(event.id)
+                  return (
+                    <Card 
+                      key={event.id} 
+                      className={`overflow-hidden transition-all duration-300 ${
+                        isRegistered 
+                          ? 'ring-2 ring-green-500 bg-green-50/50 dark:bg-green-950/20' 
+                          : 'hover:shadow-lg'
+                      }`}
+                    >
+                      <div className={`h-1 ${isRegistered ? 'bg-gradient-to-r from-green-400 to-green-600' : 'bg-gradient-to-r from-indigo-400 to-indigo-600'}`} />
+                      <CardContent className="p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-lg">{language === 'fr' ? event.title : event.titleEn}</h4>
+                              {isRegistered && <Badge className="bg-green-500">✓ {language === 'fr' ? 'Inscrit' : 'Registered'}</Badge>}
+                            </div>
+                            <p className="text-sm text-gray-500 mt-2">{language === 'fr' ? event.description : event.descriptionEn}</p>
+                            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {new Date(event.date).toLocaleDateString()}
+                              </div>
+                              {event.city && (
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  {event.city}
+                                </div>
+                              )}
+                              {event.isVirtual && <Badge variant="outline">Virtual</Badge>}
+                            </div>
+                          </div>
+                          <Button 
+                            variant={isRegistered ? 'outline' : 'default'}
+                            onClick={() => handleRegister(event.id)}
+                            className={isRegistered ? '' : 'bg-gradient-to-r from-indigo-500 to-indigo-600'}
+                          >
+                            {isRegistered 
+                              ? (language === 'fr' ? 'Annuler' : 'Cancel')
+                              : (language === 'fr' ? 'S\'inscrire' : 'Register')}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Forum Preview */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              {language === 'fr' ? '💬 Forum communautaire' : '💬 Community Forum'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { title: language === 'fr' ? 'Meilleures banques pour nouveaux arrivants?' : 'Best banks for newcomers?', replies: 24, views: 156, emoji: '🏦' },
+                { title: language === 'fr' ? 'Expérience RAMQ - délai de carence' : 'RAMQ experience - waiting period', replies: 18, views: 89, emoji: '🏥' },
+                { title: language === 'fr' ? 'Conseils recherche emploi IT Montréal' : 'IT job search tips Montreal', replies: 32, views: 203, emoji: '💼' },
+              ].map((post, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{post.emoji}</span>
+                    <p className="font-medium flex-1">{post.title}</p>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <MessageSquare className="w-4 h-4" />
+                      {post.replies}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      {post.views}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Button variant="outline" className="w-full mt-4">
+              {language === 'fr' ? 'Voir tout le forum' : 'View full forum'}
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Cultural Guide & Associations */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                {language === 'fr' ? '📚 Guide culturel canadien' : '📚 Canadian Cultural Guide'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { title: language === 'fr' ? 'Étiquette au travail' : 'Workplace etiquette', emoji: '👔' },
+                { title: language === 'fr' ? 'Petite conversation' : 'Small talk', emoji: '💬' },
+                { title: language === 'fr' ? 'Pourboires et coutumes' : 'Tipping and customs', emoji: '💰' },
+                { title: language === 'fr' ? 'Hiver canadien' : 'Canadian winter', emoji: '❄️' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg">{item.emoji}</span>
+                    {item.title}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                  <Users2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                </div>
+                {language === 'fr' ? '🤝 Associations ethnoculturelles' : '🤝 Ethnocultural Associations'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { name: language === 'fr' ? 'Association francophone' : 'Francophone Association', city: 'Toronto', emoji: '🇫🇷' },
+                { name: language === 'fr' ? 'Centre communautaire hispanique' : 'Hispanic Community Center', city: 'Montréal', emoji: '🇪🇸' },
+                { name: language === 'fr' ? 'Association sud-asiatique' : 'South Asian Association', city: 'Vancouver', emoji: '🇮🇳' },
+                { name: language === 'fr' ? 'Centre culturel chinois' : 'Chinese Cultural Center', city: 'Calgary', emoji: '🇨🇳' },
+              ].map((assoc, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{assoc.emoji}</span>
+                    <div>
+                      <p className="font-medium">{assoc.name}</p>
+                      <p className="text-xs text-gray-500">{assoc.city}</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="ghost">
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+
+// ==================== PROFILE MODULE ====================
+function ProfileModule({ language, user, onUpdate }: {
+  language: Language
+  user: any
+  onUpdate: (user: any) => void
+}) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [activeSection, setActiveSection] = useState<'personal' | 'immigration' | 'professional' | 'preferences'>('personal')
+  
+  // Form states
+  const [name, setName] = useState(user?.name || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [phone, setPhone] = useState(user?.phone || '')
+  const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth ? user.dateOfBirth.split('T')[0] : '')
+  
+  // Immigration states
+  const [immigrationStatus, setImmigrationStatus] = useState(user?.immigrationStatus || '')
+  const [province, setProvince] = useState(user?.province || '')
+  const [postalCode, setPostalCode] = useState(user?.postalCode || '')
+  const [arrivalDate, setArrivalDate] = useState(user?.arrivalDate ? user.arrivalDate.split('T')[0] : '')
+  const [studyPermitExpiry, setStudyPermitExpiry] = useState(user?.studyPermitExpiry ? user.studyPermitExpiry.split('T')[0] : '')
+  const [workPermitExpiry, setWorkPermitExpiry] = useState(user?.workPermitExpiry ? user.workPermitExpiry.split('T')[0] : '')
+  const [passportExpiry, setPassportExpiry] = useState(user?.passportExpiry ? user.passportExpiry.split('T')[0] : '')
+  const [countryOfOrigin, setCountryOfOrigin] = useState(user?.countryOfOrigin || '')
+  
+  // Professional states
+  const [professionalSector, setProfessionalSector] = useState(user?.professionalSector || '')
+  const [educationLevel, setEducationLevel] = useState(user?.educationLevel || '')
+  const [yearsExperience, setYearsExperience] = useState(user?.yearsExperience || 0)
+  const [englishLevel, setEnglishLevel] = useState(user?.englishLevel || 7)
+  const [frenchLevel, setFrenchLevel] = useState(user?.frenchLevel || 0)
+  
+  // Family states
+  const [familyStatus, setFamilyStatus] = useState(user?.familyStatus || '')
+  const [numberOfChildren, setNumberOfChildren] = useState(user?.numberOfChildren || 0)
+  
+  // Preferences
+  const [preferredLanguage, setPreferredLanguage] = useState(user?.preferredLanguage || 'fr')
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+  const [emailReminders, setEmailReminders] = useState(true)
+
+  const handleSave = async () => {
+    setIsLoading(true)
+    try {
+      const res = await fetch('/api/user-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update-profile',
+          data: {
+            userId: user.id,
+            name,
+            phone,
+            dateOfBirth,
+            immigrationStatus,
+            province,
+            postalCode,
+            arrivalDate,
+            studyPermitExpiry,
+            workPermitExpiry,
+            passportExpiry,
+            countryOfOrigin,
+            professionalSector,
+            educationLevel,
+            yearsExperience,
+            englishLevel,
+            frenchLevel,
+            familyStatus,
+            numberOfChildren,
+            preferredLanguage
+          }
+        })
+      })
+      const data = await res.json()
+      if (data.success && data.user) {
+        // Use the returned user data from the API to ensure consistency with the database
+        onUpdate(data.user)
+      }
+    } catch (e) {
+      console.error('Profile update error', e)
+    }
+    setIsLoading(false)
+  }
+
+  const countries = [
+    { code: 'FR', name: 'France', flag: '🇫🇷' },
+    { code: 'BE', name: 'Belgique', flag: '🇧🇪' },
+    { code: 'CH', name: 'Suisse', flag: '🇨🇭' },
+    { code: 'MA', name: 'Maroc', flag: '🇲🇦' },
+    { code: 'TN', name: 'Tunisie', flag: '🇹🇳' },
+    { code: 'DZ', name: 'Algérie', flag: '🇩🇿' },
+    { code: 'SN', name: 'Sénégal', flag: '🇸🇳' },
+    { code: 'CI', name: 'Côte d\'Ivoire', flag: '🇨🇮' },
+    { code: 'CM', name: 'Cameroun', flag: '🇨🇲' },
+    { code: 'HT', name: 'Haïti', flag: '🇭🇹' },
+    { code: 'IN', name: 'Inde', flag: '🇮🇳' },
+    { code: 'CN', name: 'Chine', flag: '🇨🇳' },
+    { code: 'PH', name: 'Philippines', flag: '🇵🇭' },
+    { code: 'BR', name: 'Brésil', flag: '🇧🇷' },
+    { code: 'CO', name: 'Colombie', flag: '🇨🇴' },
+    { code: 'OTHER', name: language === 'fr' ? 'Autre pays' : 'Other country', flag: '🌍' },
+  ]
+
+  const educationLevels = [
+    { code: 'highschool', label: language === 'fr' ? '🏫 Diplôme secondaire' : '🏫 High School Diploma' },
+    { code: 'cegep', label: language === 'fr' ? '📋 DEC (Cégep)' : '📋 College Diploma (CEGEP)' },
+    { code: 'bachelor', label: language === 'fr' ? '🎓 Baccalauréat' : '🎓 Bachelor\'s Degree' },
+    { code: 'master', label: language === 'fr' ? '📚 Maîtrise' : '📚 Master\'s Degree' },
+    { code: 'phd', label: language === 'fr' ? '🎓 Doctorat' : '🎓 PhD' },
+    { code: 'trade', label: language === 'fr' ? '🔧 Métier spécialisé' : '🔧 Skilled Trade' },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30">
+              <User className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {language === 'fr' ? 'Mon Profil' : 'My Profile'}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">
+                {language === 'fr' ? 'Gérez vos informations personnelles' : 'Manage your personal information'}
+              </p>
+            </div>
+          </div>
+          <Button onClick={handleSave} disabled={isLoading} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg">
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+            {language === 'fr' ? 'Enregistrer' : 'Save'}
+          </Button>
+        </div>
+
+        {/* Section Tabs */}
+        <div className="flex overflow-x-auto gap-2 pb-2">
+          {[
+            { id: 'personal', icon: User, label: language === 'fr' ? 'Personnel' : 'Personal' },
+            { id: 'immigration', icon: Shield, label: language === 'fr' ? 'Immigration' : 'Immigration' },
+            { id: 'professional', icon: Briefcase, label: language === 'fr' ? 'Professionnel' : 'Professional' },
+            { id: 'preferences', icon: Settings, label: language === 'fr' ? 'Préférences' : 'Preferences' },
+          ].map((section) => {
+            const Icon = section.icon
+            return (
+              <Button key={section.id} variant={activeSection === section.id ? 'default' : 'outline'}
+                className={`flex items-center gap-2 whitespace-nowrap ${activeSection === section.id ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : ''}`}
+                onClick={() => setActiveSection(section.id as any)}>
+                <Icon className="w-4 h-4" />
+                {section.label}
+              </Button>
+            )
+          })}
+        </div>
+
+        {/* Personal Information Section */}
+        {activeSection === 'personal' && (
+          <div className="grid lg:grid-cols-3 gap-6">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                    <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  {language === 'fr' ? 'Photo de profil' : 'Profile Picture'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <div className="w-32 h-32 mx-auto bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-xl">
+                  <span className="text-4xl font-bold text-white">
+                    {name ? name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) : 'NC'}
+                  </span>
+                </div>
+                <Button variant="outline" size="sm">{language === 'fr' ? 'Changer' : 'Change'}</Button>
+              </CardContent>
+            </Card>
+
+            <Card className="lg:col-span-2 border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  {language === 'fr' ? 'Informations personnelles' : 'Personal Information'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Nom complet' : 'Full name'}</Label>
+                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Jean Dupont" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Courriel' : 'Email'}</Label>
+                    <Input value={email} disabled className="bg-gray-50 dark:bg-gray-800" />
+                  </div>
+                </div>
+                
+                {/* Date of Birth - Important for CRS Calculation */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-indigo-500" />
+                      {language === 'fr' ? 'Date de naissance' : 'Date of birth'}
+                    </Label>
+                    <Input 
+                      type="date" 
+                      value={dateOfBirth} 
+                      onChange={(e) => setDateOfBirth(e.target.value)} 
+                    />
+                    <p className="text-xs text-gray-500">
+                      {language === 'fr' 
+                        ? '📅 Utilisée pour calculer votre âge dans le score CRS Entrée Express'
+                        : '📅 Used to calculate your age for Express Entry CRS score'}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Pays d\'origine' : 'Country of origin'}</Label>
+                    <Select value={countryOfOrigin} onValueChange={setCountryOfOrigin}>
+                      <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>{country.flag} {country.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Situation familiale' : 'Family status'}</Label>
+                    <Select value={familyStatus} onValueChange={setFamilyStatus}>
+                      <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SINGLE">{language === 'fr' ? '👤 Célibataire' : '👤 Single'}</SelectItem>
+                        <SelectItem value="COUPLE">{language === 'fr' ? '👥 En couple' : '👥 In a relationship'}</SelectItem>
+                        <SelectItem value="FAMILY_WITH_CHILDREN">{language === 'fr' ? '👨‍👩‍👧‍👦 Famille avec enfants' : '👨‍👩‍👧‍👦 Family with children'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Immigration Section */}
+        {activeSection === 'immigration' && (
+          <div className="space-y-6">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  </div>
+                  {language === 'fr' ? 'Statut d\'immigration' : 'Immigration Status'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Statut actuel' : 'Current status'}</Label>
+                    <Select value={immigrationStatus} onValueChange={setImmigrationStatus}>
+                      <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PERMANENT_RESIDENT"><Shield className="w-4 h-4 text-green-500 inline mr-2" />{language === 'fr' ? 'Résident permanent' : 'Permanent Resident'}</SelectItem>
+                        <SelectItem value="FOREIGN_STUDENT"><GraduationCap className="w-4 h-4 text-blue-500 inline mr-2" />{language === 'fr' ? 'Étudiant étranger' : 'Foreign Student'}</SelectItem>
+                        <SelectItem value="OPEN_WORK_PERMIT"><Briefcase className="w-4 h-4 text-purple-500 inline mr-2" />{language === 'fr' ? 'Permis ouvert' : 'Open Work Permit'}</SelectItem>
+                        <SelectItem value="CLOSED_WORK_PERMIT"><Building2 className="w-4 h-4 text-orange-500 inline mr-2" />{language === 'fr' ? 'Permis fermé' : 'Closed Work Permit'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{language === 'fr' ? 'Province' : 'Province'}</Label>
+                    <Select value={province} onValueChange={setProvince}>
+                      <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                      <SelectContent>
+                        {provinces.map((p) => (<SelectItem key={p.code} value={p.code}>{language === 'fr' ? p.name : p.nameEn}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-indigo-500" />
+                      {language === 'fr' ? 'Code postal' : 'Postal Code'}
+                    </Label>
+                    <Input 
+                      value={postalCode} 
+                      onChange={(e) => setPostalCode(e.target.value.toUpperCase())} 
+                      placeholder={language === 'fr' ? 'Ex: H2X 1Y4' : 'E.g.: H2X 1Y4'}
+                      maxLength={7}
+                      className="uppercase"
+                    />
+                    <p className="text-xs text-gray-500">
+                      {language === 'fr' 
+                        ? '💡 Utilisé pour trouver les cliniques proches de chez vous'
+                        : '💡 Used to find clinics near you'}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === 'fr' ? 'Date d\'arrivée' : 'Arrival date'}</Label>
+                  <Input type="date" value={arrivalDate} onChange={(e) => setArrivalDate(e.target.value)} className="max-w-xs" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(immigrationStatus) && (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-amber-600" />
+                    {language === 'fr' ? 'Dates d\'expiration' : 'Expiry Dates'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {immigrationStatus === 'FOREIGN_STUDENT' && (
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2"><GraduationCap className="w-4 h-4 text-blue-500" />{language === 'fr' ? 'Permis d\'études' : 'Study Permit'}</Label>
+                        <Input type="date" value={studyPermitExpiry} onChange={(e) => setStudyPermitExpiry(e.target.value)} />
+                      </div>
+                    )}
+                    {(immigrationStatus === 'OPEN_WORK_PERMIT' || immigrationStatus === 'CLOSED_WORK_PERMIT') && (
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-purple-500" />{language === 'fr' ? 'Permis travail' : 'Work Permit'}</Label>
+                        <Input type="date" value={workPermitExpiry} onChange={(e) => setWorkPermitExpiry(e.target.value)} />
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2"><FileText className="w-4 h-4 text-green-500" />{language === 'fr' ? 'Passeport' : 'Passport'}</Label>
+                      <Input type="date" value={passportExpiry} onChange={(e) => setPassportExpiry(e.target.value)} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* Professional Section */}
+        {activeSection === 'professional' && (
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                  {language === 'fr' ? 'Éducation et expérience' : 'Education & Experience'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{language === 'fr' ? 'Niveau d\'études' : 'Education level'}</Label>
+                  <Select value={educationLevel} onValueChange={setEducationLevel}>
+                    <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                    <SelectContent>
+                      {educationLevels.map((level) => (<SelectItem key={level.code} value={level.code}>{level.label}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === 'fr' ? 'Secteur professionnel' : 'Professional sector'}</Label>
+                  <Select value={professionalSector} onValueChange={setProfessionalSector}>
+                    <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
+                    <SelectContent>
+                      {sectors.map((sector) => (<SelectItem key={sector.code} value={sector.code}>{language === 'fr' ? sector.label : sector.labelEn}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label>{language === 'fr' ? 'Années d\'expérience' : 'Years of experience'}</Label>
+                    <Badge variant="outline">{yearsExperience} {language === 'fr' ? 'ans' : 'yrs'}</Badge>
+                  </div>
+                  <Slider value={[yearsExperience]} onValueChange={([v]) => setYearsExperience(v)} min={0} max={20} step={1} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-blue-600" />
+                  {language === 'fr' ? 'Compétences linguistiques' : 'Language Skills'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label>🇬🇧 {language === 'fr' ? 'Anglais (CLB)' : 'English (CLB)'}</Label>
+                    <Badge variant="outline">CLB {englishLevel}</Badge>
+                  </div>
+                  <Slider value={[englishLevel]} onValueChange={([v]) => setEnglishLevel(v)} min={1} max={10} step={1} />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label>🇫🇷 {language === 'fr' ? 'Français (CLB)' : 'French (CLB)'}</Label>
+                    <Badge variant="outline">CLB {frenchLevel}</Badge>
+                  </div>
+                  <Slider value={[frenchLevel]} onValueChange={([v]) => setFrenchLevel(v)} min={0} max={10} step={1} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Preferences Section */}
+        {activeSection === 'preferences' && (
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-indigo-600" />
+                  {language === 'fr' ? 'Langue' : 'Language'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-3">
+                  <Button variant={preferredLanguage === 'fr' ? 'default' : 'outline'} className="flex-1" onClick={() => setPreferredLanguage('fr')}>🇫🇷 Français</Button>
+                  <Button variant={preferredLanguage === 'en' ? 'default' : 'outline'} className="flex-1" onClick={() => setPreferredLanguage('en')}>🇬🇧 English</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-amber-600" />
+                  {language === 'fr' ? 'Notifications' : 'Notifications'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div>
+                    <p className="font-medium">{language === 'fr' ? 'Notifications push' : 'Push notifications'}</p>
+                    <p className="text-sm text-gray-500">{language === 'fr' ? 'Rappels de tâches' : 'Task reminders'}</p>
+                  </div>
+                  <Checkbox checked={notificationsEnabled} onCheckedChange={(v) => setNotificationsEnabled(!!v)} />
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div>
+                    <p className="font-medium">{language === 'fr' ? 'Rappels courriel' : 'Email reminders'}</p>
+                    <p className="text-sm text-gray-500">{language === 'fr' ? 'Expiration documents' : 'Document expiry'}</p>
+                  </div>
+                  <Checkbox checked={emailReminders} onCheckedChange={(v) => setEmailReminders(!!v)} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="lg:col-span-2 border-0 shadow-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-gray-600" />
+                  {language === 'fr' ? 'Abonnement' : 'Subscription'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600">
+                    {user?.subscriptionTier === 'FREE' ? (language === 'fr' ? 'GRATUIT' : 'FREE') : user?.subscriptionTier}
+                  </Badge>
+                  <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
+                    <Star className="w-4 h-4 mr-2" />
+                    {language === 'fr' ? 'Passer à Premium' : 'Upgrade to Premium'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ==================== ADMIN MODULE ====================
+interface AdminStats {
+  totalUsers: number
+  activeUsers: number
+  newUsersToday: number
+  premiumSubscribers: number
+  freeUsers: number
+  monthlyRevenue: number
+  signupsPerDay: { day: string; count: number }[]
+  usersByStatus: { status: string; count: number }[]
+  usersByProvince: { province: string; count: number }[]
+  taskStats: { completed: number; pending: number; inProgress: number }
+}
+
+function AdminModule({ language }: { language: Language }) {
+  const [activeTab, setActiveTab] = useState<'stats' | 'subscriptions' | 'support'>('stats')
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<AdminStats>({
+    totalUsers: 0, activeUsers: 0, newUsersToday: 0, premiumSubscribers: 0, freeUsers: 0,
+    monthlyRevenue: 0, signupsPerDay: [], usersByStatus: [], usersByProvince: [],
+    taskStats: { completed: 0, pending: 0, inProgress: 0 }
+  })
+  const [tickets, setTickets] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const statsRes = await fetch('/api/admin/stats')
+        if (statsRes.ok) { const d = await statsRes.json(); setStats(d) }
+        const ticketsRes = await fetch('/api/admin/tickets')
+        if (ticketsRes.ok) { const d = await ticketsRes.json(); setTickets(d.tickets || []) }
+      } catch (e) { console.error('Admin data error:', e) }
+      finally { setLoading(false) }
+    }
+    fetchData()
+  }, [])
+
+  const statusColors: Record<string, string> = {
+    OPEN: 'bg-red-100 text-red-700', IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
+    RESOLVED: 'bg-green-100 text-green-700', CLOSED: 'bg-gray-100 text-gray-700'
+  }
+  const openTicketsCount = tickets.filter(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-500" /><p className="text-gray-500">{language === 'fr' ? 'Chargement...' : 'Loading...'}</p></div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900">
+      <div className="p-4 lg:p-8 space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center shadow-lg"><Settings className="w-7 h-7 text-white" /></div>
+          <div><h1 className="text-2xl font-bold">{language === 'fr' ? '🛠️ Administration' : '🛠️ Administration'}</h1><p className="text-gray-500">{language === 'fr' ? 'Tableau de bord' : 'Dashboard'}</p></div>
+        </div>
+
+        <div className="flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+          {(['stats', 'subscriptions', 'support'] as const).map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === tab ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
+              {tab === 'stats' && <TrendingUp className="w-4 h-4 inline mr-2" />}
+              {tab === 'subscriptions' && <Crown className="w-4 h-4 inline mr-2" />}
+              {tab === 'support' && <><MessageSquare className="w-4 h-4 inline mr-2" />{openTicketsCount > 0 && <span className="bg-red-500 text-white text-xs px-1.5 rounded-full">{openTicketsCount}</span>}</>}
+              {language === 'fr' ? { stats: 'Statistiques', subscriptions: 'Abonnements', support: 'Support' }[tab] : tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'stats' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white"><CardContent className="p-4"><p className="text-sm opacity-80">{language === 'fr' ? 'Utilisateurs' : 'Users'}</p><p className="text-3xl font-bold">{stats.totalUsers.toLocaleString()}</p></CardContent></Card>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white"><CardContent className="p-4"><p className="text-sm opacity-80">{language === 'fr' ? 'Actifs (30j)' : 'Active (30d)'}</p><p className="text-3xl font-bold">{stats.activeUsers.toLocaleString()}</p></CardContent></Card>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white"><CardContent className="p-4"><p className="text-sm opacity-80">Premium</p><p className="text-3xl font-bold">{stats.premiumSubscribers}</p></CardContent></Card>
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white"><CardContent className="p-4"><p className="text-sm opacity-80">{language === 'fr' ? 'Revenus/mois' : 'Revenue/mo'}</p><p className="text-3xl font-bold">${stats.monthlyRevenue.toFixed(0)}</p></CardContent></Card>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg">
+                <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-blue-500" />{language === 'fr' ? 'Inscriptions (7 jours)' : 'Signups (7 days)'}</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {stats.signupsPerDay.map((d, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="w-10 text-sm text-gray-500">{d.day}</span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.max(5, (d.count / Math.max(...stats.signupsPerDay.map(x => x.count), 1)) * 100)}%` }}></div></div>
+                        <span className="text-sm w-6">{d.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-lg">
+                <CardHeader><CardTitle className="flex items-center gap-2"><PieChart className="w-5 h-5 text-purple-500" />{language === 'fr' ? 'Répartition' : 'Distribution'}</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between p-2 bg-gray-50 rounded"><span>{language === 'fr' ? 'Gratuit' : 'Free'}</span><span className="font-bold">{stats.freeUsers} ({stats.totalUsers > 0 ? Math.round(stats.freeUsers / stats.totalUsers * 100) : 0}%)</span></div>
+                    <div className="flex justify-between p-2 bg-purple-50 rounded"><span>Premium</span><span className="font-bold">{stats.premiumSubscribers} ({stats.totalUsers > 0 ? Math.round(stats.premiumSubscribers / stats.totalUsers * 100) : 0}%)</span></div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-green-600">+{stats.newUsersToday}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Nouveaux aujourd\'hui' : 'New today'}</p></div>
+              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-blue-600">{stats.taskStats.completed}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Tâches complétées' : 'Tasks done'}</p></div>
+              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-orange-600">{openTicketsCount}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Tickets ouverts' : 'Open tickets'}</p></div>
+              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-purple-600">{stats.totalUsers > 0 ? ((stats.premiumSubscribers / stats.totalUsers) * 100).toFixed(1) : 0}%</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Conversion' : 'Conversion'}</p></div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'subscriptions' && (
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { id: 'free', name: language === 'fr' ? 'Gratuit' : 'Free', price: 0, features: language === 'fr' ? ['Modules de base', 'Forum communautaire', '3 alertes/mois'] : ['Basic modules', 'Community forum', '3 alerts/month'] },
+              { id: 'premium', name: 'Premium', price: 19.99, popular: true, features: language === 'fr' ? ['Tous les modules', 'Optimisateur CV IA', 'Alertes illimitées', 'Support prioritaire'] : ['All modules', 'AI CV Optimizer', 'Unlimited alerts', 'Priority support'] },
+              { id: 'family', name: language === 'fr' ? 'Famille' : 'Family', price: 39.99, features: language === 'fr' ? ['Tout Premium', '5 membres', 'Conseiller dédié'] : ['All Premium', '5 members', 'Dedicated advisor'] }
+            ].map(plan => (
+              <Card key={plan.id} className={`border-0 shadow-lg ${plan.popular ? 'ring-2 ring-purple-500' : ''}`}>
+                {plan.popular && <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-purple-500 text-white">{language === 'fr' ? 'Populaire' : 'Popular'}</Badge>}
+                <CardHeader className="text-center"><CardTitle>{plan.name}</CardTitle><p className="text-3xl font-bold">${plan.price}<span className="text-sm text-gray-500">/{language === 'fr' ? 'mois' : 'mo'}</span></p></CardHeader>
+                <CardContent><ul className="space-y-1">{plan.features.map((f, i) => <li key={i} className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-green-500" />{f}</li>)}</ul></CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'support' && (
+          <Card className="border-0 shadow-lg">
+            <CardContent className="p-8 text-center">
+              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">{language === 'fr' ? 'Aucun ticket de support' : 'No support tickets'}</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  )
+}

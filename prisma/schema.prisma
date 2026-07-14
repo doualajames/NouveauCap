@@ -342,3 +342,14 @@ model ProvinceInfo {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+// Prospects capturés sur les pages publiques (landing, outils gratuits, prévente)
+model Lead {
+  id        String   @id @default(cuid())
+  email     String
+  source    String   // landing | simulateur-crs | quiz-citoyennete | pack-atterrissage
+  locale    String   @default("fr")
+  createdAt DateTime @default(now())
+
+  @@unique([email, source])
+}
