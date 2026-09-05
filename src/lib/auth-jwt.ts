@@ -122,7 +122,17 @@ export async function requireAuth(request: Request): Promise<SessionUser | Respo
       token = sessionCookie.substring(8)
     }
   }
-  
+
+  // Fallback : API cookie native de Next (comme getCurrentUser/api/auth/me),
+  // au cas où le parse manuel du header échoue.
+  if (!token) {
+    try {
+      const { cookies } = await import('next/headers')
+      const store = await cookies()
+      token = store.get('session')?.value
+    } catch {}
+  }
+
   if (!token) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,

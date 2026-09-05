@@ -193,31 +193,48 @@ export default function NouveauCapApp() {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({
           userId: currentUser.id,
           onboardingData
         })
       })
       
-      // Session expirée / invalide : ne pas afficher « Unauthorized » brut,
-      // déconnecter proprement et renvoyer vers la connexion.
+      // 401 possiblement transitoire (parse cookie côté requireAuth). Revérifier
+      // la session via /api/auth/me ; si toujours connecté, réessayer une fois.
+      let res2 = res
       if (res.status === 401) {
+        const meOk = await fetch('/api/auth/me').then(r => r.ok).catch(() => false)
+        if (meOk) {
+          res2 = await fetch('/api/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ userId: currentUser.id, onboardingData }),
+          })
+        }
+      }
+
+      // Toujours non authentifié après revérification : login inline (pas de bounce brutal).
+      if (res2.status === 401) {
         try { await fetch('/api/auth/logout', { method: 'POST' }) } catch {}
-        // Purge la session locale persistée et renvoie réellement vers la connexion.
         useAppStore.setState({ user: null })
         try { localStorage.removeItem('nouveau-cap-storage') } catch {}
-        if (typeof window !== 'undefined') {
-          window.location.href = '/app?reauth=1'
-        }
+        logout()
+        setError(language === 'fr'
+          ? 'Votre session a expiré. Reconnectez-vous pour continuer.'
+          : 'Your session has expired. Please sign in again.')
+        setIsLoading(false)
         return
       }
 
-      const data = await res.json()
+      const data = await res2.json()
 
       if (data.success) {
         useAppStore.setState({ user: data.user })
         if (data.tasks) setTasks(data.tasks)
         completeOnboarding()
+        setCurrentView('dashboard')
         setSuccess(language === 'fr' ? 'Profil complété avec succès!' : 'Profile completed successfully!')
       } else {
         setError(data.error || (language === 'fr'
