@@ -17,16 +17,16 @@ export const metadata: Metadata = {
 
 export default function QuizCitoyennetePage() {
   return (
-    <div className="bg-white text-gray-900">
+    <div className="bg-card text-foreground">
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-6 py-16">
-        <p className="text-sm font-semibold uppercase tracking-wide text-red-600">
+        <p className="text-sm font-semibold uppercase tracking-wide text-destructive">
           Outil gratuit
         </p>
         <h1 className="mt-2 text-3xl font-bold sm:text-5xl">
           Quiz de citoyenneté canadienne
         </h1>
-        <p className="mt-4 text-lg leading-relaxed text-gray-600">
+        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
           20 questions dans l&apos;esprit de l&apos;examen officiel, basées sur le guide
           « Découvrir le Canada ». L&apos;examen réel exige 15 bonnes réponses sur 20 en
           30 minutes.
@@ -37,7 +37,7 @@ export default function QuizCitoyennetePage() {
 
         <section className="mt-16">
           <h2 className="text-2xl font-bold">À propos de l&apos;examen de citoyenneté</h2>
-          <p className="mt-3 leading-relaxed text-gray-600">
+          <p className="mt-3 leading-relaxed text-muted-foreground">
             L&apos;examen porte sur les droits et responsabilités des citoyens, l&apos;histoire du
             Canada, sa géographie, son système de gouvernement et ses symboles. Il est offert en
             français ou en anglais. Les candidats de 18 à 54 ans doivent le réussir pour obtenir la

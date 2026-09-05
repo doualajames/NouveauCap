@@ -35,7 +35,7 @@ export function LeadForm({
 
   if (status === 'success') {
     return (
-      <p className="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm font-medium text-green-800">
+      <p className="rounded-xl bg-muted border border-border px-4 py-3 text-sm font-medium text-foreground">
         ✅ {successMessage}
       </p>
     )
@@ -49,18 +49,18 @@ export function LeadForm({
         value={email}
         onChange={e => setEmail(e.target.value)}
         placeholder={placeholder}
-        className="flex-1 rounded-xl border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+        className="flex-1 rounded-xl border border-border px-4 py-3 text-sm focus:outline-none focus:ring-2 ring-foreground/30"
         aria-label="Adresse courriel"
       />
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60 transition-colors"
+        className="rounded-xl bg-[hsl(var(--foreground))] px-6 py-3 text-sm font-semibold text-[hsl(var(--background))] hover:opacity-90 disabled:opacity-60 transition-colors"
       >
         {status === 'loading' ? 'Envoi…' : buttonLabel}
       </button>
       {status === 'error' && (
-        <p className="text-sm text-red-600 sm:self-center">Erreur — réessayez.</p>
+        <p className="text-sm text-destructive sm:self-center">Erreur — réessayez.</p>
       )}
     </form>
   )

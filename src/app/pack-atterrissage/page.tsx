@@ -26,24 +26,24 @@ const INCLUDED = [
 
 export default function PackAtterrissagePage() {
   return (
-    <div className="bg-white text-gray-900">
+    <div className="bg-card text-foreground">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-16">
         <div className="text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800">
+          <p className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-foreground">
             🚀 Lancement bientôt — liste d&apos;attente ouverte
           </p>
           <h1 className="mt-6 text-4xl font-bold sm:text-5xl">Pack Atterrissage</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
             Vos 90 premiers jours au Canada, guidés de bout en bout.{' '}
             <strong>Un paiement unique, pas d&apos;abonnement</strong> — parce que votre
             installation a une fin, votre facture aussi.
           </p>
           <div className="mt-8 inline-flex items-baseline gap-2">
-            <span className="text-5xl font-bold text-red-600">99 $</span>
-            <span className="text-gray-500">CAD, une seule fois</span>
+            <span className="text-5xl font-bold text-destructive">99 $</span>
+            <span className="text-muted-foreground">CAD, une seule fois</span>
           </div>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Prix de lancement réservé à la liste d&apos;attente (au lieu de 149 $).
             Garantie remboursement 30 jours.
           </p>
@@ -51,17 +51,17 @@ export default function PackAtterrissagePage() {
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2">
           {INCLUDED.map(([icon, title, text]) => (
-            <div key={title} className="rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <div key={title} className="rounded-2xl border border-border p-6 shadow-sm">
               <p className="text-2xl" aria-hidden>{icon}</p>
               <h2 className="mt-3 text-lg font-semibold">{title}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-gray-600">{text}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{text}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-14 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 p-8 text-white sm:p-10">
+        <div className="mt-14 rounded-2xl border border-foreground/80 bg-card p-8 sm:p-10">
           <h2 className="text-2xl font-bold">Rejoindre la liste d&apos;attente</h2>
-          <p className="mt-2 text-red-100">
+          <p className="mt-2 text-muted-foreground">
             Soyez averti·e au lancement et bloquez le prix de 99 $. Aucun engagement.
           </p>
           <div className="mt-6">
@@ -78,7 +78,7 @@ export default function PackAtterrissagePage() {
           <dl className="mt-6 space-y-6">
             <div>
               <dt className="font-semibold">Pourquoi un paiement unique plutôt qu&apos;un abonnement ?</dt>
-              <dd className="mt-1 leading-relaxed text-gray-600">
+              <dd className="mt-1 leading-relaxed text-muted-foreground">
                 Votre installation dure quelques mois, pas des années. Vous payez une fois, vous
                 êtes couvert·e pour l&apos;essentiel : 90 jours d&apos;accompagnement complet et
                 12 mois de rappels d&apos;échéances.
@@ -86,7 +86,7 @@ export default function PackAtterrissagePage() {
             </div>
             <div>
               <dt className="font-semibold">Est-ce un service de conseil en immigration ?</dt>
-              <dd className="mt-1 leading-relaxed text-gray-600">
+              <dd className="mt-1 leading-relaxed text-muted-foreground">
                 Non. NouveauCap fournit de l&apos;information organisée et des outils, avec les
                 sources officielles. Pour un avis juridique sur votre dossier, consultez un
                 consultant réglementé (CRIC) ou un avocat.
@@ -94,7 +94,7 @@ export default function PackAtterrissagePage() {
             </div>
             <div>
               <dt className="font-semibold">Et si je ne suis pas satisfait·e ?</dt>
-              <dd className="mt-1 leading-relaxed text-gray-600">
+              <dd className="mt-1 leading-relaxed text-muted-foreground">
                 Remboursement intégral sous 30 jours, sans justification.
               </dd>
             </div>

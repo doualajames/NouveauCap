@@ -44,9 +44,9 @@ export function CitizenshipQuiz() {
     const pct = Math.round((correctCount / questions.length) * 100)
     const pass = pct >= 75 // seuil de l'examen officiel : 15/20
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-        <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Résultat</p>
-        <p className="mt-2 text-6xl font-bold text-red-600">
+      <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+        <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">Résultat</p>
+        <p className="mt-2 text-6xl font-bold text-destructive">
           {correctCount}/{questions.length}
         </p>
         <p className="mt-3 text-lg font-semibold">
@@ -56,20 +56,20 @@ export function CitizenshipQuiz() {
         </p>
         <button
           onClick={restart}
-          className="mt-6 rounded-xl border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          className="mt-6 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-muted-foreground transition-colors bg-muted"
         >
           Recommencer le quiz
         </button>
 
-        <div className="mt-8 border-t border-gray-100 pt-6 text-left">
-          <p className="mb-3 text-sm font-semibold text-gray-800">
+        <div className="mt-8 border-t border-border pt-6 text-left">
+          <p className="mb-3 text-sm font-semibold text-muted-foreground">
             📬 Recevez le guide de révision complet (Découvrir le Canada, résumé)
           </p>
           <LeadForm source="quiz-citoyennete" buttonLabel="Recevoir le guide" />
         </div>
         <Link
           href="/app"
-          className="mt-6 inline-block text-sm font-semibold text-red-600 hover:underline"
+          className="mt-6 inline-block text-sm font-semibold text-destructive hover:underline"
         >
           Préparer toute mon installation au Canada →
         </Link>
@@ -78,14 +78,14 @@ export function CitizenshipQuiz() {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-      <div className="flex items-center justify-between text-sm text-gray-500">
+    <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>Question {current + 1} / {questions.length}</span>
         <span>{correctCount} bonne{correctCount > 1 ? 's' : ''} réponse{correctCount > 1 ? 's' : ''}</span>
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-100">
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
         <div
-          className="h-full rounded-full bg-red-600 transition-all"
+          className="h-full rounded-full bg-[hsl(var(--foreground))] transition-all"
           style={{ width: `${(current / questions.length) * 100}%` }}
         />
       </div>
@@ -94,13 +94,13 @@ export function CitizenshipQuiz() {
 
       <div className="mt-6 space-y-3">
         {q.options.map((opt, i) => {
-          let style = 'border-gray-200 hover:border-red-300'
+          let style = 'border-border'
           if (answered) {
-            if (i === q.correctAnswer) style = 'border-green-500 bg-green-50'
-            else if (i === selected) style = 'border-red-500 bg-red-50'
-            else style = 'border-gray-200 opacity-60'
+            if (i === q.correctAnswer) style = 'border-[hsl(var(--foreground))] bg-muted font-semibold'
+            else if (i === selected) style = 'border-destructive bg-destructive/10'
+            else style = 'border-border opacity-50'
           } else if (i === selected) {
-            style = 'border-red-500 bg-red-50'
+            style = 'border-[hsl(var(--foreground))] bg-muted'
           }
           return (
             <button
@@ -116,7 +116,7 @@ export function CitizenshipQuiz() {
       </div>
 
       {answered && (
-        <p className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        <p className="mt-4 rounded-xl bg-muted px-4 py-3 text-sm text-foreground">
           💡 {q.explanation}
         </p>
       )}
@@ -124,7 +124,7 @@ export function CitizenshipQuiz() {
       <button
         onClick={answered ? next : validate}
         disabled={selected === null}
-        className="mt-6 w-full rounded-xl bg-red-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+        className="mt-6 w-full rounded-xl bg-[hsl(var(--foreground))] px-6 py-4 text-base font-semibold text-[hsl(var(--background))] transition-colors hover:opacity-90 disabled:opacity-50"
       >
         {answered
           ? current + 1 >= questions.length ? 'Voir mon résultat' : 'Question suivante'

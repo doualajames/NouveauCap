@@ -64,12 +64,12 @@ export function CrsCalculator() {
     import('@/lib/track').then(m => m.track('tool_used', { source: 'crs' })).catch(() => {})
   }
 
-  const field = 'block text-sm font-medium text-gray-700'
+  const field = 'block text-sm font-medium text-muted-foreground'
   const input =
-    'mt-1 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500'
+    'mt-1 w-full rounded-xl border border-border px-4 py-3 text-sm focus:outline-none focus:ring-2 ring-foreground/30'
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label className={field} htmlFor="crs-age">Votre âge</label>
@@ -122,37 +122,37 @@ export function CrsCalculator() {
 
       <button
         onClick={calculate}
-        className="mt-8 w-full rounded-xl bg-red-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-red-700"
+        className="mt-8 w-full rounded-xl bg-[hsl(var(--foreground))] px-6 py-4 text-base font-semibold text-[hsl(var(--background))] transition-colors hover:opacity-90"
       >
         Calculer mon score
       </button>
 
       {score !== null && (
-        <div className="mt-8 rounded-2xl bg-gradient-to-br from-red-50 to-orange-50 p-8 text-center">
-          <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+        <div className="mt-8 rounded-2xl border border-foreground/80 bg-card p-8 text-center">
+          <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
             Score CRS estimé
           </p>
-          <p className="mt-2 text-6xl font-bold text-red-600">{score}</p>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-2 text-6xl font-bold text-destructive">{score}</p>
+          <p className="mt-3 text-sm text-muted-foreground">
             {score >= 500
               ? 'Excellent — au-dessus des seuils récents des tirages généraux.'
               : score >= 450
                 ? 'Compétitif — proche des seuils de plusieurs tirages. Les tirages ciblés (francophones !) descendent souvent plus bas.'
                 : 'Sous les seuils généraux récents — mais les tirages francophones et provinciaux ont des seuils bien plus bas. Améliorez votre NCLC : c\'est le levier le plus rapide.'}
           </p>
-          <p className="mt-4 text-xs text-gray-400">
+          <p className="mt-4 text-xs text-muted-foreground">
             Estimation simplifiée (candidat seul). Le calcul officiel d&apos;IRCC fait foi.
           </p>
 
-          <div className="mt-8 border-t border-red-100 pt-6 text-left">
-            <p className="mb-3 text-sm font-semibold text-gray-800">
+          <div className="mt-8 border-t border-border pt-6 text-left">
+            <p className="mb-3 text-sm font-semibold text-muted-foreground">
               📬 Recevez le plan d&apos;action pour augmenter votre score
             </p>
             <LeadForm source="simulateur-crs" buttonLabel="Recevoir le plan" />
           </div>
           <Link
             href="/app"
-            className="mt-6 inline-block text-sm font-semibold text-red-600 hover:underline"
+            className="mt-6 inline-block text-sm font-semibold text-destructive hover:underline"
           >
             Créer mon parcours d&apos;immigration complet →
           </Link>
