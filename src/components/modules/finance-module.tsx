@@ -202,8 +202,8 @@ export function FinanceModule({ language, user }: {
       newcomersUrl: 'https://www.nbc.ca/personal/accounts/newcomers.html',
       recommended: false,
       recommendedProvinces: ['QC'],
-      provinceNote: '🌟 #1 recommended for Quebec',
-      provinceNoteFr: '🌟 #1 recommandé pour le Québec'
+      provinceNote: '#1 recommended for Quebec',
+      provinceNoteFr: '#1 recommandé pour le Québec'
     },
     {
       id: 'desjardins',
@@ -224,8 +224,8 @@ export function FinanceModule({ language, user }: {
       newcomersUrl: 'https://www.desjardins.com/ca/personal-accounts/newcomers/',
       recommended: false,
       recommendedProvinces: ['QC'],
-      provinceNote: '🌟 Largest French cooperative in Canada',
-      provinceNoteFr: '🌟 Plus grande coopérative francophone au Canada'
+      provinceNote: 'Largest French cooperative in Canada',
+      provinceNoteFr: 'Plus grande coopérative francophone au Canada'
     },
     {
       id: 'tangerine',
@@ -321,7 +321,7 @@ export function FinanceModule({ language, user }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <Landmark className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '🏦 Comparateur Bancaire Nouveaux Arrivants' : '🏦 Newcomer Bank Comparator'}
+              {language === 'fr' ? 'Comparateur Bancaire Nouveaux Arrivants' : 'Newcomer Bank Comparator'}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {language === 'fr' 
@@ -424,25 +424,25 @@ export function FinanceModule({ language, user }: {
                 <thead className="bg-muted bg-foreground/50">
                   <tr>
                     <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '🏦 Banque' : '🏦 Bank'}
+                      {language === 'fr' ? 'Banque' : 'Bank'}
                     </th>
                     <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '📦 Compte' : '📦 Account'}
+                      {language === 'fr' ? 'Compte' : 'Account'}
                     </th>
                     <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '💰 Frais/mois' : '💰 Fee/month'}
+                      {language === 'fr' ? 'Frais/mois' : 'Fee/month'}
                     </th>
                     <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '🎁 Bonus' : '🎁 Bonus'}
+                      {language === 'fr' ? 'Bonus' : 'Bonus'}
                     </th>
                     <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '✨ Avantages clés' : '✨ Key benefits'}
+                      {language === 'fr' ? 'Avantages clés' : 'Key benefits'}
                     </th>
                     <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '⏱️ Délai' : '⏱️ Time'}
+                      {language === 'fr' ? 'Délai' : 'Time'}
                     </th>
                     <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
-                      {language === 'fr' ? '🔗 Lien' : '🔗 Link'}
+                      {language === 'fr' ? 'Lien' : 'Link'}
                     </th>
                   </tr>
                 </thead>
@@ -535,8 +535,8 @@ export function FinanceModule({ language, user }: {
             <div className="flex flex-wrap items-center justify-between gap-4 w-full">
               <p className="text-sm text-muted-foreground">
                 {language === 'fr' 
-                  ? '💡 Conseil: Les 5 grandes banques (RBC, TD, Scotia, BMO, CIBC) offrent toutes des programmes spéciaux nouveaux arrivants avec des bonus compétitifs.'
-                  : '💡 Tip: The Big 5 banks (RBC, TD, Scotia, BMO, CIBC) all offer special newcomer programs with competitive bonuses.'}
+                  ? 'Conseil: Les 5 grandes banques (RBC, TD, Scotia, BMO, CIBC) offrent toutes des programmes spéciaux nouveaux arrivants avec des bonus compétitifs.'
+                  : 'Tip: The Big 5 banks (RBC, TD, Scotia, BMO, CIBC) all offer special newcomer programs with competitive bonuses.'}
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{language === 'fr' ? 'Dernière mise à jour:' : 'Last updated:'}</span>
@@ -627,7 +627,7 @@ export function FinanceModule({ language, user }: {
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                   <CreditCard className="w-4 h-4 text-foreground text-foreground" />
                 </div>
-                {language === 'fr' ? '📈 Construire votre crédit' : '📈 Build Your Credit'}
+                {language === 'fr' ? 'Construire votre crédit' : 'Build Your Credit'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -656,7 +656,7 @@ export function FinanceModule({ language, user }: {
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                   <Receipt className="w-4 h-4 text-foreground text-foreground" />
                 </div>
-                {language === 'fr' ? '🧾 Guide fiscal simplifié' : '🧾 Simplified Tax Guide'}
+                {language === 'fr' ? 'Guide fiscal simplifié' : 'Simplified Tax Guide'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -688,7 +688,7 @@ export function FinanceModule({ language, user }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <Send className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '💸 Transferts d\'argent internationaux' : '💸 International Money Transfers'}
+              {language === 'fr' ? 'Transferts d\'argent internationaux' : 'International Money Transfers'}
             </CardTitle>
           </CardHeader>
           <CardContent>

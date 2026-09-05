@@ -331,7 +331,7 @@ export function PermitExpiryAlerts({ language, user }: {
         <div className="flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
           <h3 className="font-semibold">
-            {language === 'fr' ? '⚠️ Alertes de renouvellement' : '⚠️ Renewal Alerts'}
+            {language === 'fr' ? 'Alertes de renouvellement' : 'Renewal Alerts'}
           </h3>
         </div>
         <p className="/80 text-sm mt-1">
@@ -381,8 +381,8 @@ export function PermitExpiryAlerts({ language, user }: {
                     <div className="mt-2 p-2 bg-card/50 bg-foreground/50 rounded-lg">
                       <p className="text-xs font-medium text-destructive text-destructive">
                         {language === 'fr'
-                          ? '🚨 ACTION IMMÉDIATE REQUISE! Appliquez avant l\'expiration pour maintenir le statut implicite.'
-                          : '🚨 IMMEDIATE ACTION REQUIRED! Apply before expiry to maintain implied status.'}
+                          ? 'ACTION IMMÉDIATE REQUISE! Appliquez avant l\'expiration pour maintenir le statut implicite.'
+                          : 'IMMEDIATE ACTION REQUIRED! Apply before expiry to maintain implied status.'}
                       </p>
                     </div>
                   )}
@@ -501,13 +501,13 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         duration: '-',
         requirements: language === 'fr'
           ? [
-              '⚠️ Les titulaires de permis de travail ouvert ne sont PAS automatiquement éligibles',
+              'Les titulaires de permis de travail ouvert ne sont PAS automatiquement éligibles',
               'L\'éligibilité dépend du type de programme qui vous a donné votre permis ouvert',
               'Si votre permis est basé sur un programme provincial (EII), vérifiez les critères',
               'Les conjoints de résidents permanents en attente peuvent être éligibles'
             ]
           : [
-              '⚠️ Open work permit holders are NOT automatically eligible',
+              'Open work permit holders are NOT automatically eligible',
               'Eligibility depends on the program type that gave you your open permit',
               'If your permit is based on a provincial program (EII), check the criteria',
               'Spouses of permanent resident applicants may be eligible'
@@ -516,8 +516,8 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         processingTime: '-',
         officialUrl: 'https://www.canada.ca/en/immigration-refugis-citizenship/services/work-canada/permit/temporary/eligibility/spouse-common-law.html',
         notes: language === 'fr'
-          ? '⚠️ Attention: Depuis janvier 2024, les conjoints de titulaires de PGWP ne sont plus éligibles. L\'éligibilité varie selon votre situation spécifique.'
-          : '⚠️ Note: As of January 2024, spouses of PGWP holders are no longer eligible. Eligibility varies based on your specific situation.'
+          ? 'Attention: Depuis janvier 2024, les conjoints de titulaires de PGWP ne sont plus éligibles. L\'éligibilité varie selon votre situation spécifique.'
+          : 'Note: As of January 2024, spouses of PGWP holders are no longer eligible. Eligibility varies based on your specific situation.'
       }
     }
     
@@ -542,7 +542,7 @@ export function SpousalWorkPermitEligibility({ language, user }: {
           <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
             <Users2 className="w-4 h-4" />
           </div>
-          {language === 'fr' ? '👥 Permis de travail pour votre conjoint' : '👥 Work Permit for Your Spouse'}
+          {language === 'fr' ? 'Permis de travail pour votre conjoint' : 'Work Permit for Your Spouse'}
         </CardTitle>
         <CardDescription>
           {language === 'fr' 
@@ -572,8 +572,8 @@ export function SpousalWorkPermitEligibility({ language, user }: {
  eligibility.eligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
  }`}>
                 {eligibility.eligible 
-                  ? (language === 'fr' ? '✅ Votre conjoint est éligible!' : '✅ Your spouse is eligible!')
-                  : (language === 'fr' ? '⚠️ Éligibilité conditionnelle' : '⚠️ Conditional eligibility')
+                  ? (language === 'fr' ? 'Votre conjoint est éligible!' : 'Your spouse is eligible!')
+                  : (language === 'fr' ? 'Éligibilité conditionnelle' : 'Conditional eligibility')
                 }
               </p>
               <p className={`text-sm ${
@@ -623,7 +623,7 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         {/* Important Notes */}
         <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
           <p className="text-sm text-foreground text-foreground">
-            <strong>{language === 'fr' ? '📌 Information importante:' : '📌 Important note:'}</strong>
+            <strong>{language === 'fr' ? 'Information importante:' : 'Important note:'}</strong>
             <br />
             {eligibility.notes}
           </p>
@@ -632,7 +632,7 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         {/* Policy Changes Alert - 2024 Changes */}
         <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
           <p className="text-sm text-muted-foreground text-muted-foreground">
-            <strong>{language === 'fr' ? '🆕 Changements de politique 2024:' : '🆕 2024 Policy Changes:'}</strong>
+            <strong>{language === 'fr' ? 'Changements de politique 2024:' : '2024 Policy Changes:'}</strong>
             <br />
             {language === 'fr'
               ? 'Depuis janvier 2024, les conjoints de titulaires de PGWP ne sont plus éligibles aux permis de travail ouverts. De nouvelles restrictions s\'appliquent également aux étudiants dans certains programmes.'
@@ -666,7 +666,7 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         {/* Official Sources */}
         <div className="pt-3 border-t border-border dark:border-border">
           <p className="text-xs text-muted-foreground mb-2">
-            {language === 'fr' ? '📚 Sources officielles:' : '📚 Official sources:'}
+            {language === 'fr' ? 'Sources officielles:' : 'Official sources:'}
           </p>
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="text-xs">
@@ -728,7 +728,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
           <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
             <Crown className="w-4 h-4" />
           </div>
-          {language === 'fr' ? '🎓 Admissibilité à la citoyenneté canadienne' : '🎓 Canadian Citizenship Eligibility'}
+          {language === 'fr' ? 'Admissibilité à la citoyenneté canadienne' : 'Canadian Citizenship Eligibility'}
         </CardTitle>
         <CardDescription>
           {language === 'fr' 
@@ -758,8 +758,8 @@ export function CitizenshipEligibilityCard({ language, user }: {
  isEligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
  }`}>
                 {isEligible 
-                  ? (language === 'fr' ? '✅ Vous êtes éligible!' : '✅ You are eligible!')
-                  : (language === 'fr' ? '⏳ Pas encore éligible' : '⏳ Not yet eligible')
+                  ? (language === 'fr' ? 'Vous êtes éligible!' : 'You are eligible!')
+                  : (language === 'fr' ? 'Pas encore éligible' : 'Not yet eligible')
                 }
               </p>
               <p className={`text-sm ${
@@ -879,7 +879,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
         {/* Important Info */}
         <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
           <p className="text-sm text-foreground text-foreground">
-            <strong>{language === 'fr' ? '📋 À propos du test de citoyenneté:' : '📋 About the citizenship test:'}</strong>
+            <strong>{language === 'fr' ? 'À propos du test de citoyenneté:' : 'About the citizenship test:'}</strong>
             <br />
             {language === 'fr' 
               ? 'Si vous avez entre 18 et 54 ans, vous devez réussir un test sur vos droits, responsabilités et connaissances du Canada. Le test comporte 20 questions et vous devez en obtenir au moins 15 correctes.'
@@ -943,7 +943,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
         {/* Processing Time */}
         <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
           <p className="text-sm text-foreground text-foreground">
-            <strong>{language === 'fr' ? '⏱️ Délai de traitement actuel:' : '⏱️ Current processing time:'}</strong>
+            <strong>{language === 'fr' ? 'Délai de traitement actuel:' : 'Current processing time:'}</strong>
             <br />
             {language === 'fr' 
               ? 'Les demandes de citoyenneté sont actuellement traitées en environ 12 mois. Commencez à préparer votre demande dès maintenant!'
@@ -1032,7 +1032,7 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
               <BookOpen className="w-4 h-4" />
             </div>
-            {language === 'fr' ? '📝 Quiz de citoyenneté canadienne' : '📝 Canadian Citizenship Quiz'}
+            {language === 'fr' ? 'Quiz de citoyenneté canadienne' : 'Canadian Citizenship Quiz'}
           </CardTitle>
           <CardDescription>{language === 'fr' ? 'Pratiquez pour le test officiel' : 'Practice for the official test'}</CardDescription>
         </CardHeader>
@@ -1061,14 +1061,14 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${passed ? 'bg-muted' : 'bg-destructive/10'}`}>
               {passed ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
             </div>
-            {language === 'fr' ? '📊 Résultats' : '📊 Results'}
+            {language === 'fr' ? 'Résultats' : 'Results'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className={`p-6 rounded-xl text-center ${passed ? 'bg-muted bg-muted' : 'bg-destructive/10 bg-destructive/10'}`}>
             <div className={`text-5xl font-bold mb-2 ${passed ? 'text-foreground' : 'text-destructive'}`}>{score}/20</div>
             <div className={`text-lg font-semibold ${passed ? 'text-foreground' : 'text-destructive'}`}>
-              {passed ? (language === 'fr' ? '🎉 Réussi!' : '🎉 Passed!') : (language === 'fr' ? '📚 Continuez!' : '📚 Keep studying!')}
+              {passed ? (language === 'fr' ? 'Réussi!' : 'Passed!') : (language === 'fr' ? 'Continuez!' : 'Keep studying!')}
             </div>
           </div>
           <div className="flex gap-3">
@@ -1090,7 +1090,7 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
               <BookOpen className="w-4 h-4" />
             </div>
-            {language === 'fr' ? '📝 Quiz' : '📝 Quiz'}
+            {language === 'fr' ? 'Quiz' : 'Quiz'}
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline">{currentQuestion + 1}/20</Badge>

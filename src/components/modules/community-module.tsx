@@ -68,7 +68,7 @@ export function CommunityModule({ language, user }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <CalendarDays className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '📅 Événements à venir' : '📅 Upcoming Events'}
+              {language === 'fr' ? 'Événements à venir' : 'Upcoming Events'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -141,7 +141,7 @@ export function CommunityModule({ language, user }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '💬 Forum communautaire' : '💬 Community Forum'}
+              {language === 'fr' ? 'Forum communautaire' : 'Community Forum'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -184,7 +184,7 @@ export function CommunityModule({ language, user }: {
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                   <BookOpen className="w-4 h-4 text-muted-foreground text-muted-foreground" />
                 </div>
-                {language === 'fr' ? '📚 Guide culturel canadien' : '📚 Canadian Cultural Guide'}
+                {language === 'fr' ? 'Guide culturel canadien' : 'Canadian Cultural Guide'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -211,7 +211,7 @@ export function CommunityModule({ language, user }: {
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                   <Users2 className="w-4 h-4 text-foreground text-foreground" />
                 </div>
-                {language === 'fr' ? '🤝 Associations ethnoculturelles' : '🤝 Ethnocultural Associations'}
+                {language === 'fr' ? 'Associations ethnoculturelles' : 'Ethnocultural Associations'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">

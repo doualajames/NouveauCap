@@ -64,7 +64,7 @@ export function AdminModule({ language }: { language: Language }) {
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none"><Settings className="w-7 h-7" /></div>
-          <div><h1 className="text-2xl font-bold">{language === 'fr' ? '🛠️ Administration' : '🛠️ Administration'}</h1><p className="text-muted-foreground">{language === 'fr' ? 'Tableau de bord' : 'Dashboard'}</p></div>
+          <div><h1 className="text-2xl font-bold">{language === 'fr' ? 'Administration' : 'Administration'}</h1><p className="text-muted-foreground">{language === 'fr' ? 'Tableau de bord' : 'Dashboard'}</p></div>
         </div>
 
         <div className="flex bg-card bg-foreground rounded-xl p-1 shadow-sm border">

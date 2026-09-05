@@ -282,7 +282,7 @@ export function EmploymentModule({ language, user }: {
                 <div className="space-y-2">
                   <Label className="text-sm font-medium flex items-center gap-2">
                     <ExternalLink className="w-4 h-4 text-foreground" />
-                    {language === 'fr' ? '🔗 Lien de l\'offre d\'emploi (optionnel)' : '🔗 Job posting URL (optional)'}
+                    {language === 'fr' ? 'Lien de l\'offre d\'emploi (optionnel)' : 'Job posting URL (optional)'}
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -306,8 +306,8 @@ export function EmploymentModule({ language, user }: {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {language === 'fr' 
-                      ? '💡 Collez le lien pour extraire automatiquement les mots-clés ATS'
-                      : '💡 Paste the link to automatically extract ATS keywords'}
+                      ? 'Collez le lien pour extraire automatiquement les mots-clés ATS'
+                      : 'Paste the link to automatically extract ATS keywords'}
                   </p>
                 </div>
 
@@ -331,7 +331,7 @@ export function EmploymentModule({ language, user }: {
 
                 {/* CV Input */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">{language === 'fr' ? '📋 Votre CV' : '📋 Your CV'}</Label>
+                  <Label className="text-sm font-medium">{language === 'fr' ? 'Votre CV' : 'Your CV'}</Label>
                   
                   {/* File Upload */}
                   <div className="flex gap-2">
@@ -356,7 +356,7 @@ export function EmploymentModule({ language, user }: {
                       )}
                       {uploadingFile 
                         ? (language === 'fr' ? 'Extraction...' : 'Extracting...')
-                        : (language === 'fr' ? '📁 Charger PDF, DOCX, TXT' : '📁 Upload PDF, DOCX, TXT')
+                        : (language === 'fr' ? 'Charger PDF, DOCX, TXT' : 'Upload PDF, DOCX, TXT')
                       }
                     </Button>
                   </div>
@@ -385,7 +385,7 @@ export function EmploymentModule({ language, user }: {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">{language === 'fr' ? '🎯 Poste visé' : '🎯 Target job'}</Label>
+                  <Label className="text-sm font-medium">{language === 'fr' ? 'Poste visé' : 'Target job'}</Label>
                   <Input
                     placeholder={language === 'fr' ? 'Ex: Développeur Full Stack' : 'E.g., Full Stack Developer'}
                     value={targetJob}
@@ -499,10 +499,10 @@ export function EmploymentModule({ language, user }: {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="APPLIED">{language === 'fr' ? '📤 Postulé' : '📤 Applied'}</SelectItem>
-                                <SelectItem value="INTERVIEW">{language === 'fr' ? '🎤 Entretien' : '🎤 Interview'}</SelectItem>
-                                <SelectItem value="OFFER">{language === 'fr' ? '🎉 Offre' : '🎉 Offer'}</SelectItem>
-                                <SelectItem value="REJECTED">{language === 'fr' ? '❌ Refusé' : '❌ Rejected'}</SelectItem>
+                                <SelectItem value="APPLIED">{language === 'fr' ? 'Postulé' : 'Applied'}</SelectItem>
+                                <SelectItem value="INTERVIEW">{language === 'fr' ? 'Entretien' : 'Interview'}</SelectItem>
+                                <SelectItem value="OFFER">{language === 'fr' ? 'Offre' : 'Offer'}</SelectItem>
+                                <SelectItem value="REJECTED">{language === 'fr' ? 'Refusé' : 'Rejected'}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -530,15 +530,15 @@ export function EmploymentModule({ language, user }: {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>{language === 'fr' ? '🏢 Entreprise' : '🏢 Company'}</Label>
+                <Label>{language === 'fr' ? 'Entreprise' : 'Company'}</Label>
                 <Input value={newApp.company} onChange={(e) => setNewApp({...newApp, company: e.target.value})} placeholder={language === 'fr' ? 'Nom de l\'entreprise' : 'Company name'} />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'fr' ? '💼 Poste' : '💼 Position'}</Label>
+                <Label>{language === 'fr' ? 'Poste' : 'Position'}</Label>
                 <Input value={newApp.position} onChange={(e) => setNewApp({...newApp, position: e.target.value})} placeholder={language === 'fr' ? 'Titre du poste' : 'Job title'} />
               </div>
               <div className="space-y-2">
-                <Label>{language === 'fr' ? '📝 Notes' : '📝 Notes'}</Label>
+                <Label>{language === 'fr' ? 'Notes' : 'Notes'}</Label>
                 <Textarea value={newApp.notes} onChange={(e) => setNewApp({...newApp, notes: e.target.value})} placeholder={language === 'fr' ? 'Détails supplémentaires...' : 'Additional details...'} />
               </div>
             </div>
@@ -557,7 +557,7 @@ export function EmploymentModule({ language, user }: {
                 <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-4 h-4" />
                 </div>
-                {language === 'fr' ? '💼 Métiers en demande' : '💼 In-Demand Jobs'}
+                {language === 'fr' ? 'Métiers en demande' : 'In-Demand Jobs'}
               </CardTitle>
               <CardDescription>
                 {language === 'fr' 

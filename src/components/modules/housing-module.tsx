@@ -130,10 +130,10 @@ export function HousingModule({ language, user }: {
                       </p>
                       <p className={`text-sm font-medium ${housingRatio > 30 ? 'text-destructive' : housingRatio > 25 ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {housingRatio > 30 
-                          ? (language === 'fr' ? '⚠️ Trop élevé (>30%)' : '⚠️ Too high (>30%)')
+                          ? (language === 'fr' ? 'Trop élevé (>30%)' : 'Too high (>30%)')
                           : housingRatio > 25
-                          ? (language === 'fr' ? '⚡ Limite acceptable' : '⚡ Acceptable limit')
-                          : (language === 'fr' ? '✓ Excellent ratio' : '✓ Excellent ratio')}
+                          ? (language === 'fr' ? 'Limite acceptable' : 'Acceptable limit')
+                          : (language === 'fr' ? 'Excellent ratio' : 'Excellent ratio')}
                       </p>
                     </div>
                   </div>
@@ -190,7 +190,7 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
-                          <p className="font-medium text-foreground">{language === 'fr' ? '❌ Illégal (interdit)' : '❌ Illegal (prohibited)'}</p>
+                          <p className="font-medium text-foreground">{language === 'fr' ? 'Illégal (interdit)' : 'Illegal (prohibited)'}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
@@ -587,7 +587,7 @@ export function HousingModule({ language, user }: {
             {/* Important Notice */}
             <div className="mt-4 p-4 bg-muted bg-muted rounded-xl border border-border border-border">
               <p className="text-sm text-foreground text-foreground">
-                <strong>{language === 'fr' ? '⚠️ Important:' : '⚠️ Important:'}</strong> {language === 'fr' 
+                <strong>{language === 'fr' ? 'Important:' : 'Important:'}</strong> {language === 'fr' 
                   ? 'Ces informations sont fournies à titre indicatif. Pour les informations les plus récentes, consultez toujours les sites officiels provinciaux. Les règles peuvent changer.'
                   : 'This information is provided for guidance only. Always check official provincial websites for the most current information. Rules may change.'}
               </p>

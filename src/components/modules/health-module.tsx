@@ -153,9 +153,9 @@ export function HealthModule({ language, user, onNavigate }: {
                     <h3 className="font-bold text-lg">
                       {eligibility.eligible 
                         ? (eligibility.conditional
-                          ? (language === 'fr' ? '⚠️ Admissible sous conditions' : '⚠️ Eligible with conditions')
-                          : (language === 'fr' ? '✅ Admissible' : '✅ Eligible'))
-                        : (language === 'fr' ? '❌ Non admissible' : '❌ Not eligible')}
+                          ? (language === 'fr' ? 'Admissible sous conditions' : 'Eligible with conditions')
+                          : (language === 'fr' ? 'Admissible' : 'Eligible'))
+                        : (language === 'fr' ? 'Non admissible' : 'Not eligible')}
                     </h3>
                     <p className="/90 text-sm">{language === 'fr' ? eligibility.planName : eligibility.planNameEn}</p>
                   </div>
@@ -170,10 +170,10 @@ export function HealthModule({ language, user, onNavigate }: {
               {/* Status & Province Info */}
               <div className="flex flex-wrap gap-2">
                 <Badge className="bg-muted text-foreground">
-                  {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? '🛡️ Résident Permanent' : '🛡️ Permanent Resident')}
-                  {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? '🎓 Étudiant' : '🎓 Student')}
-                  {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? '💼 Permis Ouvert' : '💼 Open Permit')}
-                  {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? '🏢 Permis Fermé' : '🏢 Closed Permit')}
+                  {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? 'Résident Permanent' : 'Permanent Resident')}
+                  {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? 'Étudiant' : 'Student')}
+                  {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? 'Permis Ouvert' : 'Open Permit')}
+                  {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? 'Permis Fermé' : 'Closed Permit')}
                 </Badge>
                 <Badge variant="outline">
                   📍 {language === 'fr' 
@@ -205,7 +205,7 @@ export function HealthModule({ language, user, onNavigate }: {
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <ListChecks className="w-5 h-5 text-foreground" />
-                  {language === 'fr' ? '📋 Conditions d\'admissibilité' : '📋 Eligibility Conditions'}
+                  {language === 'fr' ? 'Conditions d\'admissibilité' : 'Eligibility Conditions'}
                 </h4>
                 <div className="space-y-2">
                   {(language === 'fr' ? eligibility.conditions : eligibility.conditionsEn).map((condition, i) => (
@@ -228,7 +228,7 @@ export function HealthModule({ language, user, onNavigate }: {
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold flex items-center gap-2">
                     <FileText className="w-5 h-5 text-foreground" />
-                    {language === 'fr' ? '📄 Documents requis' : '📄 Required Documents'}
+                    {language === 'fr' ? 'Documents requis' : 'Required Documents'}
                   </h4>
                   <Button variant="ghost" size="sm" onClick={() => setShowAllDocuments(!showAllDocuments)}>
                     {showAllDocuments 
@@ -292,7 +292,7 @@ export function HealthModule({ language, user, onNavigate }: {
             <CardContent className="p-6 text-center">
               <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-bold text-lg text-muted-foreground text-muted-foreground">
-                {language === 'fr' ? '⚠️ Informations manquantes' : '⚠️ Missing Information'}
+                {language === 'fr' ? 'Informations manquantes' : 'Missing Information'}
               </h3>
               <p className="text-muted-foreground text-muted-foreground mt-2">
                 {language === 'fr' 
@@ -317,7 +317,7 @@ export function HealthModule({ language, user, onNavigate }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <Shield className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '🛡️ Assurance privée (période d\'attente)' : '🛡️ Private Insurance (Waiting Period)'}
+              {language === 'fr' ? 'Assurance privée (période d\'attente)' : 'Private Insurance (Waiting Period)'}
             </CardTitle>
             <CardDescription>
               {language === 'fr' ? 'Pendant le délai de carence, une assurance privée est recommandée' : 'During the waiting period, private insurance is recommended'}
@@ -350,7 +350,7 @@ export function HealthModule({ language, user, onNavigate }: {
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
                 <MapPin className="w-4 h-4 text-foreground text-foreground" />
               </div>
-              {language === 'fr' ? '📍 Trouver une clinique' : '📍 Find a Clinic'}
+              {language === 'fr' ? 'Trouver une clinique' : 'Find a Clinic'}
             </CardTitle>
             <CardDescription>
               {language === 'fr' 
@@ -378,8 +378,8 @@ export function HealthModule({ language, user, onNavigate }: {
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {language === 'fr' 
-                    ? '💡 Entrez les 3 premiers caractères pour une recherche par région'
-                    : '💡 Enter the first 3 characters for a regional search'}
+                    ? 'Entrez les 3 premiers caractères pour une recherche par région'
+                    : 'Enter the first 3 characters for a regional search'}
                 </p>
               </div>
               

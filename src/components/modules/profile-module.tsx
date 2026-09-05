@@ -116,12 +116,12 @@ export function ProfileModule({ language, user, onUpdate }: {
   ]
 
   const educationLevels = [
-    { code: 'highschool', label: language === 'fr' ? '🏫 Diplôme secondaire' : '🏫 High School Diploma' },
-    { code: 'cegep', label: language === 'fr' ? '📋 DEC (Cégep)' : '📋 College Diploma (CEGEP)' },
-    { code: 'bachelor', label: language === 'fr' ? '🎓 Baccalauréat' : '🎓 Bachelor\'s Degree' },
-    { code: 'master', label: language === 'fr' ? '📚 Maîtrise' : '📚 Master\'s Degree' },
-    { code: 'phd', label: language === 'fr' ? '🎓 Doctorat' : '🎓 PhD' },
-    { code: 'trade', label: language === 'fr' ? '🔧 Métier spécialisé' : '🔧 Skilled Trade' },
+    { code: 'highschool', label: language === 'fr' ? 'Diplôme secondaire' : 'High School Diploma' },
+    { code: 'cegep', label: language === 'fr' ? 'DEC (Cégep)' : 'College Diploma (CEGEP)' },
+    { code: 'bachelor', label: language === 'fr' ? 'Baccalauréat' : 'Bachelor\'s Degree' },
+    { code: 'master', label: language === 'fr' ? 'Maîtrise' : 'Master\'s Degree' },
+    { code: 'phd', label: language === 'fr' ? 'Doctorat' : 'PhD' },
+    { code: 'trade', label: language === 'fr' ? 'Métier spécialisé' : 'Skilled Trade' },
   ]
 
   return (
@@ -225,8 +225,8 @@ export function ProfileModule({ language, user, onUpdate }: {
                     />
                     <p className="text-xs text-muted-foreground">
                       {language === 'fr' 
-                        ? '📅 Utilisée pour calculer votre âge dans le score CRS Entrée Express'
-                        : '📅 Used to calculate your age for Express Entry CRS score'}
+                        ? 'Utilisée pour calculer votre âge dans le score CRS Entrée Express'
+                        : 'Used to calculate your age for Express Entry CRS score'}
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -248,9 +248,9 @@ export function ProfileModule({ language, user, onUpdate }: {
                     <Select value={familyStatus} onValueChange={setFamilyStatus}>
                       <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="SINGLE">{language === 'fr' ? '👤 Célibataire' : '👤 Single'}</SelectItem>
-                        <SelectItem value="COUPLE">{language === 'fr' ? '👥 En couple' : '👥 In a relationship'}</SelectItem>
-                        <SelectItem value="FAMILY_WITH_CHILDREN">{language === 'fr' ? '👨‍👩‍👧‍👦 Famille avec enfants' : '👨‍👩‍👧‍👦 Family with children'}</SelectItem>
+                        <SelectItem value="SINGLE">{language === 'fr' ? 'Célibataire' : 'Single'}</SelectItem>
+                        <SelectItem value="COUPLE">{language === 'fr' ? 'En couple' : 'In a relationship'}</SelectItem>
+                        <SelectItem value="FAMILY_WITH_CHILDREN">{language === 'fr' ? 'Famille avec enfants' : 'Family with children'}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -309,8 +309,8 @@ export function ProfileModule({ language, user, onUpdate }: {
                     />
                     <p className="text-xs text-muted-foreground">
                       {language === 'fr' 
-                        ? '💡 Utilisé pour trouver les cliniques proches de chez vous'
-                        : '💡 Used to find clinics near you'}
+                        ? 'Utilisé pour trouver les cliniques proches de chez vous'
+                        : 'Used to find clinics near you'}
                     </p>
                   </div>
                 </div>

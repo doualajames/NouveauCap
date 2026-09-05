@@ -72,7 +72,7 @@ export function ProvinceModule({ language, user }: {
             </div>
             <div>
               <h3 className="font-semibold text-lg text-foreground dark:">
-                {language === 'fr' ? '📋 Vos droits et services provinciaux' : '📋 Your Provincial Rights and Services'}
+                {language === 'fr' ? 'Vos droits et services provinciaux' : 'Your Provincial Rights and Services'}
               </h3>
               <p className="text-muted-foreground text-muted-foreground mt-1">
                 {language === 'fr' 
@@ -185,7 +185,7 @@ export function ProvinceModule({ language, user }: {
               </div>
               <div className="space-y-3">
                 <h4 className="font-semibold text-foreground dark:">
-                  {language === 'fr' ? '📌 Points importants à retenir' : '📌 Important points to remember'}
+                  {language === 'fr' ? 'Points importants à retenir' : 'Important points to remember'}
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground text-muted-foreground">
                   <li className="flex items-start gap-2">
@@ -234,7 +234,7 @@ export function ProvinceModule({ language, user }: {
                 rel="noopener noreferrer"
                 className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
-                <p className="font-medium text-sm">{language === 'fr' ? '🇨🇦 Canada.ca Nouveaux arrivants' : '🇨🇦 Canada.ca Newcomers'}</p>
+                <p className="font-medium text-sm">{language === 'fr' ? 'Canada.ca Nouveaux arrivants' : 'Canada.ca Newcomers'}</p>
               </a>
               <a 
                 href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/nouveaux-arrivants/services-etablissement.html"
@@ -242,7 +242,7 @@ export function ProvinceModule({ language, user }: {
                 rel="noopener noreferrer"
                 className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
-                <p className="font-medium text-sm">{language === 'fr' ? '🏛️ Services d\'établissement' : '🏛️ Settlement Services'}</p>
+                <p className="font-medium text-sm">{language === 'fr' ? 'Services d\'établissement' : 'Settlement Services'}</p>
               </a>
               <a 
                 href="https://ircc.canada.ca/francais/travailler/index.asp"
@@ -250,7 +250,7 @@ export function ProvinceModule({ language, user }: {
                 rel="noopener noreferrer"
                 className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
-                <p className="font-medium text-sm">{language === 'fr' ? '💼 Travailler au Canada' : '💼 Work in Canada'}</p>
+                <p className="font-medium text-sm">{language === 'fr' ? 'Travailler au Canada' : 'Work in Canada'}</p>
               </a>
             </div>
           </CardContent>

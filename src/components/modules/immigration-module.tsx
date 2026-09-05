@@ -123,8 +123,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         eligible: false,
         duration: '0',
         message: language === 'fr' 
-          ? '❌ Votre établissement doit être un établissement d\'enseignement désigné (DLI) pour être éligible au PGWP.'
-          : '❌ Your institution must be a Designated Learning Institution (DLI) to be eligible for PGWP.'
+          ? 'Votre établissement doit être un établissement d\'enseignement désigné (DLI) pour être éligible au PGWP.'
+          : 'Your institution must be a Designated Learning Institution (DLI) to be eligible for PGWP.'
       })
       return
     }
@@ -134,8 +134,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         eligible: false,
         duration: '0',
         message: language === 'fr'
-          ? '❌ Les programmes complètement à distance ne sont PAS éligibles au PGWP. Vous devez avoir complété au moins 50% de vos études en personne au Canada.'
-          : '❌ Distance learning programs are NOT eligible for PGWP. You must have completed at least 50% of your studies in person in Canada.'
+          ? 'Les programmes complètement à distance ne sont PAS éligibles au PGWP. Vous devez avoir complété au moins 50% de vos études en personne au Canada.'
+          : 'Distance learning programs are NOT eligible for PGWP. You must have completed at least 50% of your studies in person in Canada.'
       })
       return
     }
@@ -145,8 +145,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         eligible: false,
         duration: '0',
         message: language === 'fr'
-          ? '❌ Les programmes de français langue seconde (FLS) de moins de 12 mois ne sont PAS éligibles au PGWP.'
-          : '❌ French as a Second Language (FSL) programs under 12 months are NOT eligible for PGWP.'
+          ? 'Les programmes de français langue seconde (FLS) de moins de 12 mois ne sont PAS éligibles au PGWP.'
+          : 'French as a Second Language (FSL) programs under 12 months are NOT eligible for PGWP.'
       })
       return
     }
@@ -156,8 +156,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         eligible: false,
         duration: '0',
         message: language === 'fr'
-          ? '❌ Votre programme doit durer minimum 8 mois pour être éligible au PGWP.'
-          : '❌ Your program must be at least 8 months long to be eligible for PGWP.'
+          ? 'Votre programme doit durer minimum 8 mois pour être éligible au PGWP.'
+          : 'Your program must be at least 8 months long to be eligible for PGWP.'
       })
       return
     }
@@ -167,8 +167,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         eligible: false,
         duration: '0',
         message: language === 'fr'
-          ? '❌ Vous devez avoir été inscrit à temps plein pendant vos études pour être éligible (sauf exception pour le dernier semestre).'
-          : '❌ You must have been enrolled full-time during your studies to be eligible (except for the final semester).'
+          ? 'Vous devez avoir été inscrit à temps plein pendant vos études pour être éligible (sauf exception pour le dernier semestre).'
+          : 'You must have been enrolled full-time during your studies to be eligible (except for the final semester).'
       })
       return
     }
@@ -397,8 +397,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     ) : (
                       <div className="p-2 bg-muted bg-foreground rounded-lg text-sm text-muted-foreground text-muted-foreground">
                         {language === 'fr' 
-                          ? '💡 Ajoutez votre date de naissance dans votre profil pour un calcul précis'
-                          : '💡 Add your date of birth in your profile for accurate calculation'}
+                          ? 'Ajoutez votre date de naissance dans votre profil pour un calcul précis'
+                          : 'Add your date of birth in your profile for accurate calculation'}
                       </div>
                     )}
                   </div>
@@ -411,11 +411,11 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="phd">{language === 'fr' ? '🎓 Doctorat' : '🎓 PhD'}</SelectItem>
-                        <SelectItem value="masters">{language === 'fr' ? '📚 Maîtrise' : '📚 Masters'}</SelectItem>
-                        <SelectItem value="bachelors">{language === 'fr' ? '📖 Baccalauréat' : '📖 Bachelors'}</SelectItem>
-                        <SelectItem value="diploma">{language === 'fr' ? '📋 Diplôme collégial' : '📋 College Diploma'}</SelectItem>
-                        <SelectItem value="highschool">{language === 'fr' ? '🏫 Secondaire' : '🏫 High School'}</SelectItem>
+                        <SelectItem value="phd">{language === 'fr' ? 'Doctorat' : 'PhD'}</SelectItem>
+                        <SelectItem value="masters">{language === 'fr' ? 'Maîtrise' : 'Masters'}</SelectItem>
+                        <SelectItem value="bachelors">{language === 'fr' ? 'Baccalauréat' : 'Bachelors'}</SelectItem>
+                        <SelectItem value="diploma">{language === 'fr' ? 'Diplôme collégial' : 'College Diploma'}</SelectItem>
+                        <SelectItem value="highschool">{language === 'fr' ? 'Secondaire' : 'High School'}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -519,8 +519,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     <div className="mt-4 pt-4 border-t border-border dark:border-border">
                       <p className="text-xs text-muted-foreground">
                         {language === 'fr' 
-                          ? '💡 Conseil: Améliorez votre score en augmentant votre niveau CLB ou en accumulant plus d\'expérience.'
-                          : '💡 Tip: Improve your score by increasing your CLB level or gaining more experience.'}
+                          ? 'Conseil: Améliorez votre score en augmentant votre niveau CLB ou en accumulant plus d\'expérience.'
+                          : 'Tip: Improve your score by increasing your CLB level or gaining more experience.'}
                       </p>
                     </div>
                   </div>
@@ -553,7 +553,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                 <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
                   <GraduationCap className="w-4 h-4" />
                 </div>
-                {language === 'fr' ? '🎓 Vérificateur d\'éligibilité PGWP' : '🎓 PGWP Eligibility Checker'}
+                {language === 'fr' ? 'Vérificateur d\'éligibilité PGWP' : 'PGWP Eligibility Checker'}
               </CardTitle>
               <CardDescription>
                 {language === 'fr' 
@@ -566,7 +566,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
               {/* Quick Info Banner */}
               <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
                 <p className="text-sm text-foreground text-foreground">
-                  <strong>{language === 'fr' ? '📌 Qu\'est-ce que le PGWP?' : '📌 What is PGWP?'}</strong>
+                  <strong>{language === 'fr' ? 'Qu\'est-ce que le PGWP?' : 'What is PGWP?'}</strong>
                   <br />
                   {language === 'fr' 
                     ? 'Le Permis de Travail Post-Diplôme permet aux diplômés internationaux de travailler au Canada après leurs études. C\'est souvent une étape clé vers la résidence permanente.'
@@ -592,7 +592,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </Badge>
                   </div>
                   {pgwpProgramDuration < 8 && (
-                    <p className="text-xs text-destructive">{language === 'fr' ? '⚠️ Minimum 8 mois requis' : '⚠️ Minimum 8 months required'}</p>
+                    <p className="text-xs text-destructive">{language === 'fr' ? 'Minimum 8 mois requis' : 'Minimum 8 months required'}</p>
                   )}
                 </div>
 
@@ -604,9 +604,9 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="degree">{language === 'fr' ? '🎓 Diplôme universitaire' : '🎓 University Degree'}</SelectItem>
-                      <SelectItem value="diploma">{language === 'fr' ? '📋 Diplôme collégial' : '📋 College Diploma'}</SelectItem>
-                      <SelectItem value="certificate">{language === 'fr' ? '📜 Certificat' : '📜 Certificate'}</SelectItem>
+                      <SelectItem value="degree">{language === 'fr' ? 'Diplôme universitaire' : 'University Degree'}</SelectItem>
+                      <SelectItem value="diploma">{language === 'fr' ? 'Diplôme collégial' : 'College Diploma'}</SelectItem>
+                      <SelectItem value="certificate">{language === 'fr' ? 'Certificat' : 'Certificate'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -621,7 +621,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       className="flex-1"
                       onClick={() => setPgwpIsDLI(true)}
                     >
-                      {language === 'fr' ? '✅ Oui' : '✅ Yes'}
+                      {language === 'fr' ? 'Oui' : 'Yes'}
                     </Button>
                     <Button 
                       variant={!pgwpIsDLI ? 'destructive' : 'outline'} 
@@ -629,7 +629,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                       className="flex-1"
                       onClick={() => setPgwpIsDLI(false)}
                     >
-                      {language === 'fr' ? '❌ Non' : '❌ No'}
+                      {language === 'fr' ? 'Non' : 'No'}
                     </Button>
                   </div>
                 </div>
@@ -706,8 +706,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     <div className="flex-1">
                       <p className="font-semibold text-lg mb-2">
                         {pgwpResult.eligible 
-                          ? (language === 'fr' ? '✅ Vous êtes éligible!' : '✅ You are eligible!')
-                          : (language === 'fr' ? '❌ Non éligible' : '❌ Not eligible')
+                          ? (language === 'fr' ? 'Vous êtes éligible!' : 'You are eligible!')
+                          : (language === 'fr' ? 'Non éligible' : 'Not eligible')
                         }
                       </p>
                       <p className="text-muted-foreground text-muted-foreground text-sm mb-3">
