@@ -52,25 +52,25 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
         <PermitExpiryAlerts language={language} user={user} />
       )}
 
-      {/* Status & Province Info Card */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+      {/* Statut & province — éditorial plat, filet encre, sans emoji */}
+      <Card className="border border-foreground/80 shadow-none rounded-lg">
         <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1">
-              {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? '🛡️ Résident Permanent' : '🛡️ Permanent Resident')}
-              {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? '🎓 Étudiant Étranger' : '🎓 Foreign Student')}
-              {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? '💼 Permis de Travail Ouvert' : '💼 Open Work Permit')}
-              {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? '🏢 Permis de Travail Fermé' : '🏢 Closed Work Permit')}
-            </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center bg-foreground text-background text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
+              {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? 'Résident permanent' : 'Permanent Resident')}
+              {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? 'Étudiant étranger' : 'Foreign Student')}
+              {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail ouvert' : 'Open Work Permit')}
+              {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail fermé' : 'Closed Work Permit')}
+            </span>
             {user?.province && (
-              <Badge variant="outline" className="px-4 py-1">
-                📍 {language === 'fr' 
-                  ? provinces.find(p => p.code === user.province)?.name 
+              <span className="inline-flex items-center border border-foreground/80 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
+                {language === 'fr'
+                  ? provinces.find(p => p.code === user.province)?.name
                   : provinces.find(p => p.code === user.province)?.nameEn}
-              </Badge>
+              </span>
             )}
             {user?.arrivalDate && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 {language === 'fr' ? 'Arrivé le' : 'Arrived on'} {new Date(user.arrivalDate).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-CA')}
               </span>
             )}

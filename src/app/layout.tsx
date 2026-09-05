@@ -1,11 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+// Serif éditorial pour les titres (direction haut contraste / premium)
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  weight: ["400", "600", "700"],
+  style: ["normal"],
 });
 
 export const metadata: Metadata = {
@@ -43,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${fraunces.variable} font-sans antialiased`}>
         {children}
         <Toaster />
       </body>
