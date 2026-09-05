@@ -42,6 +42,13 @@ export default function NouveauCapApp() {
   const [success, setSuccess] = useState('')
   const [isHydrated, setIsHydrated] = useState(true) // Start hydrated on client
 
+  // Auto-dismiss success toast after 3.5s
+  useEffect(() => {
+    if (!success) return
+    const t = setTimeout(() => setSuccess(''), 3500)
+    return () => clearTimeout(t)
+  }, [success])
+
   // Task detail modal
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [taskModalOpen, setTaskModalOpen] = useState(false)
@@ -1185,8 +1192,8 @@ export default function NouveauCapApp() {
           {/* Main Content */}
           <main className="flex-1 lg:ml-72 pt-16 lg:pt-0">
             {success && (
-              <div className="fixed top-20 right-4 z-50">
-                <Alert className="bg-muted border-border">
+              <div className="fixed top-20 right-4 z-50 max-w-[calc(100vw-2rem)] sm:max-w-sm animate-in fade-in slide-in-from-top-2">
+                <Alert className="bg-card border border-foreground/80 shadow-lg">
                   <CheckCircle2 className="w-4 h-4 text-foreground" />
                   <AlertDescription className="text-foreground">{success}</AlertDescription>
                 </Alert>
