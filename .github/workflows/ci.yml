@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [master, 'claude/**']
+  pull_request:
+
+jobs:
+  build:
+    name: Build (schéma Postgres, comme Vercel)
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://u:p@localhost:5432/db?sslmode=require
+      DIRECT_DATABASE_URL: postgresql://u:p@localhost:5432/db?sslmode=require
+      JWT_SECRET: ci-secret-0123456789012345678901234567890123456789
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx prisma generate --schema=prisma/schema.postgresql.prisma
+      - run: npx next build
+
+  typecheck:
+    name: Typecheck (reporting, non bloquant)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx prisma generate
+      - run: npm run typecheck
+        continue-on-error: true
+
+  e2e:
+    name: Smoke E2E (SQLite éphémère)
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./ci.db
+      JWT_SECRET: ci-secret-0123456789012345678901234567890123456789
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx prisma generate
+      - run: npx prisma db push --skip-generate
+      - run: node --experimental-strip-types prisma/seed-templates.ts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
