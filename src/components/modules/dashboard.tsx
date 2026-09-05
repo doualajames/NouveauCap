@@ -27,6 +27,18 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
   const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus)
   const hasPermitDates = user?.studyPermitExpiry || user?.workPermitExpiry || user?.passportExpiry
 
+  // UX : « quoi faire maintenant » d'abord. Prochaines étapes = pending, urgent puis obligatoire puis ordre.
+  const rank = (x: Task) => (x.priority === 'HIGH' ? 0 : x.isRequired ? 1 : 2)
+  const nextTasks = [...tasks]
+    .filter(t => t.status !== 'COMPLETED')
+    .sort((a, b) => rank(a) - rank(b) || (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 3)
+  // Progression par domaine (remplace la barre brute)
+  const perModule = modules.map(m => {
+    const mt = tasks.filter(t => t.category === m.id.toUpperCase())
+    return { id: m.id, icon: m.icon, completed: mt.filter(t => t.status === 'COMPLETED').length, total: mt.length }
+  })
+
   return (
     <div className="p-4 lg:p-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -34,104 +46,106 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
           <h1 className="text-2xl font-bold">
             {t('dashboard.welcome', language)}, {user?.name?.split(' ')[0] || 'User'}!
           </h1>
-          <p className="text-muted-foreground">{t('dashboard.progress', language)}: {completedTasks}/{tasks.length} {t('dashboard.tasksCompleted', language)}</p>
+          <p className="text-muted-foreground">
+            {tasks.length - completedTasks > 0
+              ? (language === 'fr' ? `${tasks.length - completedTasks} démarches restantes` : `${tasks.length - completedTasks} steps left`)
+              : (language === 'fr' ? 'Tout est à jour.' : 'All caught up.')}
+          </p>
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <Progress value={progress} className="flex-1 h-3" />
-            <span className="text-sm font-medium">{Math.round(progress)}%</span>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Statut compact — secondaire, une ligne */}
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="inline-flex items-center bg-foreground text-background text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
+          {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? 'Résident permanent' : 'Permanent Resident')}
+          {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? 'Étudiant étranger' : 'Foreign Student')}
+          {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail ouvert' : 'Open Work Permit')}
+          {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail fermé' : 'Closed Work Permit')}
+        </span>
+        {user?.province && (
+          <span className="inline-flex items-center border border-foreground/80 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
+            {language === 'fr' ? provinces.find(p => p.code === user.province)?.name : provinces.find(p => p.code === user.province)?.nameEn}
+          </span>
+        )}
+        {user?.arrivalDate && (
+          <span className="text-muted-foreground">
+            {language === 'fr' ? 'Arrivé le' : 'Arrived on'} {new Date(user.arrivalDate).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-CA')}
+          </span>
+        )}
+      </div>
 
-      {/* Permit Expiry Alerts - Show for temporary residents */}
+      {/* Alertes urgentes (permis) — remontées près du haut */}
       {isTemporaryResident && hasPermitDates && (
         <PermitExpiryAlerts language={language} user={user} />
       )}
 
-      {/* Statut & province — éditorial plat, filet encre, sans emoji */}
-      <Card className="border border-foreground/80 shadow-none rounded-lg">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center bg-foreground text-background text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
-              {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? 'Résident permanent' : 'Permanent Resident')}
-              {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? 'Étudiant étranger' : 'Foreign Student')}
-              {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail ouvert' : 'Open Work Permit')}
-              {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail fermé' : 'Closed Work Permit')}
-            </span>
-            {user?.province && (
-              <span className="inline-flex items-center border border-foreground/80 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
-                {language === 'fr'
-                  ? provinces.find(p => p.code === user.province)?.name
-                  : provinces.find(p => p.code === user.province)?.nameEn}
-              </span>
-            )}
-            {user?.arrivalDate && (
-              <span className="text-sm text-muted-foreground">
-                {language === 'fr' ? 'Arrivé le' : 'Arrived on'} {new Date(user.arrivalDate).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-CA')}
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {modules.map(m => {
-          const Icon = m.icon
-          const moduleTasks = tasks.filter(t => t.category === m.id.toUpperCase())
-          const completed = moduleTasks.filter(t => t.status === 'COMPLETED').length
-          
-          return (
-            <Card key={m.id} className="cursor-pointer hover:shadow-none transition-shadow" onClick={() => onModuleClick(m.id)}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${m.bgColor} rounded-lg flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${m.color}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t(`modules.${m.id}.title`, language)}</p>
-                    <p className="font-medium">{completed}/{moduleTasks.length}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
+      {/* HÉROS : ce qu'il faut faire maintenant */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">{t('dashboard.priorityActions', language)}</h2>
-        <div className="space-y-3">
-          {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').slice(0, 5).map(task => (
-            <Card key={task.id} className="hover:shadow-none transition-shadow cursor-pointer" onClick={() => onTaskClick(task)}>
+        <div className="flex items-center gap-2">
+          <Target className="w-5 h-5 text-destructive" />
+          <h2 className="text-xl font-bold">{language === 'fr' ? 'À faire maintenant' : 'Do this now'}</h2>
+        </div>
+        <div className="mt-4 space-y-3">
+          {nextTasks.map(task => (
+            <Card key={task.id} className="border border-foreground/80 shadow-none cursor-pointer transition-colors hover:bg-muted" onClick={() => onTaskClick(task)}>
               <CardContent className="p-4 flex items-center gap-4">
                 <Checkbox
                   checked={task.status === 'COMPLETED'}
-                  onCheckedChange={(checked) => {
-                    onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')
-                  }}
+                  onCheckedChange={(checked) => onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')}
                   onClick={(e) => e.stopPropagation()}
+                  className="h-5 w-5"
                 />
                 <div className="flex-1">
-                  <p className="font-medium">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
-                  <Badge variant="outline" className="mt-1">{t(`modules.${task.category.toLowerCase()}.title`, language)}</Badge>
+                  <p className="font-semibold leading-snug">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t(`modules.${task.category.toLowerCase()}.title`, language)}
+                    </span>
+                    {task.priority === 'HIGH' && (
+                      <span className="text-xs font-bold uppercase text-destructive">{language === 'fr' ? 'Urgent' : 'Urgent'}</span>
+                    )}
+                  </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                <ChevronRight className="w-5 h-5 flex-none text-muted-foreground" />
               </CardContent>
             </Card>
           ))}
-          
-          {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').length === 0 && (
-            <Card className="bg-muted bg-muted border-border">
-              <CardContent className="p-4 text-center">
+          {nextTasks.length === 0 && (
+            <Card className="border border-border shadow-none">
+              <CardContent className="p-5 text-center">
                 <CheckCircle2 className="w-8 h-8 text-foreground mx-auto mb-2" />
-                <p>{language === 'fr' ? 'Toutes les tâches prioritaires sont complétées!' : 'All priority tasks are completed!'}</p>
+                <p className="font-medium">{language === 'fr' ? 'Tout est à jour. Beau travail.' : 'All caught up. Nice work.'}</p>
               </CardContent>
             </Card>
           )}
+        </div>
+      </div>
+
+      {/* Progression par domaine — remplace barre brute + grille */}
+      <div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">{language === 'fr' ? 'Votre progression' : 'Your progress'}</h2>
+          <span className="text-sm text-muted-foreground">{completedTasks}/{tasks.length} {language === 'fr' ? 'faites' : 'done'}</span>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {perModule.map(m => {
+            const Icon = m.icon
+            const pct = m.total > 0 ? Math.round((m.completed / m.total) * 100) : 0
+            return (
+              <button key={m.id} onClick={() => onModuleClick(m.id)} className="rounded-xl border border-border p-4 text-left transition-colors hover:border-foreground">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-lg border border-foreground/80">
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <span className="flex-1 font-medium">{t(`modules.${m.id}.title`, language)}</span>
+                  <span className="text-sm font-bold tabular-nums">{m.completed}/{m.total}</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full rounded bg-muted">
+                  <div className="h-1.5 rounded bg-foreground" style={{ width: `${Math.max(pct === 0 ? 0 : 4, pct)}%` }} />
+                </div>
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -140,7 +154,7 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ListChecks className="w-5 h-5 text-foreground" />
-            {language === 'fr' ? '📋 Toutes les tâches administratives' : '📋 All Administrative Tasks'}
+            {language === 'fr' ? 'Toutes les démarches' : 'All tasks'}
           </CardTitle>
           <CardDescription>
             {language === 'fr' 
@@ -153,7 +167,7 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
             {tasks.filter(t => t.status !== 'COMPLETED').map(task => (
               <div 
                 key={task.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-muted bg-foreground bg-muted dark:hover:bg-foreground cursor-pointer transition-colors"
+                className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted cursor-pointer transition-colors"
                 onClick={() => onTaskClick(task)}
               >
                 <Checkbox
