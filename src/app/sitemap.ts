@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${BASE}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE}/guides`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${BASE}/temoignages`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE}/simulateur-crs`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/quiz-citoyennete`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/pack-atterrissage`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },

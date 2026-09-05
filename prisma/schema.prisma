@@ -354,6 +354,29 @@ model Lead {
   @@unique([email, source])
 }
 
+// Sondage prix (E6) — valide le modèle de monétisation avant de facturer
+model PriceSurvey {
+  id            String   @id @default(cuid())
+  email         String?
+  format        String   // one-shot | monthly | freemium
+  maxPriceCents Int?
+  whoPays       String?  // self | relative | employer
+  comment       String?
+  createdAt     DateTime @default(now())
+}
+
+// Témoignages (E6) — admin-gérés, seuls les approuvés s'affichent (pas de faux)
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  quote     String
+  avatarUrl String?
+  approved  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
 // Templates de tâches d'onboarding (corpus administrable — remplace le hardcode)
 model TaskTemplate {
   id            String   @id @default(cuid())

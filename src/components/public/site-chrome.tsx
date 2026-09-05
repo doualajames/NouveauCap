@@ -9,6 +9,7 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex">
           <Link href="/guides" className="hover:text-gray-900">Guides</Link>
+          <Link href="/temoignages" className="hover:text-gray-900">Bêta</Link>
           <Link href="/simulateur-crs" className="hover:text-gray-900">Simulateur CRS</Link>
           <Link href="/quiz-citoyennete" className="hover:text-gray-900">Quiz citoyenneté</Link>
           <Link href="/pack-atterrissage" className="hover:text-gray-900">Pack Atterrissage</Link>
