@@ -1012,7 +1012,7 @@ export default function NouveauCapApp() {
   // ==================== RENDER DASHBOARD ====================
   if (currentView === 'dashboard') {
     return (
-      <div className="min-h-screen bg-muted bg-foreground">
+      <div className="min-h-screen bg-card">
         {/* Mobile Header */}
         <header className="lg:hidden fixed top-0 w-full bg-card/95 backdrop-blur-xl z-50 border-b border-border shadow-sm">
           <div className="px-4 py-3 flex items-center justify-between">
@@ -1080,78 +1080,83 @@ export default function NouveauCapApp() {
         )}
 
         <div className="flex">
-          {/* Desktop Sidebar - Nouveau Design */}
-          <aside className="hidden lg:flex flex-col w-72 bg-card border-r border-border min-h-screen fixed">
+          {/* Desktop Sidebar — encre sombre, arborescence domaines→compteurs */}
+          <aside className="hidden lg:flex flex-col w-72 bg-foreground text-background min-h-screen fixed">
             {/* Logo Header */}
-            <div className="flex items-center gap-3 px-5 py-5 border-b border-border">
-              <div className="h-11 w-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-none shadow-red-500/30 shrink-0">
+            <div className="flex items-center gap-3 px-5 py-5 border-b border-background/15">
+              <div className="h-11 w-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
                 <MapPin className="w-6 h-6" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-xl font-bold text-foreground">NouveauCap</span>
-                <p className="text-xs text-muted-foreground truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
+                <span className="text-xl font-bold text-background">NouveauCap</span>
+                <p className="text-xs text-background/55 truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
               </div>
             </div>
-            
+
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto p-3 space-y-1">
               {/* Main Section */}
-              <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{language === 'fr' ? 'Principal' : 'Main'}</p>
-              
+              <p className="px-3 py-2 text-xs font-semibold text-background/45 uppercase tracking-wider">{language === 'fr' ? 'Principal' : 'Main'}</p>
+
               <button
                 onClick={() => setActiveModule(null)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === null ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === null ? 'bg-background/12 border border-background/25' : 'border border-transparent hover:bg-background/10'}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-background text-foreground' : 'bg-background/10 text-background/70'}`}>
                   <Home className="w-5 h-5" />
                 </div>
-                <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-background font-semibold' : 'text-background/70'}`}>
                   {t('dashboard.title', language)}
                 </span>
               </button>
-              
+
               {modules.filter(m => m.id !== 'admin').map(m => {
                 const Icon = m.icon
+                const active = activeModule === m.id
+                const remaining = tasks.filter(tk => tk.category === m.id.toUpperCase() && tk.status !== 'COMPLETED').length
                 return (
                   <button
                     key={m.id}
                     onClick={() => setActiveModule(m.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === m.id ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${active ? 'bg-background/12 border border-background/25' : 'border border-transparent hover:bg-background/10'}`}
                   >
-                    <div className={`relative shrink-0 rounded-lg p-2 transition-colors ${activeModule === m.id ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground'}`}>
+                    <div className={`relative shrink-0 rounded-lg p-2 transition-colors ${active ? 'bg-background text-foreground' : 'bg-background/10 text-background/70'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <span className={`flex-1 text-left font-medium ${active ? 'text-background font-semibold' : 'text-background/70'}`}>
                       {t(`modules.${m.id}.title`, language)}
                     </span>
+                    {remaining > 0 && (
+                      <span className={`shrink-0 text-xs font-semibold tabular-nums rounded-full px-2 py-0.5 ${active ? 'bg-background text-foreground' : 'bg-background/15 text-background/70'}`}>{remaining}</span>
+                    )}
                   </button>
                 )
               })}
 
               {/* Tools Section */}
-              <p className="px-3 py-2 mt-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{language === 'fr' ? 'Outils' : 'Tools'}</p>
-              
+              <p className="px-3 py-2 mt-4 text-xs font-semibold text-background/45 uppercase tracking-wider">{language === 'fr' ? 'Outils' : 'Tools'}</p>
+
               <button
                 onClick={() => setActiveModule('admin')}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === 'admin' ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === 'admin' ? 'bg-background/12 border border-background/25' : 'border border-transparent hover:bg-background/10'}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-background text-foreground' : 'bg-background/10 text-background/70'}`}>
                   <Settings className="w-5 h-5" />
                 </div>
-                <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-background font-semibold' : 'text-background/70'}`}>
                   {t('modules.admin.title', language)}
                 </span>
               </button>
             </nav>
-            
+
             {/* Premium Banner */}
             {user?.subscriptionTier === 'FREE' && (
-              <div className="mx-3 mb-3 p-4 rounded-xl bg-muted border border-border">
+              <div className="mx-3 mb-3 p-4 rounded-xl bg-background/8 border border-background/15">
                 <div className="flex items-center gap-2 mb-2">
-                  <Crown className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-semibold text-muted-foreground">{language === 'fr' ? 'Passez Premium' : 'Go Premium'}</span>
+                  <Crown className="w-5 h-5 text-background/70" />
+                  <span className="font-semibold text-background">{language === 'fr' ? 'Passez Premium' : 'Go Premium'}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mb-3">
+                <p className="text-xs text-background/60 mb-3">
                   {language === 'fr' ? 'Accédez à tous les outils et support prioritaire' : 'Access all tools and priority support'}
                 </p>
                 <Button size="sm" className="w-full bg-primary text-primary-foreground">
@@ -1159,31 +1164,31 @@ export default function NouveauCapApp() {
                 </Button>
               </div>
             )}
-            
+
             {/* User Profile Footer */}
-            <div className="p-3 border-t border-border">
+            <div className="p-3 border-t border-background/15">
               <div
                 onClick={() => setActiveModule('profile')}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors bg-muted cursor-pointer ${activeModule === 'profile' ? 'bg-muted' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors cursor-pointer ${activeModule === 'profile' ? 'bg-background/12' : 'hover:bg-background/10'}`}
               >
-                <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold shadow-none">
+                <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold">
                   {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{user?.name || user?.email}</p>
+                  <p className="text-sm font-medium text-background truncate">{user?.name || user?.email}</p>
                   <div className="flex items-center gap-1">
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-background/55">
                       {user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}
                     </span>
-                    {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-muted-foreground" />}
+                    {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-background/55" />}
                   </div>
                 </div>
-                <button 
-                  className="shrink-0 p-2 rounded-lg bg-destructive/10 transition-colors" 
+                <button
+                  className="shrink-0 p-2 rounded-lg bg-background/10 hover:bg-background/20 transition-colors"
                   onClick={(e) => { e.stopPropagation(); logout(); setCurrentView('landing') }}
                   title={t('auth.signOut', language)}
                 >
-                  <LogOut className="w-4 h-4 text-muted-foreground" />
+                  <LogOut className="w-4 h-4 text-background/80" />
                 </button>
               </div>
             </div>

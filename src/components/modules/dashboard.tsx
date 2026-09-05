@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress'
 import { Slider } from '@/components/ui/slider'
 import { citizenshipTestQuestions, type CitizenshipQuestion } from '@/lib/public-data/citizenship-questions'
 import { t, type Language, type Province, type Task } from '@/lib/stores/app-store'
-import { AlertCircle, BookOpen, Briefcase, CheckCircle2, ChevronRight, Circle, Clock, Crown, ExternalLink, FileCheck, FileText, GraduationCap, ListChecks, MapPin, RefreshCw, Star, Target, User, Users2, X } from 'lucide-react'
+import { AlertCircle, BookOpen, Briefcase, CalendarDays, CheckCircle2, ChevronRight, Circle, Clock, Crown, ExternalLink, FileCheck, FileText, GraduationCap, LayoutGrid, ListChecks, MapPin, RefreshCw, Star, Target, User, Users2, X } from 'lucide-react'
 import { useState } from 'react'
 import { modules, provinces } from '@/lib/app-data'
 
@@ -27,107 +27,218 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
   const isTemporaryResident = ['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus)
   const hasPermitDates = user?.studyPermitExpiry || user?.workPermitExpiry || user?.passportExpiry
 
-  // UX : « quoi faire maintenant » d'abord. Prochaines étapes = pending, urgent puis obligatoire puis ordre.
-  const rank = (x: Task) => (x.priority === 'HIGH' ? 0 : x.isRequired ? 1 : 2)
-  const nextTasks = [...tasks]
-    .filter(t => t.status !== 'COMPLETED')
-    .sort((a, b) => rank(a) - rank(b) || (a.order ?? 0) - (b.order ?? 0))
-    .slice(0, 3)
-  // Progression par domaine (remplace la barre brute)
+  // Vue table-centrée : onglets (liste / calendrier / domaines) + filtres de statut
+  const [view, setView] = useState<'list' | 'calendar' | 'domains'>('list')
+  const [filter, setFilter] = useState<'all' | 'todo' | 'progress' | 'done'>('todo')
+
+  const total = tasks.length
+  const remaining = total - completedTasks
+  const inProgress = tasks.filter(t => t.status === 'IN_PROGRESS').length
+
+  // Progression par domaine (vue « Domaines »)
   const perModule = modules.map(m => {
     const mt = tasks.filter(t => t.category === m.id.toUpperCase())
     return { id: m.id, icon: m.icon, completed: mt.filter(t => t.status === 'COMPLETED').length, total: mt.length }
   })
 
+  const statusLabel =
+    user?.immigrationStatus === 'PERMANENT_RESIDENT' ? (language === 'fr' ? 'Résident permanent' : 'Permanent Resident') :
+    user?.immigrationStatus === 'FOREIGN_STUDENT' ? (language === 'fr' ? 'Étudiant étranger' : 'Foreign Student') :
+    user?.immigrationStatus === 'OPEN_WORK_PERMIT' ? (language === 'fr' ? 'Permis de travail ouvert' : 'Open Work Permit') :
+    user?.immigrationStatus === 'CLOSED_WORK_PERMIT' ? (language === 'fr' ? 'Permis de travail fermé' : 'Closed Work Permit') : '—'
+  const provinceLabel = user?.province
+    ? (language === 'fr' ? provinces.find(p => p.code === user.province)?.name : provinces.find(p => p.code === user.province)?.nameEn)
+    : null
+
+  const locale = language === 'fr' ? 'fr-CA' : 'en-CA'
+  const fmtDue = (d?: string) => d ? new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) : null
+  const dueTs = (t: Task) => t.dueDate ? new Date(t.dueDate).getTime() : Infinity
+
+  const matchesFilter = (t: Task) =>
+    filter === 'all' ? t.status !== 'SKIPPED' :
+    filter === 'todo' ? t.status === 'PENDING' :
+    filter === 'progress' ? t.status === 'IN_PROGRESS' :
+    t.status === 'COMPLETED'
+  const visibleTasks = tasks.filter(matchesFilter).sort((a, b) => dueTs(a) - dueTs(b) || (a.order ?? 0) - (b.order ?? 0))
+
+  const filterChips: Array<{ id: typeof filter; label: string; count: number }> = [
+    { id: 'todo', label: language === 'fr' ? 'À faire' : 'To do', count: tasks.filter(t => t.status === 'PENDING').length },
+    { id: 'progress', label: language === 'fr' ? 'En cours' : 'In progress', count: inProgress },
+    { id: 'done', label: language === 'fr' ? 'Terminé' : 'Done', count: completedTasks },
+    { id: 'all', label: language === 'fr' ? 'Tout' : 'All', count: tasks.filter(t => t.status !== 'SKIPPED').length },
+  ]
+  const viewTabs: Array<{ id: typeof view; label: string; icon: typeof ListChecks }> = [
+    { id: 'list', label: language === 'fr' ? 'Liste' : 'List', icon: ListChecks },
+    { id: 'calendar', label: language === 'fr' ? 'Calendrier' : 'Calendar', icon: CalendarDays },
+    { id: 'domains', label: language === 'fr' ? 'Domaines' : 'Domains', icon: LayoutGrid },
+  ]
+
+  // Regroupement mensuel pour la vue calendrier (tâches datées)
+  const datedTasks = visibleTasks.filter(t => t.dueDate)
+  const byMonth = datedTasks.reduce<Record<string, Task[]>>((acc, t) => {
+    const key = new Date(t.dueDate!).toLocaleDateString(locale, { month: 'long', year: 'numeric' })
+    ;(acc[key] ||= []).push(t)
+    return acc
+  }, {})
+
+  const TaskRow = ({ task, compact = false }: { task: Task; compact?: boolean }) => (
+    <div
+      className="group flex items-center gap-3 px-4 py-3 border-b border-border last:border-0 hover:bg-muted cursor-pointer transition-colors"
+      onClick={() => onTaskClick(task)}
+    >
+      <Checkbox
+        checked={task.status === 'COMPLETED'}
+        onCheckedChange={(checked) => onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')}
+        onClick={(e) => e.stopPropagation()}
+        className="h-5 w-5 flex-none"
+      />
+      <div className="flex-1 min-w-0">
+        <p className={`font-medium leading-snug truncate ${task.status === 'COMPLETED' ? 'text-muted-foreground line-through' : ''}`}>
+          {language === 'fr' ? task.title : (task.titleEn || task.title)}
+        </p>
+      </div>
+      {!compact && (
+        <span className="hidden sm:flex w-28 flex-none items-center gap-1.5 text-sm text-muted-foreground tabular-nums">
+          {task.dueDate ? (<><Clock className="w-3.5 h-3.5" />{fmtDue(task.dueDate)}</>) : <span className="text-muted-foreground/50">—</span>}
+        </span>
+      )}
+      <div className="hidden md:flex w-44 flex-none items-center justify-end gap-1.5">
+        <span className="text-xs font-semibold uppercase tracking-wider border border-foreground/25 rounded px-2 py-0.5 text-foreground/80">
+          {t(`modules.${task.category.toLowerCase()}.title`, language)}
+        </span>
+        {task.isRequired && (
+          <span className="text-xs font-bold uppercase bg-destructive/10 text-destructive rounded px-2 py-0.5">
+            {language === 'fr' ? 'Oblig.' : 'Req.'}
+          </span>
+        )}
+      </div>
+      {task.priority === 'HIGH' && task.status !== 'COMPLETED' && (
+        <AlertCircle className="w-4 h-4 flex-none text-destructive" />
+      )}
+      <ChevronRight className="w-4 h-4 flex-none text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+    </div>
+  )
+
   return (
     <div className="p-4 lg:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {t('dashboard.welcome', language)}, {user?.name?.split(' ')[0] || 'User'}!
-          </h1>
-          <p className="text-muted-foreground">
-            {tasks.length - completedTasks > 0
-              ? (language === 'fr' ? `${tasks.length - completedTasks} démarches restantes` : `${tasks.length - completedTasks} steps left`)
-              : (language === 'fr' ? 'Tout est à jour.' : 'All caught up.')}
-          </p>
+      {/* Bandeau — titre + méta (statut, province, arrivée, compteurs) */}
+      <div>
+        <h1 className="text-3xl font-bold">
+          {t('dashboard.welcome', language)}, {user?.name?.split(' ')[0] || 'User'}
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          {remaining > 0
+            ? (language === 'fr' ? `Il vous reste ${remaining} démarche${remaining > 1 ? 's' : ''} à accomplir.` : `You have ${remaining} step${remaining > 1 ? 's' : ''} left.`)
+            : (language === 'fr' ? 'Tout est à jour. Beau travail.' : 'All caught up. Nice work.')}
+        </p>
+
+        <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-4 border-y border-border py-4">
+          <div>
+            <p className="font-bold leading-tight">{statusLabel}</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{language === 'fr' ? 'Statut' : 'Status'}</p>
+          </div>
+          {provinceLabel && (
+            <div>
+              <p className="font-bold leading-tight">{provinceLabel}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{language === 'fr' ? 'Province' : 'Province'}</p>
+            </div>
+          )}
+          {user?.arrivalDate && (
+            <div>
+              <p className="font-bold leading-tight tabular-nums">{new Date(user.arrivalDate).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{language === 'fr' ? 'Arrivée' : 'Arrival'}</p>
+            </div>
+          )}
+          <div>
+            <p className="font-bold leading-tight tabular-nums">{remaining}</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{language === 'fr' ? 'À faire' : 'To do'}</p>
+          </div>
+          <div>
+            <p className="font-bold leading-tight tabular-nums">{completedTasks}/{total}</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{language === 'fr' ? 'Faites' : 'Done'}</p>
+          </div>
         </div>
       </div>
 
-      {/* Statut compact — secondaire, une ligne */}
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="inline-flex items-center bg-foreground text-background text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
-          {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? 'Résident permanent' : 'Permanent Resident')}
-          {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? 'Étudiant étranger' : 'Foreign Student')}
-          {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail ouvert' : 'Open Work Permit')}
-          {user?.immigrationStatus === 'CLOSED_WORK_PERMIT' && (language === 'fr' ? 'Permis de travail fermé' : 'Closed Work Permit')}
-        </span>
-        {user?.province && (
-          <span className="inline-flex items-center border border-foreground/80 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded">
-            {language === 'fr' ? provinces.find(p => p.code === user.province)?.name : provinces.find(p => p.code === user.province)?.nameEn}
-          </span>
-        )}
-        {user?.arrivalDate && (
-          <span className="text-muted-foreground">
-            {language === 'fr' ? 'Arrivé le' : 'Arrived on'} {new Date(user.arrivalDate).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-CA')}
-          </span>
-        )}
-      </div>
-
-      {/* Alertes urgentes (permis) — remontées près du haut */}
+      {/* Alertes urgentes (permis) */}
       {isTemporaryResident && hasPermitDates && (
         <PermitExpiryAlerts language={language} user={user} />
       )}
 
-      {/* HÉROS : ce qu'il faut faire maintenant */}
-      <div>
-        <div className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-destructive" />
-          <h2 className="text-xl font-bold">{language === 'fr' ? 'À faire maintenant' : 'Do this now'}</h2>
-        </div>
-        <div className="mt-4 space-y-3">
-          {nextTasks.map(task => (
-            <Card key={task.id} className="border border-foreground/80 shadow-none cursor-pointer transition-colors hover:bg-muted" onClick={() => onTaskClick(task)}>
-              <CardContent className="p-4 flex items-center gap-4">
-                <Checkbox
-                  checked={task.status === 'COMPLETED'}
-                  onCheckedChange={(checked) => onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')}
-                  onClick={(e) => e.stopPropagation()}
-                  className="h-5 w-5"
-                />
-                <div className="flex-1">
-                  <p className="font-semibold leading-snug">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t(`modules.${task.category.toLowerCase()}.title`, language)}
-                    </span>
-                    {task.priority === 'HIGH' && (
-                      <span className="text-xs font-bold uppercase text-destructive">{language === 'fr' ? 'Urgent' : 'Urgent'}</span>
-                    )}
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 flex-none text-muted-foreground" />
-              </CardContent>
-            </Card>
-          ))}
-          {nextTasks.length === 0 && (
-            <Card className="border border-border shadow-none">
-              <CardContent className="p-5 text-center">
-                <CheckCircle2 className="w-8 h-8 text-foreground mx-auto mb-2" />
-                <p className="font-medium">{language === 'fr' ? 'Tout est à jour. Beau travail.' : 'All caught up. Nice work.'}</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+      {/* Onglets de vue */}
+      <div className="flex items-center gap-1 border-b border-border">
+        {viewTabs.map(tab => {
+          const Icon = tab.icon
+          const active = view === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setView(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 -mb-px border-b-2 text-sm font-medium transition-colors ${active ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+            >
+              <Icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          )
+        })}
       </div>
 
-      {/* Progression par domaine — remplace barre brute + grille */}
-      <div>
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">{language === 'fr' ? 'Votre progression' : 'Your progress'}</h2>
-          <span className="text-sm text-muted-foreground">{completedTasks}/{tasks.length} {language === 'fr' ? 'faites' : 'done'}</span>
+      {/* Vue LISTE : puces de filtre + table */}
+      {view === 'list' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {filterChips.map(chip => {
+              const active = filter === chip.id
+              return (
+                <button
+                  key={chip.id}
+                  onClick={() => setFilter(chip.id)}
+                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium border transition-colors ${active ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/50'}`}
+                >
+                  {chip.label}
+                  <span className={`text-xs tabular-nums ${active ? 'text-background/70' : 'text-muted-foreground/70'}`}>{chip.count}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="rounded-2xl border border-border overflow-hidden">
+            {visibleTasks.length > 0 ? (
+              visibleTasks.map(task => <TaskRow key={task.id} task={task} />)
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <CheckCircle2 className="w-10 h-10 text-foreground mx-auto mb-3" />
+                <p className="font-medium">{language === 'fr' ? 'Rien ici pour ce filtre.' : 'Nothing here for this filter.'}</p>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      )}
+
+      {/* Vue CALENDRIER : agenda groupé par mois */}
+      {view === 'calendar' && (
+        <div className="space-y-6">
+          {Object.keys(byMonth).length > 0 ? (
+            Object.entries(byMonth).map(([month, list]) => (
+              <div key={month}>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{month}</h3>
+                <div className="rounded-2xl border border-border overflow-hidden">
+                  {list.map(task => <TaskRow key={task.id} task={task} />)}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-2xl border border-border text-center py-12 text-muted-foreground">
+              <CalendarDays className="w-10 h-10 text-foreground mx-auto mb-3" />
+              <p className="font-medium">{language === 'fr' ? 'Aucune échéance datée pour ce filtre.' : 'No dated deadlines for this filter.'}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Vue DOMAINES : progression par module */}
+      {view === 'domains' && (
+        <div className="grid gap-3 sm:grid-cols-2">
           {perModule.map(m => {
             const Icon = m.icon
             const pct = m.total > 0 ? Math.round((m.completed / m.total) * 100) : 0
@@ -147,76 +258,19 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
             )
           })}
         </div>
-      </div>
-
-      {/* All Tasks by Category */}
-      <Card className="border border-border shadow-none">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ListChecks className="w-5 h-5 text-foreground" />
-            {language === 'fr' ? 'Toutes les démarches' : 'All tasks'}
-          </CardTitle>
-          <CardDescription>
-            {language === 'fr' 
-              ? `Tâches personnalisées pour votre statut (${user?.immigrationStatus === 'PERMANENT_RESIDENT' ? 'Résident Permanent' : user?.immigrationStatus === 'FOREIGN_STUDENT' ? 'Étudiant' : 'Travailleur'}) et votre province`
-              : `Tasks customized for your status and province`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {tasks.filter(t => t.status !== 'COMPLETED').map(task => (
-              <div 
-                key={task.id}
-                className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted cursor-pointer transition-colors"
-                onClick={() => onTaskClick(task)}
-              >
-                <Checkbox
-                  checked={task.status === 'COMPLETED'}
-                  onCheckedChange={(checked) => {
-                    onTaskUpdate(task.id, checked ? 'COMPLETED' : 'PENDING')
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">{language === 'fr' ? task.title : (task.titleEn || task.title)}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-xs">
-                      {t(`modules.${task.category.toLowerCase()}.title`, language)}
-                    </Badge>
-                    {task.isRequired && (
-                      <Badge className="text-xs bg-destructive/10 text-destructive bg-destructive/10 text-destructive">
-                        {language === 'fr' ? 'Obligatoire' : 'Required'}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                {task.priority === 'HIGH' && (
-                  <AlertCircle className="w-4 h-4 text-destructive" />
-                )}
-              </div>
-            ))}
-            
-            {tasks.filter(t => t.status !== 'COMPLETED').length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <CheckCircle2 className="w-12 h-12 text-foreground mx-auto mb-3" />
-                <p className="font-medium">{language === 'fr' ? 'Toutes les tâches sont terminées!' : 'All tasks completed!'}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      )}
 
       {user?.subscriptionTier === 'FREE' && (
-        <Card className="bg-primary text-primary-foreground">
+        <Card className="bg-foreground text-background border-0">
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Crown className="w-12 h-12" />
+              <Crown className="w-10 h-10 flex-none" />
               <div>
                 <p className="font-bold text-lg">{language === 'fr' ? 'Passez à Premium' : 'Upgrade to Premium'}</p>
-                <p className="text-foreground">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
+                <p className="text-background/70">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
               </div>
             </div>
-            <Button variant="secondary">
+            <Button variant="secondary" className="flex-none">
               <Star className="w-4 h-4 mr-2" />
               {t('subscription.choosePlan', language)}
             </Button>
