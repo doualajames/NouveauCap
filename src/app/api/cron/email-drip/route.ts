@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
   }
   if (!emailEnabled) {
-    return NextResponse.json({ skipped: 'email désactivé (pas de RESEND_API_KEY)' })
+    return NextResponse.json({ skipped: 'email désactivé (pas de BREVO_API_KEY)' })
   }
 
   const now = new Date()
