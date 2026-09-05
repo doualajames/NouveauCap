@@ -246,25 +246,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Renvoyer l'utilisateur MIS À JOUR (sinon onboardingCompleted reste false → dashboard bloqué)
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        dateOfBirth: user.dateOfBirth?.toISOString(),
-        immigrationStatus: user.immigrationStatus,
-        province: user.province,
-        arrivalDate: user.arrivalDate?.toISOString(),
-        professionalSector: user.professionalSector,
-        preferredLanguage: user.preferredLanguage,
-        familyStatus: user.familyStatus,
-        countryOfOrigin: user.countryOfOrigin,
-        subscriptionTier: user.subscriptionTier,
-        onboardingCompleted: user.onboardingCompleted,
-        studyPermitExpiry: user.studyPermitExpiry?.toISOString(),
-        workPermitExpiry: user.workPermitExpiry?.toISOString(),
-        passportExpiry: user.passportExpiry?.toISOString()
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        dateOfBirth: updatedUser.dateOfBirth?.toISOString(),
+        immigrationStatus: updatedUser.immigrationStatus,
+        province: updatedUser.province,
+        arrivalDate: updatedUser.arrivalDate?.toISOString(),
+        professionalSector: updatedUser.professionalSector,
+        preferredLanguage: updatedUser.preferredLanguage,
+        familyStatus: updatedUser.familyStatus,
+        countryOfOrigin: updatedUser.countryOfOrigin,
+        subscriptionTier: updatedUser.subscriptionTier,
+        onboardingCompleted: updatedUser.onboardingCompleted,
+        studyPermitExpiry: updatedUser.studyPermitExpiry?.toISOString(),
+        workPermitExpiry: updatedUser.workPermitExpiry?.toISOString(),
+        passportExpiry: updatedUser.passportExpiry?.toISOString()
       }
     })
   } catch (error) {
