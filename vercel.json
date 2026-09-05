@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "prisma generate --schema=prisma/schema.postgresql.prisma && next build"
+  "buildCommand": "prisma generate --schema=prisma/schema.postgresql.prisma && next build",
+  "crons": [
+    { "path": "/api/cron/email-drip", "schedule": "0 14 * * *" }
+  ]
 }

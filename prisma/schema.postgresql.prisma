@@ -369,6 +369,19 @@ model Testimonial {
   createdAt DateTime @default(now())
 }
 
+// Séquence email « 90 premiers jours » (E1) — un abonné par courriel, on avance step par step
+model EmailSubscription {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  source     String?
+  step       Int       @default(0) // prochaine étape à envoyer
+  nextSendAt DateTime? // null = rien de planifié ; le cron envoie quand due
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+
+  @@index([active, nextSendAt])
+}
+
 // Funnel first-party (E-funnel) — mesure visite→outil→email→signup, sans GA ni cookies
 model FunnelEvent {
   id        String   @id @default(cuid())
