@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
     
     const user = authResult
     const body = await request.json()
-    const onboardingData = body
+    // Le client envoie { userId, onboardingData: {...} } ; accepter aussi un corps plat.
+    const onboardingData = body?.onboardingData ?? body
 
     // Validate immigration status
     const validStatuses = ['PERMANENT_RESIDENT', 'FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT']
