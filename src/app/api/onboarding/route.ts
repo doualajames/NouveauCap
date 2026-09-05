@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { db as prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth-jwt'
 
-const prisma = new PrismaClient()
 
 import { provinceSpecificTasks, taskTemplates } from '@/lib/onboarding-templates'
 

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { db as prisma } from '@/lib/db'
 import { hash, compare } from 'bcryptjs'
 import { createSessionToken } from '@/lib/auth-jwt'
 
-const prisma = new PrismaClient()
 
 // Pose le cookie de session sur la réponse (sinon toutes les routes authentifiées → 401)
 async function withSession(user: { id: string; email: string; name: string | null }, payload: any) {

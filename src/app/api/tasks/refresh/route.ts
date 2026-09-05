@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { db as prisma } from '@/lib/db'
 
-const prisma = new PrismaClient()
 
 // Task descriptions by title
 const taskDescriptions: Record<string, { description: string; descriptionEn: string; source?: string }> = {
