@@ -665,7 +665,7 @@ export default function NouveauCapApp() {
                     return (
                       <Card 
                         key={status.code}
-                        className={`cursor-pointer transition-all hover:shadow-none ${isSelected ? 'ring-2 ring-blue-500 bg-muted bg-muted' : ''}`}
+                        className={`cursor-pointer transition-all hover:shadow-none ${isSelected ? 'ring-2 ring-foreground bg-muted bg-muted' : ''}`}
                         onClick={() => setOnboardingData({ immigrationStatus: status.code as ImmigrationStatus })}
                       >
                         <CardContent className="p-4 flex items-center gap-3">
@@ -892,7 +892,7 @@ export default function NouveauCapApp() {
                     return (
                       <Card
                         key={lang}
-                        className={`cursor-pointer transition-all hover:shadow-none flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                        className={`cursor-pointer transition-all hover:shadow-none flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-foreground' : ''}`}
                         onClick={() => {
                           setOnboardingData({ preferredLanguage: lang as Language })
                           setLanguage(lang as Language)

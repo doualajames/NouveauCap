@@ -174,7 +174,7 @@ export function HousingModule({ language, user }: {
           <CardContent>
             <div className="space-y-4">
               {/* Ontario */}
-              <Card className={`overflow-hidden ${user?.province === 'ON' ? 'ring-2 ring-blue-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'ON' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -217,7 +217,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Québec */}
-              <Card className={`overflow-hidden ${user?.province === 'QC' ? 'ring-2 ring-purple-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'QC' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -260,7 +260,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Colombie-Britannique */}
-              <Card className={`overflow-hidden ${user?.province === 'BC' ? 'ring-2 ring-green-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'BC' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -303,7 +303,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Alberta */}
-              <Card className={`overflow-hidden ${user?.province === 'AB' ? 'ring-2 ring-amber-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'AB' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -385,7 +385,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Saskatchewan */}
-              <Card className={`overflow-hidden ${user?.province === 'SK' ? 'ring-2 ring-emerald-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'SK' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -424,7 +424,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Nouvelle-Écosse */}
-              <Card className={`overflow-hidden ${user?.province === 'NS' ? 'ring-2 ring-indigo-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'NS' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
@@ -502,7 +502,7 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Île-du-Prince-Édouard */}
-              <Card className={`overflow-hidden ${user?.province === 'PE' ? 'ring-2 ring-teal-500' : ''}`}>
+              <Card className={`overflow-hidden ${user?.province === 'PE' ? 'ring-2 ring-foreground' : ''}`}>
                 <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">

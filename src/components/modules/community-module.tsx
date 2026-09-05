@@ -88,7 +88,7 @@ export function CommunityModule({ language, user }: {
                       key={event.id} 
                       className={`overflow-hidden transition-all duration-300 ${
  isRegistered 
- ? 'ring-2 ring-green-500 bg-muted bg-muted' 
+ ? 'ring-2 ring-foreground bg-muted bg-muted' 
  : 'hover:shadow-none'
  }`}
                     >

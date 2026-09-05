@@ -196,7 +196,7 @@ const actionButtonVariants = cva(
         outline: 'btn-outline',
         ghost: 'btn-ghost',
         danger: 'bg-destructive/10  bg-destructive/10 focus:ring-red-500 rounded-xl shadow-none hover:shadow-none',
-        success: 'bg-muted  bg-muted focus:ring-green-500 rounded-xl shadow-none hover:shadow-none',
+        success: 'bg-muted  bg-muted ring-foreground rounded-xl shadow-none hover:shadow-none',
       },
       size: {
         sm: 'text-sm px-4 py-2 rounded-lg',
@@ -293,7 +293,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               LeftIcon && 'pl-10',
               (RightIcon || rightElement) && 'pr-10',
               error && 'border-destructive/40 focus:ring-red-500',
-              success && 'border-border focus:ring-green-500',
+              success && 'border-border ring-foreground',
               className
             )}
             {...props}

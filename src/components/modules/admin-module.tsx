@@ -126,7 +126,7 @@ export function AdminModule({ language }: { language: Language }) {
               { id: 'premium', name: 'Premium', price: 19.99, popular: true, features: language === 'fr' ? ['Tous les modules', 'Optimisateur CV IA', 'Alertes illimitées', 'Support prioritaire'] : ['All modules', 'AI CV Optimizer', 'Unlimited alerts', 'Priority support'] },
               { id: 'family', name: language === 'fr' ? 'Famille' : 'Family', price: 39.99, features: language === 'fr' ? ['Tout Premium', '5 membres', 'Conseiller dédié'] : ['All Premium', '5 members', 'Dedicated advisor'] }
             ].map(plan => (
-              <Card key={plan.id} className={`border border-border shadow-none ${plan.popular ? 'ring-2 ring-purple-500' : ''}`}>
+              <Card key={plan.id} className={`border border-border shadow-none ${plan.popular ? 'ring-2 ring-foreground' : ''}`}>
                 {plan.popular && <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-muted">{language === 'fr' ? 'Populaire' : 'Popular'}</Badge>}
                 <CardHeader className="text-center"><CardTitle>{plan.name}</CardTitle><p className="text-3xl font-bold">${plan.price}<span className="text-sm text-gray-500">/{language === 'fr' ? 'mois' : 'mo'}</span></p></CardHeader>
                 <CardContent><ul className="space-y-1">{plan.features.map((f, i) => <li key={i} className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-foreground" />{f}</li>)}</ul></CardContent>
