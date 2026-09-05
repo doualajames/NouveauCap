@@ -210,7 +210,7 @@ export function EmploymentModule({ language, user }: {
   const offerCount = applications.filter(a => a.status === 'OFFER').length
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -219,41 +219,41 @@ export function EmploymentModule({ language, user }: {
               <Briefcase className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {t('modules.employment.title', language)}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">{t('modules.employment.description', language)}</p>
+              <p className="text-muted-foreground text-muted-foreground">{t('modules.employment.description', language)}</p>
             </div>
           </div>
           
           {/* Quick Stats */}
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Candidatures' : 'Applications'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Candidatures' : 'Applications'}</p>
               <p className="font-bold text-foreground">{applications.length}</p>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Entretiens' : 'Interviews'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Entretiens' : 'Interviews'}</p>
               <p className="font-bold text-muted-foreground">{interviewCount}</p>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Offres' : 'Offers'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Offres' : 'Offers'}</p>
               <p className="font-bold text-foreground">{offerCount}</p>
             </div>
           </div>
         </div>
 
         {/* Mobile Tabs */}
-        <div className="flex lg:hidden bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+        <div className="flex lg:hidden bg-card bg-foreground rounded-xl p-1 shadow-sm border">
           <button
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'cv' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'cv' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
             onClick={() => setActiveTab('cv')}
           >
             <Brain className="w-4 h-4 inline mr-2" />
             {language === 'fr' ? 'CV IA' : 'AI CV'}
           </button>
           <button
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tracker' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tracker' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
             onClick={() => setActiveTab('tracker')}
           >
             <Target className="w-4 h-4 inline mr-2" />
@@ -265,7 +265,7 @@ export function EmploymentModule({ language, user }: {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* AI CV Optimizer */}
           <div className={`${activeTab !== 'cv' ? 'hidden lg:block' : ''}`}>
-            <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -289,7 +289,7 @@ export function EmploymentModule({ language, user }: {
                       placeholder={language === 'fr' ? 'https://indeed.com/... ou https://linkedin.com/jobs/...' : 'https://indeed.com/... or https://linkedin.com/jobs/...'}
                       value={jobUrl}
                       onChange={(e) => setJobUrl(e.target.value)}
-                      className="bg-white dark:bg-gray-800 flex-1"
+                      className="bg-card bg-foreground flex-1"
                     />
                     <Button 
                       onClick={handleExtractFromUrl}
@@ -304,7 +304,7 @@ export function EmploymentModule({ language, user }: {
                       )}
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {language === 'fr' 
                       ? '💡 Collez le lien pour extraire automatiquement les mots-clés ATS'
                       : '💡 Paste the link to automatically extract ATS keywords'}
@@ -381,7 +381,7 @@ export function EmploymentModule({ language, user }: {
                     value={cvContent}
                     onChange={(e) => setCvContent(e.target.value)}
                     rows={5}
-                    className="resize-none bg-white dark:bg-gray-800"
+                    className="resize-none bg-card bg-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -390,7 +390,7 @@ export function EmploymentModule({ language, user }: {
                     placeholder={language === 'fr' ? 'Ex: Développeur Full Stack' : 'E.g., Full Stack Developer'}
                     value={targetJob}
                     onChange={(e) => setTargetJob(e.target.value)}
-                    className="bg-white dark:bg-gray-800"
+                    className="bg-card bg-foreground"
                   />
                 </div>
                 <Button 
@@ -413,7 +413,7 @@ export function EmploymentModule({ language, user }: {
                         <FileCheck className="w-4 h-4 text-foreground" />
                         {language === 'fr' ? 'CV Optimisé' : 'Optimized CV'}
                       </h4>
-                      <pre className="whitespace-pre-wrap text-sm bg-white dark:bg-gray-900 p-4 rounded-lg border max-h-40 overflow-auto">
+                      <pre className="whitespace-pre-wrap text-sm bg-card bg-foreground p-4 rounded-lg border max-h-40 overflow-auto">
                         {aiResult.optimizedCv}
                       </pre>
                     </div>
@@ -422,7 +422,7 @@ export function EmploymentModule({ language, user }: {
                         <h4 className="font-semibold mb-2">💡 {language === 'fr' ? 'Suggestions' : 'Suggestions'}</h4>
                         <ul className="list-disc list-inside text-sm space-y-1">
                           {aiResult.suggestions.map((s: string, i: number) => (
-                            <li key={i} className="text-gray-700 dark:text-gray-300">{s}</li>
+                            <li key={i} className="text-muted-foreground text-muted-foreground">{s}</li>
                           ))}
                         </ul>
                       </div>
@@ -445,7 +445,7 @@ export function EmploymentModule({ language, user }: {
 
           {/* Job Applications Tracker */}
           <div className={`${activeTab !== 'tracker' ? 'hidden lg:block' : ''}`}>
-            <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -463,12 +463,12 @@ export function EmploymentModule({ language, user }: {
               <CardContent>
                 <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2">
                   {applications.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Briefcase className="w-8 h-8 text-gray-300" />
+                    <div className="text-center py-12 text-muted-foreground">
+                      <div className="w-16 h-16 bg-muted bg-foreground rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Briefcase className="w-8 h-8 text-muted-foreground" />
                       </div>
                       <p className="font-medium">{language === 'fr' ? 'Aucune candidature' : 'No applications'}</p>
-                      <p className="text-sm text-gray-400 mt-1">{language === 'fr' ? 'Ajoutez votre première candidature' : 'Add your first application'}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{language === 'fr' ? 'Ajoutez votre première candidature' : 'Add your first application'}</p>
                       <Button variant="outline" className="mt-4" onClick={() => setShowAddApplication(true)}>
                         <Plus className="w-4 h-4 mr-2" />
                         {language === 'fr' ? 'Ajouter' : 'Add'}
@@ -480,7 +480,7 @@ export function EmploymentModule({ language, user }: {
                       return (
                         <div 
                           key={app.id} 
-                          className="group p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-none transition-all duration-300 bg-white dark:bg-gray-800"
+                          className="group p-4 border border-border dark:border-border rounded-xl hover:shadow-none transition-all duration-300 bg-card bg-foreground"
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
@@ -488,9 +488,9 @@ export function EmploymentModule({ language, user }: {
                                 <span className="text-lg">{config.icon}</span>
                                 <p className="font-semibold">{app.position}</p>
                               </div>
-                              <p className="text-sm text-gray-500 mt-1">{app.company}</p>
-                              {app.notes && <p className="text-xs text-gray-400 mt-2 italic">"{app.notes}"</p>}
-                              <p className="text-xs text-gray-400 mt-2">
+                              <p className="text-sm text-muted-foreground mt-1">{app.company}</p>
+                              {app.notes && <p className="text-xs text-muted-foreground mt-2 italic">"{app.notes}"</p>}
+                              <p className="text-xs text-muted-foreground mt-2">
                                 📅 {language === 'fr' ? 'Ajouté le' : 'Added on'} {new Date(app.createdAt).toLocaleDateString()}
                               </p>
                             </div>
@@ -593,7 +593,7 @@ export function EmploymentModule({ language, user }: {
                   return (
                     <div 
                       key={i} 
-                      className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-none transition-all duration-300"
+                      className="p-4 bg-card bg-foreground rounded-xl border border-border dark:border-border hover:shadow-none transition-all duration-300"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
@@ -610,7 +610,7 @@ export function EmploymentModule({ language, user }: {
                               {language === 'fr' ? job.sector : job.sectorEn}
                             </Badge>
                             {job.nocCode && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-muted-foreground">
                                 NOC {job.nocCode}
                               </span>
                             )}
@@ -618,11 +618,11 @@ export function EmploymentModule({ language, user }: {
                         </div>
                       </div>
                       
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                      <p className="text-xs text-muted-foreground text-muted-foreground mt-2">
                         {language === 'fr' ? job.description : job.descriptionEn}
                       </p>
                       
-                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-border dark:border-border">
                         <div className="flex items-center gap-1">
                           <DollarSign className="w-3 h-3 text-foreground" />
                           <span className="text-xs font-medium text-foreground text-foreground">
@@ -695,7 +695,7 @@ export function EmploymentModule({ language, user }: {
               <CardContent className={`p-5 ${item.bg} rounded-lg`}>
                 <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
                 <h3 className="font-semibold">{item.title}</h3>
-                <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+                <p className="text-sm text-muted-foreground mt-1">{item.desc}</p>
               </CardContent>
             </Card>
           ))}

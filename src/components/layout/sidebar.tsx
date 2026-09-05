@@ -64,11 +64,11 @@ export function Sidebar({
 
   return (
     <aside className={cn(
-      "hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300",
+      "hidden lg:flex flex-col bg-card border-r border-border transition-all duration-300",
       collapsed ? "w-20" : "w-72"
     )}>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
+      <div className="flex items-center gap-3 px-4 py-5 border-b border-border">
         <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-none shadow-red-500/30 shrink-0">
           <MapPin className="h-6 w-6" />
         </div>
@@ -77,7 +77,7 @@ export function Sidebar({
             <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">
               NouveauCap
             </span>
-            <p className="text-xs text-gray-500 truncate">Votre guide au Canada</p>
+            <p className="text-xs text-muted-foreground truncate">Votre guide au Canada</p>
           </div>
         )}
         <Button
@@ -98,7 +98,7 @@ export function Sidebar({
         {/* Main Navigation */}
         <div className="space-y-1">
           {!collapsed && (
-            <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Principal
             </p>
           )}
@@ -116,7 +116,7 @@ export function Sidebar({
         {/* Tools Section */}
         <div className="mt-6 space-y-1">
           {!collapsed && (
-            <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Outils
             </p>
           )}
@@ -149,9 +149,9 @@ export function Sidebar({
       )}
 
       {/* User Profile */}
-      <div className="p-3 border-t border-gray-100">
+      <div className="p-3 border-t border-border">
         <div className={cn(
-          "flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors",
+          "flex items-center gap-3 p-3 rounded-xl bg-muted cursor-pointer transition-colors",
           collapsed && "justify-center"
         )}>
           <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold">
@@ -159,16 +159,16 @@ export function Sidebar({
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{userProfile?.name || 'Utilisateur'}</p>
+              <p className="text-sm font-medium text-foreground truncate">{userProfile?.name || 'Utilisateur'}</p>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-500 truncate">{userProfile?.status || 'Résident'}</span>
+                <span className="text-xs text-muted-foreground truncate">{userProfile?.status || 'Résident'}</span>
                 {isPremium && <Crown className="h-3 w-3 text-muted-foreground" />}
               </div>
             </div>
           )}
           {!collapsed && (
             <Button variant="ghost" size="icon" className="shrink-0" onClick={onLogout}>
-              <LogOut className="h-4 w-4 text-gray-400" />
+              <LogOut className="h-4 w-4 text-muted-foreground" />
             </Button>
           )}
         </div>
@@ -192,10 +192,10 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
       onClick={onClick}
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
-        "hover:bg-gray-50",
+        "bg-muted",
         active && [
-          "bg-muted  to-white",
-          "shadow-sm border border-gray-100",
+          "bg-muted ",
+          "shadow-sm border border-border",
         ],
         collapsed && "justify-center px-2"
       )}
@@ -204,7 +204,7 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
         "relative shrink-0 rounded-lg p-2 transition-all duration-200",
         active 
           ? `bg-muted ${item.gradient}  shadow-none`
-          : "bg-gray-100 text-gray-600"
+          : "bg-muted text-muted-foreground"
       )}>
         <Icon className="h-5 w-5" />
         {item.badge && !active && (
@@ -218,7 +218,7 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
         <>
           <span className={cn(
             "flex-1 text-left font-medium transition-colors",
-            active ? "text-gray-900" : "text-gray-600"
+            active ? "text-foreground" : "text-muted-foreground"
           )}>
             {item.label}
           </span>
@@ -243,7 +243,7 @@ export function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
   const mobileItems = mainNavigation.slice(0, 4)
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 px-2 py-2 lg:hidden safe-bottom shadow-none shadow-gray-200/50">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border px-2 py-2 lg:hidden safe-bottom shadow-none shadow-gray-200/50">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {mobileItems.map((item) => (
           <button
@@ -253,7 +253,7 @@ export function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
               "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
               activeSection === item.id 
                 ? "text-destructive" 
-                : "text-gray-500"
+                : "text-muted-foreground"
             )}
           >
             <div className={cn(
@@ -266,7 +266,7 @@ export function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
           </button>
         ))}
         {/* More Menu */}
-        <button className="flex flex-col items-center gap-1 p-2 rounded-xl text-gray-500">
+        <button className="flex flex-col items-center gap-1 p-2 rounded-xl text-muted-foreground">
           <div className="p-1.5 rounded-lg">
             <Menu className="h-5 w-5" />
           </div>

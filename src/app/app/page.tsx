@@ -280,12 +280,12 @@ export default function NouveauCapApp() {
   // Added fallback timeout to prevent infinite loading
   if (!isHydrated) {
     return (
-      <div className="min-h-screen bg-muted via-white flex items-center justify-center">
+      <div className="min-h-screen bg-muted flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-none shadow-red-500/30">
             <MapPin className="w-8 h-8" />
           </div>
-          <p className="text-gray-500">Chargement...</p>
+          <p className="text-muted-foreground">Chargement...</p>
         </div>
       </div>
     )
@@ -294,7 +294,7 @@ export default function NouveauCapApp() {
   // ==================== RENDER LANDING ====================
   if (currentView === 'landing') {
     return (
-      <div className="min-h-screen bg-gray-50 overflow-hidden">
+      <div className="min-h-screen bg-muted overflow-hidden">
         {/* Background Pattern & Orbs */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-destructive/10 blur-3xl" />
@@ -303,7 +303,7 @@ export default function NouveauCapApp() {
         </div>
 
         {/* Header */}
-        <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl z-50 border-b border-gray-100 shadow-sm">
+        <header className="fixed top-0 w-full bg-card/80 backdrop-blur-xl z-50 border-b border-border shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none shadow-red-500/30">
@@ -346,7 +346,7 @@ export default function NouveauCapApp() {
                   </span>
                 </h1>
                 
-                <p className="text-lg text-gray-600 mb-8 max-w-xl leading-relaxed">
+                <p className="text-lg text-muted-foreground mb-8 max-w-xl leading-relaxed">
                   {language === 'fr'
                     ? 'NouveauCap vous guide à travers toutes les étapes de votre installation: immigration, emploi, santé, finance et plus encore.'
                     : 'NouveauCap guides you through every step of your settlement: immigration, employment, health, finance and more.'}
@@ -357,7 +357,7 @@ export default function NouveauCapApp() {
                     {t('auth.createAccount', language)}
                     <ChevronRight className="w-5 h-5" />
                   </Button>
-                  <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2 hover:bg-gray-50 gap-2" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
+                  <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2 bg-muted gap-2" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
                     <Globe className="w-5 h-5" />
                     {language === 'fr' ? 'Continue in English' : 'Continuer en français'}
                   </Button>
@@ -373,8 +373,8 @@ export default function NouveauCapApp() {
                     ))}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">+5,000 {language === 'fr' ? 'utilisateurs' : 'users'}</p>
-                    <p className="text-sm text-gray-500">{language === 'fr' ? 'nous font confiance' : 'trust us'}</p>
+                    <p className="font-semibold text-foreground">+5,000 {language === 'fr' ? 'utilisateurs' : 'users'}</p>
+                    <p className="text-sm text-muted-foreground">{language === 'fr' ? 'nous font confiance' : 'trust us'}</p>
                   </div>
                 </div>
               </div>
@@ -382,11 +382,11 @@ export default function NouveauCapApp() {
               {/* Illustration / Dashboard Preview */}
               <div className="relative hidden lg:block">
                 <div className="relative rounded-3xl bg-primary text-primary-foreground p-1 shadow-none shadow-red-500/30">
-                  <div className="rounded-[22px] bg-white p-6">
+                  <div className="rounded-[22px] bg-card p-6">
                     {/* Mini Dashboard Preview */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <div className="h-6 w-24 rounded-lg bg-gray-100" />
+                        <div className="h-6 w-24 rounded-lg bg-muted" />
                         <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
                           <User className="h-4 w-4 text-destructive" />
                         </div>
@@ -398,22 +398,22 @@ export default function NouveauCapApp() {
                           { icon: Heart, label: 'Santé', value: 'Active', color: ' ' },
                           { icon: Wallet, label: 'Finance', value: 'Setup', color: ' ' },
                         ].map((item, i) => (
-                          <div key={i} className="rounded-xl bg-gray-50 p-3">
+                          <div key={i} className="rounded-xl bg-muted p-3">
                             <div className={`inline-flex rounded-lg bg-muted ${item.color} p-1.5 mb-2 shadow-none`}>
                               <item.icon className="h-3 w-3" />
                             </div>
-                            <p className="text-xs text-gray-500">{item.label}</p>
-                            <p className="font-semibold text-gray-900">{item.value}</p>
+                            <p className="text-xs text-muted-foreground">{item.label}</p>
+                            <p className="font-semibold text-foreground">{item.value}</p>
                           </div>
                         ))}
                       </div>
-                      <div className="h-16 rounded-xl bg-gray-50 flex items-center px-4 gap-3">
+                      <div className="h-16 rounded-xl bg-muted flex items-center px-4 gap-3">
                         <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                           <CheckCircle2 className="h-4 w-4 text-foreground" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</p>
-                          <p className="text-xs text-gray-500">{language === 'fr' ? 'Demande NAS envoyée' : 'SIN application sent'}</p>
+                          <p className="text-sm font-medium text-foreground">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</p>
+                          <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Demande NAS envoyée' : 'SIN application sent'}</p>
                         </div>
                       </div>
                     </div>
@@ -421,7 +421,7 @@ export default function NouveauCapApp() {
                 </div>
 
                 {/* Floating Cards */}
-                <div className="absolute -left-8 top-1/4 rounded-xl bg-white p-3 shadow-none border border-gray-100 animate-bounce" style={{ animationDuration: '3s' }}>
+                <div className="absolute -left-8 top-1/4 rounded-xl bg-card p-3 shadow-none border border-border animate-bounce" style={{ animationDuration: '3s' }}>
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <CheckCircle2 className="h-4 w-4 text-foreground" />
@@ -433,14 +433,14 @@ export default function NouveauCapApp() {
                   </div>
                 </div>
 
-                <div className="absolute -right-4 bottom-1/3 rounded-xl bg-white p-3 shadow-none border border-gray-100">
+                <div className="absolute -right-4 bottom-1/3 rounded-xl bg-card p-3 shadow-none border border-border">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       <Shield className="h-4 w-4 text-foreground" />
                     </div>
                     <div>
                       <p className="text-xs font-medium">{language === 'fr' ? 'RP Éligible' : 'PR Eligible'}</p>
-                      <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Express Entry' : 'Express Entry'}</p>
+                      <p className="text-[10px] text-muted-foreground">{language === 'fr' ? 'Express Entry' : 'Express Entry'}</p>
                     </div>
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function NouveauCapApp() {
               <h2 className="text-3xl font-bold mb-4">
                 {language === 'fr' ? 'Tout ce dont vous avez besoin' : 'Everything you need'}
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl mx-auto">
                 {language === 'fr' 
                   ? 'Une plateforme complète pour vous accompagner à chaque étape de votre installation'
                   : 'A complete platform to accompany you at every step of your settlement'}
@@ -474,7 +474,7 @@ export default function NouveauCapApp() {
               ].map((feature, i) => (
                 <div 
                   key={i} 
-                  className="group relative overflow-hidden rounded-2xl bg-white p-6 border border-gray-100 shadow-sm hover:shadow-none hover:shadow-gray-200/50 transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl bg-card p-6 border border-border shadow-sm hover:shadow-none hover:shadow-gray-200/50 transition-all duration-300 cursor-pointer hover:-translate-y-1"
                 >
                   {/* Background Gradient on Hover */}
                   <div className={`absolute inset-0 bg-muted ${feature.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`} />
@@ -484,7 +484,7 @@ export default function NouveauCapApp() {
                   </div>
                   
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
                     {feature.badge && (
                       <span className="px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-medium">
                         {feature.badge}
@@ -492,9 +492,9 @@ export default function NouveauCapApp() {
                     )}
                   </div>
                   
-                  <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+                  <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
                   
-                  <div className="mt-4 flex items-center text-sm font-medium text-gray-400 transition-colors group-text-destructive">
+                  <div className="mt-4 flex items-center text-sm font-medium text-muted-foreground transition-colors group-text-destructive">
                     {language === 'fr' ? 'Explorer' : 'Explore'}
                     <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </div>
@@ -508,7 +508,7 @@ export default function NouveauCapApp() {
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto">
             <div className="relative overflow-hidden rounded-3xl bg-primary text-primary-foreground p-8 md:p-12 shadow-none shadow-red-500/30">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-card/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
               
               <div className="relative text-center">
@@ -520,7 +520,7 @@ export default function NouveauCapApp() {
                     ? 'Rejoignez des milliers de nouveaux arrivants qui ont fait confiance à NouveauCap pour leur installation.'
                     : 'Join thousands of newcomers who trusted NouveauCap for their settlement.'}
                 </p>
-                <Button size="lg" className="bg-white text-destructive hover:bg-gray-100 text-lg px-8 h-14 rounded-xl shadow-none gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
+                <Button size="lg" className="bg-card text-destructive bg-muted text-lg px-8 h-14 rounded-xl shadow-none gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
                   {t('auth.createAccount', language)}
                   <ChevronRight className="w-5 h-5" />
                 </Button>
@@ -530,7 +530,7 @@ export default function NouveauCapApp() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 px-4 border-t bg-white">
+        <footer className="py-8 px-4 border-t bg-card">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center shadow-none shadow-red-500/30">
@@ -538,10 +538,10 @@ export default function NouveauCapApp() {
               </div>
               <span className="font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
             </div>
-            <p className="text-gray-500 text-sm">© 2025 NouveauCap. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
-            <div className="flex items-center gap-4 text-gray-500 text-sm">
-              <a href="#" className="hover:text-gray-900 transition-colors">{language === 'fr' ? 'Confidentialité' : 'Privacy'}</a>
-              <a href="#" className="hover:text-gray-900 transition-colors">{language === 'fr' ? 'Conditions' : 'Terms'}</a>
+            <p className="text-muted-foreground text-sm">© 2025 NouveauCap. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+            <div className="flex items-center gap-4 text-muted-foreground text-sm">
+              <a href="#" className="hover:text-foreground transition-colors">{language === 'fr' ? 'Confidentialité' : 'Privacy'}</a>
+              <a href="#" className="hover:text-foreground transition-colors">{language === 'fr' ? 'Conditions' : 'Terms'}</a>
             </div>
           </div>
         </footer>
@@ -552,7 +552,7 @@ export default function NouveauCapApp() {
   // ==================== RENDER AUTH ====================
   if (currentView === 'auth') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted via-white p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted p-4">
         <Card className="w-full max-w-md shadow-none border border-border">
           <CardHeader className="text-center">
             <div className="w-16 h-16 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-none shadow-red-500/30">
@@ -598,7 +598,7 @@ export default function NouveauCapApp() {
               {authMode === 'signIn' ? t('auth.signIn', language) : t('auth.signUp', language)}
             </Button>
             
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-muted-foreground">
               {authMode === 'signIn' ? (
                 <>
                   {t('auth.noAccount', language)}{' '}
@@ -639,10 +639,10 @@ export default function NouveauCapApp() {
     const progressPercent = ((onboardingStep + 1) / totalSteps) * 100
 
     return (
-      <div className="min-h-screen bg-muted via-white p-4">
+      <div className="min-h-screen bg-muted p-4">
         <div className="max-w-2xl mx-auto pt-8">
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-500 mb-2">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
               <span>{t('onboarding.step', language)} {onboardingStep + 1} {t('onboarding.of', language)} {totalSteps}</span>
               <span>{Math.round(progressPercent)}%</span>
             </div>
@@ -756,7 +756,7 @@ export default function NouveauCapApp() {
                   
                   {/* Other Countries */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-sm font-medium text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? 'Autres pays:' : 'Other countries:'}
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[200px] overflow-y-auto">
@@ -838,7 +838,7 @@ export default function NouveauCapApp() {
                         onChange={(e) => setOnboardingData({ studyPermitExpiry: e.target.value })}
                         className="text-lg py-4"
                       />
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {language === 'fr' 
                           ? '📅 Renouvellement recommandé 90 jours avant l\'expiration'
                           : '📅 Renewal recommended 90 days before expiry'}
@@ -859,7 +859,7 @@ export default function NouveauCapApp() {
                         onChange={(e) => setOnboardingData({ workPermitExpiry: e.target.value })}
                         className="text-lg py-4"
                       />
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {language === 'fr' 
                           ? '📅 Renouvellement recommandé 90 jours avant l\'expiration'
                           : '📅 Renewal recommended 90 days before expiry'}
@@ -879,7 +879,7 @@ export default function NouveauCapApp() {
                       onChange={(e) => setOnboardingData({ passportExpiry: e.target.value })}
                       className="text-lg py-4"
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {language === 'fr' 
                         ? '🛂 Un passeport valide est requis pour toute demande de permis'
                         : '🛂 A valid passport is required for all permit applications'}
@@ -1005,9 +1005,9 @@ export default function NouveauCapApp() {
   // ==================== RENDER DASHBOARD ====================
   if (currentView === 'dashboard') {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-muted bg-foreground">
         {/* Mobile Header */}
-        <header className="lg:hidden fixed top-0 w-full bg-white/95 backdrop-blur-xl z-50 border-b border-gray-200 shadow-sm">
+        <header className="lg:hidden fixed top-0 w-full bg-card/95 backdrop-blur-xl z-50 border-b border-border shadow-sm">
           <div className="px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none shadow-red-500/30">
@@ -1018,10 +1018,10 @@ export default function NouveauCapApp() {
             
             <div className="flex items-center gap-1">
               <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}>
-                <Globe className="w-5 h-5 text-gray-600" />
+                <Globe className="w-5 h-5 text-muted-foreground" />
               </Button>
               <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                {mobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-muted-foreground" /> : <Menu className="w-5 h-5 text-muted-foreground" />}
               </Button>
             </div>
           </div>
@@ -1030,36 +1030,36 @@ export default function NouveauCapApp() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" onClick={() => setMobileMenuOpen(false)}>
-            <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-none animate-slide-in" onClick={e => e.stopPropagation()}>
-              <div className="p-4 border-b border-gray-100">
+            <div className="absolute right-0 top-0 h-full w-72 bg-card shadow-none animate-slide-in" onClick={e => e.stopPropagation()}>
+              <div className="p-4 border-b border-border">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-none">
                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{user?.name || user?.email}</p>
-                    <p className="text-sm text-gray-500">{user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}</p>
+                    <p className="font-semibold text-foreground">{user?.name || user?.email}</p>
+                    <p className="text-sm text-muted-foreground">{user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}</p>
                   </div>
                 </div>
               </div>
               <div className="p-2 space-y-1">
-                <button onClick={() => { setActiveModule(null); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
-                  <Home className="w-5 h-5 text-gray-600" />
-                  <span className="font-medium text-gray-700">{t('dashboard.title', language)}</span>
+                <button onClick={() => { setActiveModule(null); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-muted transition-colors">
+                  <Home className="w-5 h-5 text-muted-foreground" />
+                  <span className="font-medium text-muted-foreground">{t('dashboard.title', language)}</span>
                 </button>
                 {modules.map(m => {
                   const Icon = m.icon
                   return (
-                    <button key={m.id} onClick={() => { setActiveModule(m.id); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <button key={m.id} onClick={() => { setActiveModule(m.id); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-muted transition-colors">
                       <Icon className={`w-5 h-5 ${m.color}`} />
-                      <span className="font-medium text-gray-700">{t(`modules.${m.id}.title`, language)}</span>
+                      <span className="font-medium text-muted-foreground">{t(`modules.${m.id}.title`, language)}</span>
                     </button>
                   )
                 })}
                 <Separator className="my-2" />
-                <button onClick={() => { setActiveModule('profile'); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition-colors">
-                  <User className="w-5 h-5 text-gray-600" />
-                  <span className="font-medium text-gray-700">{language === 'fr' ? 'Mon Profil' : 'My Profile'}</span>
+                <button onClick={() => { setActiveModule('profile'); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-muted transition-colors">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <span className="font-medium text-muted-foreground">{language === 'fr' ? 'Mon Profil' : 'My Profile'}</span>
                 </button>
                 <Separator className="my-2" />
                 <button onClick={() => { logout(); setCurrentView('landing') }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-destructive/10 transition-colors text-destructive">
@@ -1073,31 +1073,31 @@ export default function NouveauCapApp() {
 
         <div className="flex">
           {/* Desktop Sidebar - Nouveau Design */}
-          <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-200 min-h-screen fixed">
+          <aside className="hidden lg:flex flex-col w-72 bg-card border-r border-border min-h-screen fixed">
             {/* Logo Header */}
-            <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
+            <div className="flex items-center gap-3 px-5 py-5 border-b border-border">
               <div className="h-11 w-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-none shadow-red-500/30 shrink-0">
                 <MapPin className="w-6 h-6" />
               </div>
               <div className="overflow-hidden">
                 <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
-                <p className="text-xs text-gray-500 truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
+                <p className="text-xs text-muted-foreground truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
               </div>
             </div>
             
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto p-3 space-y-1">
               {/* Main Section */}
-              <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{language === 'fr' ? 'Principal' : 'Main'}</p>
+              <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{language === 'fr' ? 'Principal' : 'Main'}</p>
               
               <button
                 onClick={() => setActiveModule(null)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === null ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === null ? 'bg-muted shadow-sm border border-border' : ''}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-primary text-primary-foreground shadow-none' : 'bg-gray-100 text-gray-600'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
                   <Home className="w-5 h-5" />
                 </div>
-                <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-gray-900' : 'text-gray-600'}`}>
+                <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {t('dashboard.title', language)}
                 </span>
               </button>
@@ -1117,12 +1117,12 @@ export default function NouveauCapApp() {
                   <button
                     key={m.id}
                     onClick={() => setActiveModule(m.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === m.id ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === m.id ? 'bg-muted shadow-sm border border-border' : ''}`}
                   >
-                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-muted ${gradients[m.id] || ' '}  shadow-none` : 'bg-gray-100 text-gray-600'}`}>
+                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-muted ${gradients[m.id] || ' '}  shadow-none` : 'bg-muted text-muted-foreground'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-gray-900' : 'text-gray-600'}`}>
+                    <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {t(`modules.${m.id}.title`, language)}
                     </span>
                   </button>
@@ -1130,16 +1130,16 @@ export default function NouveauCapApp() {
               })}
 
               {/* Tools Section */}
-              <p className="px-3 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{language === 'fr' ? 'Outils' : 'Tools'}</p>
+              <p className="px-3 py-2 mt-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{language === 'fr' ? 'Outils' : 'Tools'}</p>
               
               <button
                 onClick={() => setActiveModule('admin')}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === 'admin' ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === 'admin' ? 'bg-muted shadow-sm border border-border' : ''}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-primary text-primary-foreground shadow-none' : 'bg-gray-100 text-gray-600'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
                   <Settings className="w-5 h-5" />
                 </div>
-                <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-gray-900' : 'text-gray-600'}`}>
+                <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {t('modules.admin.title', language)}
                 </span>
               </button>
@@ -1162,18 +1162,18 @@ export default function NouveauCapApp() {
             )}
             
             {/* User Profile Footer */}
-            <div className="p-3 border-t border-gray-100">
+            <div className="p-3 border-t border-border">
               <div
                 onClick={() => setActiveModule('profile')}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-gray-50 cursor-pointer ${activeModule === 'profile' ? 'bg-gray-50' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors bg-muted cursor-pointer ${activeModule === 'profile' ? 'bg-muted' : ''}`}
               >
                 <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold shadow-none">
                   {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{user?.name || user?.email}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{user?.name || user?.email}</p>
                   <div className="flex items-center gap-1">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}
                     </span>
                     {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-muted-foreground" />}
@@ -1184,7 +1184,7 @@ export default function NouveauCapApp() {
                   onClick={(e) => { e.stopPropagation(); logout(); setCurrentView('landing') }}
                   title={t('auth.signOut', language)}
                 >
-                  <LogOut className="w-4 h-4 text-gray-400" />
+                  <LogOut className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -1375,8 +1375,8 @@ export default function NouveauCapApp() {
 
               {/* Description */}
               {(selectedTask?.description || selectedTask?.descriptionEn) ? (
-                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-sans">
+                <div className="p-4 bg-muted bg-foreground rounded-lg">
+                  <pre className="whitespace-pre-wrap text-sm text-muted-foreground text-muted-foreground font-sans">
                     {language === 'fr' 
                       ? selectedTask?.description 
                       : (selectedTask?.descriptionEn || selectedTask?.description)}
@@ -1421,7 +1421,7 @@ export default function NouveauCapApp() {
 
               {/* Due Date */}
               {selectedTask?.dueDate && (
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   <span>
                     {language === 'fr' ? 'Échéance: ' : 'Due: '}

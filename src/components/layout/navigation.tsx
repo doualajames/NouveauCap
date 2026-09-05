@@ -153,13 +153,13 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300',
+        'fixed left-0 top-0 z-40 h-screen bg-card border-r border-border transition-all duration-300',
         'flex flex-col',
         collapsed ? 'w-[72px]' : 'w-[280px]'
       )}
     >
       {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-gray-100">
+      <div className="flex items-center h-16 px-4 border-b border-border">
         <Link href="/dashboard" className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none">
             <MapPin className="w-5 h-5" />
@@ -167,7 +167,7 @@ export function Sidebar({
           {!collapsed && (
             <div className="flex flex-col">
               <span className="font-bold text-lg gradient-text">NouveauCap</span>
-              <span className="text-[10px] text-gray-400 -mt-1">
+              <span className="text-[10px] text-muted-foreground -mt-1">
                 {t('Votre guide au Canada', 'Your guide to Canada')}
               </span>
             </div>
@@ -175,7 +175,7 @@ export function Sidebar({
         </Link>
         <button
           onClick={onToggle}
-          className="ml-auto p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          className="ml-auto p-1.5 rounded-lg bg-muted text-muted-foreground text-muted-foreground transition-colors"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -198,14 +198,14 @@ export function Sidebar({
                     'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200',
                     itemIsActive
                       ? 'bg-primary-50 text-primary-600 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                      : 'text-muted-foreground bg-muted hover:text-foreground',
                     collapsed && 'justify-center px-2'
                   )}
                   title={collapsed ? t(item.label, item.labelEn) : undefined}
                 >
                   <div className={cn(
                     'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                    itemIsActive ? 'bg-primary-500 ' : 'bg-gray-100 text-gray-500'
+                    itemIsActive ? 'bg-primary-500 ' : 'bg-muted text-muted-foreground'
                   )}>
                     <Icon className="w-4 h-4" />
                   </div>
@@ -220,7 +220,7 @@ export function Sidebar({
                       {hasChildren && (
                         <ChevronRight
                           className={cn(
-                            'w-4 h-4 text-gray-400 transition-transform',
+                            'w-4 h-4 text-muted-foreground transition-transform',
                             isExpanded && 'rotate-90'
                           )}
                         />
@@ -231,7 +231,7 @@ export function Sidebar({
 
                 {/* Submenu */}
                 {!collapsed && hasChildren && isExpanded && (
-                  <div className="mt-1 ml-4 pl-4 border-l-2 border-gray-100 space-y-1">
+                  <div className="mt-1 ml-4 pl-4 border-l-2 border-border space-y-1">
                     {item.children!.map((child) => {
                       const ChildIcon = child.icon
                       const childIsActive = isActive(child.href)
@@ -243,7 +243,7 @@ export function Sidebar({
                             'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200',
                             childIsActive
                               ? 'bg-primary-50 text-primary-600 font-medium'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              : 'text-muted-foreground bg-muted text-muted-foreground'
                           )}
                         >
                           <ChildIcon className="w-4 h-4" />
@@ -260,9 +260,9 @@ export function Sidebar({
       </ScrollArea>
 
       {/* User Profile */}
-      <div className="p-3 border-t border-gray-100">
+      <div className="p-3 border-t border-border">
         <div className={cn(
-          'flex items-center gap-3 p-2 rounded-xl bg-gray-50',
+          'flex items-center gap-3 p-2 rounded-xl bg-muted',
           collapsed && 'justify-center'
         )}>
           <Avatar className="w-9 h-9 border-2 border-white shadow-sm">
@@ -273,10 +273,10 @@ export function Sidebar({
           </Avatar>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-foreground truncate">
                 {user?.name || 'Utilisateur'}
               </p>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {user?.email}
               </p>
             </div>
@@ -297,7 +297,7 @@ export function Header({
   const t = (fr: string, en: string) => (language === 'fr' ? fr : en)
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-lg border-b border-gray-200">
+    <header className="sticky top-0 z-30 h-16 bg-card/80 backdrop-blur-lg border-b border-border">
       <div className="h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Left side - Mobile menu */}
         <div className="lg:hidden">
@@ -310,9 +310,9 @@ export function Header({
             <input
               type="text"
               placeholder={t('Rechercher...', 'Search...')}
-              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-card transition-all"
             />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -325,14 +325,14 @@ export function Header({
           {/* Language Toggle */}
           <button
             onClick={() => onLanguageChange?.(language === 'fr' ? 'en' : 'fr')}
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+            className="p-2 rounded-lg bg-muted text-muted-foreground text-muted-foreground transition-colors"
             title={t('Changer de langue', 'Change language')}
           >
             <Globe className="w-5 h-5" />
           </button>
 
           {/* Notifications */}
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+          <button className="relative p-2 rounded-lg bg-muted text-muted-foreground text-muted-foreground transition-colors">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive/10 rounded-full" />
           </button>
@@ -348,21 +348,21 @@ export function Header({
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+              <button className="flex items-center gap-2 p-1.5 rounded-xl bg-muted transition-colors">
                 <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                   <AvatarImage src={user?.avatar} />
                   <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                     {user?.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <ChevronRight className="w-4 h-4 text-gray-400 hidden sm:block" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col">
                   <span>{user?.name}</span>
-                  <span className="text-xs font-normal text-gray-500">{user?.email}</span>
+                  <span className="text-xs font-normal text-muted-foreground">{user?.email}</span>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -434,7 +434,7 @@ export function MobileNavigation({
 // ==================== MOBILE MENU BUTTON ====================
 function MobileMenuButton() {
   return (
-    <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+    <button className="p-2 rounded-lg bg-muted text-muted-foreground text-muted-foreground transition-colors">
       <Menu className="w-5 h-5" />
     </button>
   )
@@ -462,7 +462,7 @@ export function AppLayout({
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Sidebar - Desktop */}
       <div className="hidden lg:block">
         <Sidebar

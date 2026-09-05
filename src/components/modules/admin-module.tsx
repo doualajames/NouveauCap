@@ -47,29 +47,29 @@ export function AdminModule({ language }: { language: Language }) {
 
   const statusColors: Record<string, string> = {
     OPEN: 'bg-destructive/10 text-destructive', IN_PROGRESS: 'bg-muted text-muted-foreground',
-    RESOLVED: 'bg-muted text-foreground', CLOSED: 'bg-gray-100 text-gray-700'
+    RESOLVED: 'bg-muted text-foreground', CLOSED: 'bg-muted text-muted-foreground'
   }
   const openTicketsCount = tickets.filter(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-muted to-white flex items-center justify-center">
-        <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-500" /><p className="text-gray-500">{language === 'fr' ? 'Chargement...' : 'Loading...'}</p></div>
+      <div className="min-h-screen bg-muted flex items-center justify-center">
+        <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-muted-foreground" /><p className="text-muted-foreground">{language === 'fr' ? 'Chargement...' : 'Loading...'}</p></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none"><Settings className="w-7 h-7" /></div>
-          <div><h1 className="text-2xl font-bold">{language === 'fr' ? '🛠️ Administration' : '🛠️ Administration'}</h1><p className="text-gray-500">{language === 'fr' ? 'Tableau de bord' : 'Dashboard'}</p></div>
+          <div><h1 className="text-2xl font-bold">{language === 'fr' ? '🛠️ Administration' : '🛠️ Administration'}</h1><p className="text-muted-foreground">{language === 'fr' ? 'Tableau de bord' : 'Dashboard'}</p></div>
         </div>
 
-        <div className="flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+        <div className="flex bg-card bg-foreground rounded-xl p-1 shadow-sm border">
           {(['stats', 'subscriptions', 'support'] as const).map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === tab ? 'bg-gray-800 ' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === tab ? 'bg-foreground ' : 'text-muted-foreground bg-muted'}`}>
               {tab === 'stats' && <TrendingUp className="w-4 h-4 inline mr-2" />}
               {tab === 'subscriptions' && <Crown className="w-4 h-4 inline mr-2" />}
               {tab === 'support' && <><MessageSquare className="w-4 h-4 inline mr-2" />{openTicketsCount > 0 && <span className="bg-destructive/10 text-xs px-1.5 rounded-full">{openTicketsCount}</span>}</>}
@@ -93,8 +93,8 @@ export function AdminModule({ language }: { language: Language }) {
                   <div className="space-y-2">
                     {stats.signupsPerDay.map((d, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <span className="w-10 text-sm text-gray-500">{d.day}</span>
-                        <div className="flex-1 bg-gray-100 rounded-full h-2"><div className="bg-muted h-2 rounded-full" style={{ width: `${Math.max(5, (d.count / Math.max(...stats.signupsPerDay.map(x => x.count), 1)) * 100)}%` }}></div></div>
+                        <span className="w-10 text-sm text-muted-foreground">{d.day}</span>
+                        <div className="flex-1 bg-muted rounded-full h-2"><div className="bg-muted h-2 rounded-full" style={{ width: `${Math.max(5, (d.count / Math.max(...stats.signupsPerDay.map(x => x.count), 1)) * 100)}%` }}></div></div>
                         <span className="text-sm w-6">{d.count}</span>
                       </div>
                     ))}
@@ -105,17 +105,17 @@ export function AdminModule({ language }: { language: Language }) {
                 <CardHeader><CardTitle className="flex items-center gap-2"><PieChart className="w-5 h-5 text-foreground" />{language === 'fr' ? 'Répartition' : 'Distribution'}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div className="flex justify-between p-2 bg-gray-50 rounded"><span>{language === 'fr' ? 'Gratuit' : 'Free'}</span><span className="font-bold">{stats.freeUsers} ({stats.totalUsers > 0 ? Math.round(stats.freeUsers / stats.totalUsers * 100) : 0}%)</span></div>
+                    <div className="flex justify-between p-2 bg-muted rounded"><span>{language === 'fr' ? 'Gratuit' : 'Free'}</span><span className="font-bold">{stats.freeUsers} ({stats.totalUsers > 0 ? Math.round(stats.freeUsers / stats.totalUsers * 100) : 0}%)</span></div>
                     <div className="flex justify-between p-2 bg-muted rounded"><span>Premium</span><span className="font-bold">{stats.premiumSubscribers} ({stats.totalUsers > 0 ? Math.round(stats.premiumSubscribers / stats.totalUsers * 100) : 0}%)</span></div>
                   </div>
                 </CardContent>
               </Card>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">+{stats.newUsersToday}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Nouveaux aujourd\'hui' : 'New today'}</p></div>
-              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">{stats.taskStats.completed}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Tâches complétées' : 'Tasks done'}</p></div>
-              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-muted-foreground">{openTicketsCount}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Tickets ouverts' : 'Open tickets'}</p></div>
-              <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">{stats.totalUsers > 0 ? ((stats.premiumSubscribers / stats.totalUsers) * 100).toFixed(1) : 0}%</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Conversion' : 'Conversion'}</p></div>
+              <div className="p-4 bg-card bg-foreground rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">+{stats.newUsersToday}</p><p className="text-sm text-muted-foreground">{language === 'fr' ? 'Nouveaux aujourd\'hui' : 'New today'}</p></div>
+              <div className="p-4 bg-card bg-foreground rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">{stats.taskStats.completed}</p><p className="text-sm text-muted-foreground">{language === 'fr' ? 'Tâches complétées' : 'Tasks done'}</p></div>
+              <div className="p-4 bg-card bg-foreground rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-muted-foreground">{openTicketsCount}</p><p className="text-sm text-muted-foreground">{language === 'fr' ? 'Tickets ouverts' : 'Open tickets'}</p></div>
+              <div className="p-4 bg-card bg-foreground rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">{stats.totalUsers > 0 ? ((stats.premiumSubscribers / stats.totalUsers) * 100).toFixed(1) : 0}%</p><p className="text-sm text-muted-foreground">{language === 'fr' ? 'Conversion' : 'Conversion'}</p></div>
             </div>
 
             {/* Funnel d'acquisition (30 j, sessions distinctes) */}
@@ -182,7 +182,7 @@ export function AdminModule({ language }: { language: Language }) {
             ].map(plan => (
               <Card key={plan.id} className={`border border-border shadow-none ${plan.popular ? 'ring-2 ring-foreground' : ''}`}>
                 {plan.popular && <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-muted">{language === 'fr' ? 'Populaire' : 'Popular'}</Badge>}
-                <CardHeader className="text-center"><CardTitle>{plan.name}</CardTitle><p className="text-3xl font-bold">${plan.price}<span className="text-sm text-gray-500">/{language === 'fr' ? 'mois' : 'mo'}</span></p></CardHeader>
+                <CardHeader className="text-center"><CardTitle>{plan.name}</CardTitle><p className="text-3xl font-bold">${plan.price}<span className="text-sm text-muted-foreground">/{language === 'fr' ? 'mois' : 'mo'}</span></p></CardHeader>
                 <CardContent><ul className="space-y-1">{plan.features.map((f, i) => <li key={i} className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-foreground" />{f}</li>)}</ul></CardContent>
               </Card>
             ))}
@@ -192,8 +192,8 @@ export function AdminModule({ language }: { language: Language }) {
         {activeTab === 'support' && (
           <Card className="border border-border shadow-none">
             <CardContent className="p-8 text-center">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{language === 'fr' ? 'Aucun ticket de support' : 'No support tickets'}</p>
+              <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">{language === 'fr' ? 'Aucun ticket de support' : 'No support tickets'}</p>
             </CardContent>
           </Card>
         )}

@@ -115,7 +115,7 @@ export function HealthModule({ language, user, onNavigate }: {
   }, [user?.province])
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -123,10 +123,10 @@ export function HealthModule({ language, user, onNavigate }: {
             <Heart className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
               {t('modules.health.title', language)}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400">{t('modules.health.description', language)}</p>
+            <p className="text-muted-foreground text-muted-foreground">{t('modules.health.description', language)}</p>
           </div>
         </div>
 
@@ -160,7 +160,7 @@ export function HealthModule({ language, user, onNavigate }: {
                     <p className="/90 text-sm">{language === 'fr' ? eligibility.planName : eligibility.planNameEn}</p>
                   </div>
                 </div>
-                <Badge className="bg-white/20 text-sm px-3 py-1">
+                <Badge className="bg-card/20 text-sm px-3 py-1">
                   {language === 'fr' ? eligibility.waitPeriod : eligibility.waitPeriodEn}
                 </Badge>
               </div>
@@ -209,7 +209,7 @@ export function HealthModule({ language, user, onNavigate }: {
                 </h4>
                 <div className="space-y-2">
                   {(language === 'fr' ? eligibility.conditions : eligibility.conditionsEn).map((condition, i) => (
-                    <div key={i} className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div key={i} className="flex items-start gap-2 p-3 bg-muted bg-foreground rounded-lg">
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
  condition.startsWith('✅') ? 'bg-muted text-foreground' : 
  condition.startsWith('❌') ? 'bg-destructive/10 text-destructive' : 
@@ -239,9 +239,9 @@ export function HealthModule({ language, user, onNavigate }: {
                 
                 <div className="space-y-2">
                   {eligibility.documents.slice(0, showAllDocuments ? undefined : 4).map((doc, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <div key={i} className="flex items-start gap-3 p-3 border rounded-lg bg-muted dark:hover:bg-foreground transition-colors">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
- doc.required ? 'bg-destructive/10 text-destructive' : 'bg-gray-100 text-gray-500'
+ doc.required ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground'
  }`}>
                         {doc.required ? '!' : '?'}
                       </div>
@@ -253,7 +253,7 @@ export function HealthModule({ language, user, onNavigate }: {
                           )}
                         </div>
                         {(doc.notes || doc.notesEn) && (
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             💡 {language === 'fr' ? doc.notes : doc.notesEn}
                           </p>
                         )}
@@ -311,7 +311,7 @@ export function HealthModule({ language, user, onNavigate }: {
         )}
 
         {/* Private Insurance */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -334,7 +334,7 @@ export function HealthModule({ language, user, onNavigate }: {
                   <div className={`h-2 bg-muted ${ins.color}`} />
                   <CardContent className="p-5">
                     <h4 className="font-bold text-lg">{ins.name}</h4>
-                    <p className="text-sm text-gray-500 mt-2">{ins.coverage}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{ins.coverage}</p>
                     <p className="text-foreground font-bold mt-3">{ins.price}</p>
                   </CardContent>
                 </Card>
@@ -344,7 +344,7 @@ export function HealthModule({ language, user, onNavigate }: {
         </Card>
 
         {/* Clinic Directory */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -366,7 +366,7 @@ export function HealthModule({ language, user, onNavigate }: {
                   {language === 'fr' ? 'Code postal' : 'Postal Code'}
                 </Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder={language === 'fr' ? 'Ex: H2X 1Y4' : 'E.g.: H2X 1Y4'}
@@ -376,7 +376,7 @@ export function HealthModule({ language, user, onNavigate }: {
                     maxLength={7}
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   {language === 'fr' 
                     ? '💡 Entrez les 3 premiers caractères pour une recherche par région'
                     : '💡 Enter the first 3 characters for a regional search'}
@@ -446,9 +446,9 @@ export function HealthModule({ language, user, onNavigate }: {
                 
                 if (clinics.length === 0) {
                   return (
-                    <div className="text-center py-8 text-gray-500">
-                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <MapPin className="w-8 h-8 text-gray-300" />
+                    <div className="text-center py-8 text-muted-foreground">
+                      <div className="w-16 h-16 bg-muted bg-foreground rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <MapPin className="w-8 h-8 text-muted-foreground" />
                       </div>
                       <p className="font-medium">
                         {language === 'fr' ? 'Aucune clinique trouvée' : 'No clinics found'}
@@ -491,7 +491,7 @@ export function HealthModule({ language, user, onNavigate }: {
                     case 'HOSPITAL': return 'bg-destructive/10 text-destructive bg-destructive/10 text-destructive'
                     case 'PRIVATE': return 'bg-muted text-foreground bg-muted text-foreground'
                     case 'COMMUNITY': return 'bg-muted text-muted-foreground bg-muted text-muted-foreground'
-                    default: return 'bg-gray-100 text-gray-800'
+                    default: return 'bg-muted text-foreground'
                   }
                 }
 
@@ -505,7 +505,7 @@ export function HealthModule({ language, user, onNavigate }: {
                 return clinics.map((clinic, i) => (
                   <div 
                     key={i} 
-                    className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
+                    className="flex items-start justify-between p-4 bg-muted bg-foreground rounded-xl bg-muted dark:hover:bg-foreground transition-colors cursor-pointer group"
                   >
                     <div className="flex items-start gap-3">
                       <span className="text-2xl">{getTypeEmoji(clinic.type)}</span>
@@ -518,25 +518,25 @@ export function HealthModule({ language, user, onNavigate }: {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {language === 'fr' ? clinic.address : (clinic.addressEn || clinic.address)}
                         </p>
                         <div className="flex flex-wrap items-center gap-3 mt-1">
                           <div className="flex items-center gap-1">
-                            <Phone className="w-3 h-3 text-gray-400" />
-                            <span className="text-xs text-gray-500">{clinic.phone}</span>
+                            <Phone className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">{clinic.phone}</span>
                           </div>
                           {clinic.hours && (
                             <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-gray-400" />
-                              <span className="text-xs text-gray-500">
+                              <Clock className="w-3 h-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">
                                 {language === 'fr' ? clinic.hours : (clinic.hoursEn || clinic.hours)}
                               </span>
                             </div>
                           )}
                           <div className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-gray-400" />
-                            <span className="text-xs text-gray-500">
+                            <MapPin className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
                               {language === 'fr' ? clinic.city : (clinic.cityEn || clinic.city)}
                             </span>
                           </div>
@@ -556,7 +556,7 @@ export function HealthModule({ language, user, onNavigate }: {
                       <Badge className={getTypeColor(clinic.type)}>
                         {getTypeLabel(clinic.type)}
                       </Badge>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {formatDistance(clinic.distance)}
                       </span>
                     </div>

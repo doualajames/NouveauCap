@@ -31,7 +31,7 @@ export function ProvinceModule({ language, user }: {
   const statusLabel = t(`status.${userStatus}`, language)
   
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -40,10 +40,10 @@ export function ProvinceModule({ language, user }: {
               <MapPin className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {t('modules.province.title', language)} - {language === 'fr' ? provinceName : provinceNameEn}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted-foreground text-muted-foreground">
                 {language === 'fr' 
                   ? `Programmes d'accueil et d'intégration pour ${statusLabel.toLowerCase()}`
                   : `Welcome and integration programs for ${statusLabel.toLowerCase()}`}
@@ -53,12 +53,12 @@ export function ProvinceModule({ language, user }: {
           
           {/* Quick Info */}
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Province' : 'Province'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Province' : 'Province'}</p>
               <Badge variant="default" className="mt-0.5 bg-primary text-primary-foreground">{provinceNameEn}</Badge>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Statut' : 'Status'}</p>
               <Badge variant="outline" className="mt-0.5">{statusLabel}</Badge>
             </div>
           </div>
@@ -71,10 +71,10 @@ export function ProvinceModule({ language, user }: {
               <BookOpen className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-gray-900 dark:">
+              <h3 className="font-semibold text-lg text-foreground dark:">
                 {language === 'fr' ? '📋 Vos droits et services provinciaux' : '📋 Your Provincial Rights and Services'}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-muted-foreground text-muted-foreground mt-1">
                 {language === 'fr' 
                   ? `En tant que ${statusLabel.toLowerCase()} en ${provinceName}, vous avez accès à divers programmes et services d'intégration financés par le gouvernement provincial. Ces services sont généralement gratuits et conçus pour faciliter votre établissement.`
                   : `As a ${statusLabel.toLowerCase()} in ${provinceNameEn}, you have access to various government-funded integration programs and services. These services are generally free and designed to facilitate your settlement.`}
@@ -91,7 +91,7 @@ export function ProvinceModule({ language, user }: {
             if (!data) return null
             
             return (
-              <Card key={section.key} className="border border-border shadow-none bg-white/80 backdrop-blur-sm overflow-hidden hover:shadow-none transition-all duration-300">
+              <Card key={section.key} className="border border-border shadow-none bg-card/80 backdrop-blur-sm overflow-hidden hover:shadow-none transition-all duration-300">
                 <div className={`h-2 bg-muted ${section.color}`} />
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -107,12 +107,12 @@ export function ProvinceModule({ language, user }: {
                 <CardContent className="space-y-4">
                   {/* Services List */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <h4 className="text-sm font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? 'Services offerts:' : 'Services offered:'}
                     </h4>
                     <ul className="space-y-2">
                       {(language === 'fr' ? data.services : data.servicesEn).map((service: string, i: number) => (
-                        <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground text-muted-foreground">
                           <CheckCircle2 className="w-4 h-4 text-foreground flex-shrink-0" />
                           {service}
                         </li>
@@ -184,10 +184,10 @@ export function ProvinceModule({ language, user }: {
                 <AlertCircle className="w-5 h-5" />
               </div>
               <div className="space-y-3">
-                <h4 className="font-semibold text-gray-900 dark:">
+                <h4 className="font-semibold text-foreground dark:">
                   {language === 'fr' ? '📌 Points importants à retenir' : '📌 Important points to remember'}
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <ul className="space-y-2 text-sm text-muted-foreground text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-foreground mt-1">•</span>
                     {language === 'fr' 
@@ -232,7 +232,7 @@ export function ProvinceModule({ language, user }: {
                 href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/nouveaux-arrivants.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
+                className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
                 <p className="font-medium text-sm">{language === 'fr' ? '🇨🇦 Canada.ca Nouveaux arrivants' : '🇨🇦 Canada.ca Newcomers'}</p>
               </a>
@@ -240,7 +240,7 @@ export function ProvinceModule({ language, user }: {
                 href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/nouveaux-arrivants/services-etablissement.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
+                className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
                 <p className="font-medium text-sm">{language === 'fr' ? '🏛️ Services d\'établissement' : '🏛️ Settlement Services'}</p>
               </a>
@@ -248,7 +248,7 @@ export function ProvinceModule({ language, user }: {
                 href="https://ircc.canada.ca/francais/travailler/index.asp"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
+                className="p-3 bg-muted bg-foreground rounded-lg bg-muted dark:bg-muted transition-colors border border-border"
               >
                 <p className="font-medium text-sm">{language === 'fr' ? '💼 Travailler au Canada' : '💼 Work in Canada'}</p>
               </a>

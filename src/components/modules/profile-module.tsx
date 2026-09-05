@@ -125,7 +125,7 @@ export function ProfileModule({ language, user, onUpdate }: {
   ]
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -134,10 +134,10 @@ export function ProfileModule({ language, user, onUpdate }: {
               <User className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {language === 'fr' ? 'Mon Profil' : 'My Profile'}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted-foreground text-muted-foreground">
                 {language === 'fr' ? 'Gérez vos informations personnelles' : 'Manage your personal information'}
               </p>
             </div>
@@ -190,7 +190,7 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-2 border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="lg:col-span-2 border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -207,7 +207,7 @@ export function ProfileModule({ language, user, onUpdate }: {
                   </div>
                   <div className="space-y-2">
                     <Label>{language === 'fr' ? 'Courriel' : 'Email'}</Label>
-                    <Input value={email} disabled className="bg-gray-50 dark:bg-gray-800" />
+                    <Input value={email} disabled className="bg-muted bg-foreground" />
                   </div>
                 </div>
                 
@@ -223,7 +223,7 @@ export function ProfileModule({ language, user, onUpdate }: {
                       value={dateOfBirth} 
                       onChange={(e) => setDateOfBirth(e.target.value)} 
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {language === 'fr' 
                         ? '📅 Utilisée pour calculer votre âge dans le score CRS Entrée Express'
                         : '📅 Used to calculate your age for Express Entry CRS score'}
@@ -263,7 +263,7 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Immigration Section */}
         {activeSection === 'immigration' && (
           <div className="space-y-6">
-            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -307,7 +307,7 @@ export function ProfileModule({ language, user, onUpdate }: {
                       maxLength={7}
                       className="uppercase"
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {language === 'fr' 
                         ? '💡 Utilisé pour trouver les cliniques proches de chez vous'
                         : '💡 Used to find clinics near you'}
@@ -357,7 +357,7 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Professional Section */}
         {activeSection === 'professional' && (
           <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <GraduationCap className="w-5 h-5 text-foreground" />
@@ -393,7 +393,7 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Globe className="w-5 h-5 text-foreground" />
@@ -423,7 +423,7 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Preferences Section */}
         {activeSection === 'preferences' && (
           <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Globe className="w-5 h-5 text-foreground" />
@@ -438,7 +438,7 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Bell className="w-5 h-5 text-muted-foreground" />
@@ -446,17 +446,17 @@ export function ProfileModule({ language, user, onUpdate }: {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted bg-foreground rounded-lg">
                   <div>
                     <p className="font-medium">{language === 'fr' ? 'Notifications push' : 'Push notifications'}</p>
-                    <p className="text-sm text-gray-500">{language === 'fr' ? 'Rappels de tâches' : 'Task reminders'}</p>
+                    <p className="text-sm text-muted-foreground">{language === 'fr' ? 'Rappels de tâches' : 'Task reminders'}</p>
                   </div>
                   <Checkbox checked={notificationsEnabled} onCheckedChange={(v) => setNotificationsEnabled(!!v)} />
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted bg-foreground rounded-lg">
                   <div>
                     <p className="font-medium">{language === 'fr' ? 'Rappels courriel' : 'Email reminders'}</p>
-                    <p className="text-sm text-gray-500">{language === 'fr' ? 'Expiration documents' : 'Document expiry'}</p>
+                    <p className="text-sm text-muted-foreground">{language === 'fr' ? 'Expiration documents' : 'Document expiry'}</p>
                   </div>
                   <Checkbox checked={emailReminders} onCheckedChange={(v) => setEmailReminders(!!v)} />
                 </div>
@@ -466,7 +466,7 @@ export function ProfileModule({ language, user, onUpdate }: {
             <Card className="lg:col-span-2 border border-border shadow-none bg-muted">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-gray-600" />
+                  <Crown className="w-5 h-5 text-muted-foreground" />
                   {language === 'fr' ? 'Abonnement' : 'Subscription'}
                 </CardTitle>
               </CardHeader>

@@ -26,7 +26,7 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-xl',
+        'relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-xl',
         'border border-white/20 shadow-none shadow-gray-200/50',
         'p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-none',
         className
@@ -42,13 +42,13 @@ export function StatsCard({
 
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{value}</p>
           {trend !== undefined && (
             <p
               className={cn(
                 'mt-2 flex items-center text-sm',
-                trend > 0 ? 'text-foreground' : trend < 0 ? 'text-destructive' : 'text-gray-500'
+                trend > 0 ? 'text-foreground' : trend < 0 ? 'text-destructive' : 'text-muted-foreground'
               )}
             >
               {trend > 0 ? (
@@ -97,10 +97,10 @@ export function FeatureCard({
     <div
       onClick={onClick}
       className={cn(
-        'group relative overflow-hidden rounded-2xl bg-white p-6',
-        'border border-gray-100 cursor-pointer',
+        'group relative overflow-hidden rounded-2xl bg-card p-6',
+        'border border-border cursor-pointer',
         'transition-all duration-300',
-        'hover:border-gray-200 hover:shadow-none hover:shadow-gray-200/50',
+        'hover:border-border hover:shadow-none hover:shadow-gray-200/50',
         'hover:-translate-y-1',
         className
       )}
@@ -132,11 +132,11 @@ export function FeatureCard({
         <Icon className="h-6 w-6" />
       </div>
 
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="mt-2 text-sm text-gray-500 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{description}</p>
 
       {/* Arrow */}
-      <div className="mt-4 flex items-center text-sm font-medium text-gray-400 transition-all duration-300 group-text-destructive">
+      <div className="mt-4 flex items-center text-sm font-medium text-muted-foreground transition-all duration-300 group-text-destructive">
         Explorer
         <svg
           className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
@@ -176,7 +176,7 @@ export function ProgressRing({
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background circle */}
         <circle
-          className="text-gray-100"
+          className="text-muted-foreground"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
@@ -199,8 +199,8 @@ export function ProgressRing({
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-2xl font-bold text-gray-900">{progress}%</span>
-        {label && <span className="text-xs text-gray-500">{label}</span>}
+        <span className="text-2xl font-bold text-foreground">{progress}%</span>
+        {label && <span className="text-xs text-muted-foreground">{label}</span>}
       </div>
     </div>
   )
@@ -227,15 +227,15 @@ export function TaskItem({
   const priorityColors = {
     HIGH: 'bg-destructive/10 text-destructive',
     MEDIUM: 'bg-muted text-muted-foreground',
-    LOW: 'bg-gray-100 text-gray-700',
+    LOW: 'bg-muted text-muted-foreground',
   }
 
   return (
     <div
       className={cn(
-        'group relative flex items-center gap-4 rounded-xl bg-white p-4',
-        'border border-gray-100 shadow-sm',
-        'hover:shadow-none hover:border-gray-200',
+        'group relative flex items-center gap-4 rounded-xl bg-card p-4',
+        'border border-border shadow-sm',
+        'hover:shadow-none hover:border-border',
         'transition-all duration-200',
         completed && 'opacity-60'
       )}
@@ -248,7 +248,7 @@ export function TaskItem({
           'border-2 transition-all',
           completed
             ? 'border-border bg-muted'
-            : 'border-gray-300 border-destructive/40 bg-destructive/10'
+            : 'border-border border-destructive/40 bg-destructive/10'
         )}
       >
         {completed && (
@@ -262,13 +262,13 @@ export function TaskItem({
       <div className="flex-1 min-w-0">
         <p
           className={cn(
-            'font-medium text-gray-900 truncate',
-            completed && 'line-through text-gray-500'
+            'font-medium text-foreground truncate',
+            completed && 'line-through text-muted-foreground'
           )}
         >
           {title}
         </p>
-        {description && <p className="text-sm text-gray-500 truncate">{description}</p>}
+        {description && <p className="text-sm text-muted-foreground truncate">{description}</p>}
       </div>
 
       {/* Priority Badge */}
@@ -282,7 +282,7 @@ export function TaskItem({
 
       {/* Due Date */}
       {dueDate && (
-        <span className="flex items-center gap-1 text-sm text-gray-400">
+        <span className="flex items-center gap-1 text-sm text-muted-foreground">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"

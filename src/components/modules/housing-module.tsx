@@ -25,7 +25,7 @@ export function HousingModule({ language, user }: {
   const housingRatio = (totalHousingCost / monthlyIncome) * 100
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -34,28 +34,28 @@ export function HousingModule({ language, user }: {
               <Building className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {t('modules.housing.title', language)}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">{t('modules.housing.description', language)}</p>
+              <p className="text-muted-foreground text-muted-foreground">{t('modules.housing.description', language)}</p>
             </div>
           </div>
           
           {/* Quick Stats */}
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Coût total' : 'Total Cost'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Coût total' : 'Total Cost'}</p>
               <p className="font-bold text-foreground">${totalHousingCost}</p>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Revenu disponible' : 'Disposable'}</p>
               <p className="font-bold text-foreground">${disposableIncome}</p>
             </div>
           </div>
         </div>
 
         {/* Budget Calculator */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -103,9 +103,9 @@ export function HousingModule({ language, user }: {
                       <Home className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Coût total logement' : 'Total Housing Cost'}</p>
+                      <p className="text-sm text-muted-foreground">{language === 'fr' ? 'Coût total logement' : 'Total Housing Cost'}</p>
                       <p className="text-4xl font-bold text-foreground">${totalHousingCost}</p>
-                      <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois' : 'per month'}</p>
+                      <p className="text-sm text-muted-foreground">{language === 'fr' ? 'par mois' : 'per month'}</p>
                     </div>
                   </div>
                 </div>
@@ -124,7 +124,7 @@ export function HousingModule({ language, user }: {
                       <Percent className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Ratio logement/revenu' : 'Housing/Income Ratio'}</p>
+                      <p className="text-sm text-muted-foreground">{language === 'fr' ? 'Ratio logement/revenu' : 'Housing/Income Ratio'}</p>
                       <p className={`text-4xl font-bold ${housingRatio > 30 ? 'text-destructive' : housingRatio > 25 ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {housingRatio.toFixed(1)}%
                       </p>
@@ -145,9 +145,9 @@ export function HousingModule({ language, user }: {
                       <PiggyBank className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable Income'}</p>
+                      <p className="text-sm text-muted-foreground">{language === 'fr' ? 'Revenu disponible' : 'Disposable Income'}</p>
                       <p className="text-4xl font-bold text-foreground">${disposableIncome}</p>
-                      <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois après logement' : 'per month after housing'}</p>
+                      <p className="text-sm text-muted-foreground">{language === 'fr' ? 'par mois après logement' : 'per month after housing'}</p>
                     </div>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export function HousingModule({ language, user }: {
         </Card>
 
         {/* Tenant Rights by Province - Comprehensive */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -185,19 +185,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Landlord and Tenant Board (LTB)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium text-foreground">{language === 'fr' ? '❌ Illégal (interdit)' : '❌ Illegal (prohibited)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">60 {language === 'fr' ? 'jours' : 'days'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
                           <p className="font-medium text-foreground">2.5%</p>
                         </div>
                       </div>
@@ -228,19 +228,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Tribunal administratif du logement (TAL)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '1er mois max (intérêt payable)' : '1st month max (interest payable)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">3 {language === 'fr' ? 'mois (appartement)' : 'months (apartment)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Raisonnable (doit être justifiée)' : 'Reasonable (must be justified)'}</p>
                         </div>
                       </div>
@@ -271,19 +271,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Residential Tenancy Branch (RTB)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '½ mois de loyer max' : '½ month rent max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
                           <p className="font-medium text-foreground">3.5%</p>
                         </div>
                       </div>
@@ -314,19 +314,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">RTDRS (Residential Tenancy Dispute Resolution Service)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">1 {language === 'fr' ? 'mois (mois au mois)' : 'month (month-to-month)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 3 mois préavis' : 'No cap, 3 months notice'}</p>
                         </div>
                       </div>
@@ -357,19 +357,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Residential Tenancies Branch</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '½ mois max' : '½ month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-foreground">{language === 'fr' ? 'Limitée par guideline annuel' : 'Limited by annual guideline'}</p>
                         </div>
                       </div>
@@ -396,19 +396,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Office of Residential Tenancies (ORT)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 6 mois entre augmentations' : 'No cap, 6 months between increases'}</p>
                         </div>
                       </div>
@@ -435,19 +435,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Residential Tenancies Program</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '½ mois max' : '½ month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">3 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 4 mois préavis' : 'No cap, 4 months notice'}</p>
                         </div>
                       </div>
@@ -474,19 +474,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">{language === 'fr' ? 'Tribunal de la location résidentielle' : 'Residential Tenancies Tribunal'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '1 mois max' : '1 month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">1 {language === 'fr' ? 'mois' : 'month'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 6 mois préavis' : 'No cap, 6 months notice'}</p>
                         </div>
                       </div>
@@ -513,19 +513,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">IRAC (Island Regulatory and Appeals Commission)</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? 'Aucun maximum légal' : 'No legal maximum'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">2 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-foreground">{language === 'fr' ? 'Doit être approuvée par IRAC' : 'Must be approved by IRAC'}</p>
                         </div>
                       </div>
@@ -556,19 +556,19 @@ export function HousingModule({ language, user }: {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Tribunal' : 'Board'}</p>
                           <p className="font-medium">Residential Tenancies</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
                           <p className="font-medium">{language === 'fr' ? '¾ mois max' : '¾ month max'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
                           <p className="font-medium">2 {language === 'fr' ? 'mois (année), 1 mois (mois au mois)' : 'months (year), 1 month (month-to-month)'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
+                          <p className="text-muted-foreground">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
                           <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond' : 'No cap'}</p>
                         </div>
                       </div>
@@ -617,7 +617,7 @@ export function HousingModule({ language, user }: {
               <CardContent className={`p-5 ${item.bg} rounded-lg`}>
                 <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
                 <h3 className="font-semibold">{item.title}</h3>
-                <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+                <p className="text-sm text-muted-foreground mt-1">{item.desc}</p>
                 <Button size="sm" className="mt-3">
                   <Download className="w-4 h-4 mr-2" />
                   {language === 'fr' ? 'Télécharger' : 'Download'}

@@ -32,7 +32,7 @@ export function CommunityModule({ language, user }: {
   }
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -41,28 +41,28 @@ export function CommunityModule({ language, user }: {
               <Users className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {t('modules.community.title', language)}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">{t('modules.community.description', language)}</p>
+              <p className="text-muted-foreground text-muted-foreground">{t('modules.community.description', language)}</p>
             </div>
           </div>
           
           {/* Quick Stats */}
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Inscriptions' : 'Registered'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Inscriptions' : 'Registered'}</p>
               <p className="font-bold text-foreground">{registeredEvents.length}</p>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Événements' : 'Events'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Événements' : 'Events'}</p>
               <p className="font-bold text-foreground">{events.length}</p>
             </div>
           </div>
         </div>
 
         {/* Upcoming Events */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -74,9 +74,9 @@ export function CommunityModule({ language, user }: {
           <CardContent>
             <div className="space-y-4">
               {events.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <CalendarDays className="w-8 h-8 text-gray-300" />
+                <div className="text-center py-12 text-muted-foreground">
+                  <div className="w-16 h-16 bg-muted bg-foreground rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <CalendarDays className="w-8 h-8 text-muted-foreground" />
                   </div>
                   <p className="font-medium">{language === 'fr' ? 'Aucun événement à venir' : 'No upcoming events'}</p>
                 </div>
@@ -100,8 +100,8 @@ export function CommunityModule({ language, user }: {
                               <h4 className="font-bold text-lg">{language === 'fr' ? event.title : event.titleEn}</h4>
                               {isRegistered && <Badge className="bg-muted">✓ {language === 'fr' ? 'Inscrit' : 'Registered'}</Badge>}
                             </div>
-                            <p className="text-sm text-gray-500 mt-2">{language === 'fr' ? event.description : event.descriptionEn}</p>
-                            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground mt-2">{language === 'fr' ? event.description : event.descriptionEn}</p>
+                            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
                                 {new Date(event.date).toLocaleDateString()}
@@ -135,7 +135,7 @@ export function CommunityModule({ language, user }: {
         </Card>
 
         {/* Forum Preview */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -151,12 +151,12 @@ export function CommunityModule({ language, user }: {
                 { title: language === 'fr' ? 'Expérience RAMQ - délai de carence' : 'RAMQ experience - waiting period', replies: 18, views: 89, emoji: '🏥' },
                 { title: language === 'fr' ? 'Conseils recherche emploi IT Montréal' : 'IT job search tips Montreal', replies: 32, views: 203, emoji: '💼' },
               ].map((post, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+                <div key={i} className="flex items-center justify-between p-4 bg-muted bg-foreground rounded-xl cursor-pointer bg-muted dark:hover:bg-foreground transition-colors group">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{post.emoji}</span>
                     <p className="font-medium flex-1">{post.title}</p>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <MessageSquare className="w-4 h-4" />
                       {post.replies}
@@ -178,7 +178,7 @@ export function CommunityModule({ language, user }: {
 
         {/* Cultural Guide & Associations */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -194,18 +194,18 @@ export function CommunityModule({ language, user }: {
                 { title: language === 'fr' ? 'Pourboires et coutumes' : 'Tipping and customs', emoji: '💰' },
                 { title: language === 'fr' ? 'Hiver canadien' : 'Canadian winter', emoji: '❄️' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                <div key={i} className="flex items-center justify-between p-3 bg-muted bg-foreground rounded-lg bg-muted dark:hover:bg-foreground transition-colors cursor-pointer group">
                   <span className="flex items-center gap-2">
                     <span className="text-lg">{item.emoji}</span>
                     {item.title}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -221,12 +221,12 @@ export function CommunityModule({ language, user }: {
                 { name: language === 'fr' ? 'Association sud-asiatique' : 'South Asian Association', city: 'Vancouver', emoji: '🇮🇳' },
                 { name: language === 'fr' ? 'Centre culturel chinois' : 'Chinese Cultural Center', city: 'Calgary', emoji: '🇨🇳' },
               ].map((assoc, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                <div key={i} className="flex items-center justify-between p-3 bg-muted bg-foreground rounded-lg bg-muted dark:hover:bg-foreground transition-colors cursor-pointer group">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{assoc.emoji}</span>
                     <div>
                       <p className="font-medium">{assoc.name}</p>
-                      <p className="text-xs text-gray-500">{assoc.city}</p>
+                      <p className="text-xs text-muted-foreground">{assoc.city}</p>
                     </div>
                   </div>
                   <Button size="sm" variant="ghost">

@@ -407,7 +407,7 @@ export const modules = [
   { id: 'finance', icon: Wallet, color: 'text-muted-foreground', bgColor: 'bg-muted bg-muted' },
   { id: 'health', icon: Heart, color: 'text-destructive', bgColor: 'bg-destructive/10 bg-destructive/10' },
   { id: 'community', icon: Users, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
-  { id: 'admin', icon: Settings, color: 'text-gray-500', bgColor: 'bg-gray-50 dark:bg-gray-950' },
+  { id: 'admin', icon: Settings, color: 'text-muted-foreground', bgColor: 'bg-muted dark:bg-gray-950' },
 ]
 
 // ==================== MAIN APP ====================

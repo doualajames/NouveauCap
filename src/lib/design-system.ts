@@ -304,15 +304,15 @@ export const componentStyles = {
       primary: 'bg-primary-500  hover:bg-primary-600 focus:ring-primary-500 shadow-none hover:shadow-none',
       secondary: 'bg-secondary-500  hover:bg-secondary-600 focus:ring-secondary-500',
       outline: 'border-2 border-primary-500 text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
-      ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+      ghost: 'text-muted-foreground bg-muted focus:ring-gray-500',
       danger: 'bg-destructive/10  bg-destructive/10 focus:ring-red-500',
-      success: 'bg-muted  bg-muted focus:ring-green-500',
+      success: 'bg-muted  bg-muted ring-ring',
     },
   },
   
   // Cards
   card: {
-    base: 'bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden',
+    base: 'bg-card rounded-2xl border border-border shadow-sm overflow-hidden',
     hover: 'transition-all duration-300 hover:shadow-none hover:-translate-y-1',
     variants: {
       default: '',
@@ -324,12 +324,12 @@ export const componentStyles = {
   
   // Inputs
   input: {
-    base: 'w-full px-4 py-3 text-base border border-gray-200 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+    base: 'w-full px-4 py-3 text-base border border-border rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
     states: {
-      default: 'bg-white',
+      default: 'bg-card',
       error: 'border-destructive/40 focus:ring-red-500',
-      success: 'border-border focus:ring-green-500',
-      disabled: 'bg-gray-100 cursor-not-allowed',
+      success: 'border-border ring-ring',
+      disabled: 'bg-muted cursor-not-allowed',
     },
   },
   
@@ -337,7 +337,7 @@ export const componentStyles = {
   badge: {
     base: 'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full',
     variants: {
-      default: 'bg-gray-100 text-gray-700',
+      default: 'bg-muted text-muted-foreground',
       primary: 'bg-primary-100 text-primary-700',
       success: 'bg-muted text-foreground',
       warning: 'bg-muted text-muted-foreground',
@@ -348,7 +348,7 @@ export const componentStyles = {
   
   // Navigation
   nav: {
-    item: 'flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all duration-200',
+    item: 'flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all duration-200',
     itemActive: 'flex items-center gap-3 px-4 py-3 text-primary-600 bg-primary-50 rounded-xl font-medium',
   },
 } as const
@@ -385,15 +385,15 @@ export const twClasses = {
     heading2: 'text-2xl sm:text-3xl font-bold tracking-tight',
     heading3: 'text-xl sm:text-2xl font-semibold',
     heading4: 'text-lg sm:text-xl font-semibold',
-    body: 'text-base text-gray-600 leading-relaxed',
-    bodySmall: 'text-sm text-gray-500',
-    caption: 'text-xs text-gray-400',
-    label: 'text-sm font-medium text-gray-700',
+    body: 'text-base text-muted-foreground leading-relaxed',
+    bodySmall: 'text-sm text-muted-foreground',
+    caption: 'text-xs text-muted-foreground',
+    label: 'text-sm font-medium text-muted-foreground',
   },
   
   // Effets
   effects: {
-    glass: 'bg-white/80 backdrop-blur-lg',
+    glass: 'bg-card/80 backdrop-blur-lg',
     gradient: 'bg-primary text-primary-foreground',
     gradientText: 'bg-primary text-primary-foreground bg-clip-text text-transparent',
     shadowHover: 'transition-shadow duration-300 hover:shadow-none',

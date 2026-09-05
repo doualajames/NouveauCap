@@ -197,7 +197,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
   }
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -206,30 +206,30 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
               <Shield className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
                 {t('modules.immigration.title', language)}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">{t('modules.immigration.description', language)}</p>
+              <p className="text-muted-foreground text-muted-foreground">{t('modules.immigration.description', language)}</p>
             </div>
           </div>
           
           {/* Quick Stats */}
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Progression' : 'Progress'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Progression' : 'Progress'}</p>
               <p className="font-bold text-foreground">{completedCount}/{immigrationTasks.length}</p>
             </div>
-            <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
-              <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+            <div className="px-4 py-2 bg-card bg-foreground rounded-xl border shadow-sm">
+              <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Statut' : 'Status'}</p>
               <Badge variant="default" className="mt-0.5">{t(`status.${user?.immigrationStatus}`, language)}</Badge>
             </div>
           </div>
         </div>
 
         {/* Mobile Tabs */}
-        <div className="flex lg:hidden bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
+        <div className="flex lg:hidden bg-card bg-foreground rounded-xl p-1 shadow-sm border">
           <button
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tasks' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tasks' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
             onClick={() => setActiveTab('tasks')}
           >
             <ListChecks className="w-4 h-4 inline mr-2" />
@@ -237,7 +237,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
           </button>
           {user?.immigrationStatus === 'FOREIGN_STUDENT' && (
             <button
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'pgwp' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'pgwp' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
               onClick={() => setActiveTab('pgwp')}
             >
               <GraduationCap className="w-4 h-4 inline mr-2" />
@@ -247,7 +247,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
           {/* CRS only for temporary residents */}
           {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(user?.immigrationStatus) && (
             <button
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'simulator' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'simulator' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
               onClick={() => setActiveTab('simulator')}
             >
               <Calculator className="w-4 h-4 inline mr-2" />
@@ -257,7 +257,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
           {/* Citizenship for permanent residents */}
           {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (
             <button
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'citizenship' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'citizenship' ? 'bg-muted shadow-sm' : 'text-muted-foreground bg-muted'}`}
               onClick={() => setActiveTab('citizenship')}
             >
               <Crown className="w-4 h-4 inline mr-2" />
@@ -270,7 +270,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Tasks Checklist - Left Side */}
           <div className={`lg:col-span-2 ${activeTab !== 'tasks' ? 'hidden lg:block' : ''}`}>
-            <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-none bg-card/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -291,7 +291,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
               <CardContent>
                 <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
                   {immigrationTasks.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-muted-foreground">
                       <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-foreground" />
                       <p>{language === 'fr' ? 'Aucune tâche pour le moment' : 'No tasks at the moment'}</p>
                     </div>
@@ -302,14 +302,14 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         className={`group flex items-start gap-3 p-3 rounded-xl border transition-all duration-300 cursor-pointer hover:shadow-none ${
  task.status === 'COMPLETED' 
  ? 'bg-muted bg-muted border-border border-border' 
- : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 border-border dark:border-border'
+ : 'bg-card bg-foreground border-border dark:border-border border-border dark:border-border'
  }`}
                         onClick={() => onTaskUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
                       >
                         <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
  task.status === 'COMPLETED' 
  ? 'bg-muted border-border' 
- : 'border-gray-300 group-border-border'
+ : 'border-border group-border-border'
  }`}>
                           {task.status === 'COMPLETED' && (
                             <CheckCircle2 className="w-3 h-3" />
@@ -318,8 +318,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         <div className="flex-1 min-w-0">
                           <p className={`font-medium text-sm transition-all ${
  task.status === 'COMPLETED' 
- ? 'text-gray-400 line-through' 
- : 'text-gray-700 dark:text-gray-200'
+ ? 'text-muted-foreground line-through' 
+ : 'text-muted-foreground text-muted-foreground'
  }`}>
                             {language === 'fr' ? task.title : (task.titleEn || task.title)}
                           </p>
@@ -346,7 +346,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
           {/* CRS Simulator - Right Side - Only for Temporary Residents */}
           {isTemporaryResident && (
             <div className={`lg:col-span-3 ${activeTab !== 'simulator' ? 'hidden lg:block' : ''}`}>
-              <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
+              <Card className="h-full border border-border shadow-none bg-card/80 backdrop-blur-sm">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -395,7 +395,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         className="py-2"
                       />
                     ) : (
-                      <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm text-gray-600 dark:text-gray-400">
+                      <div className="p-2 bg-muted bg-foreground rounded-lg text-sm text-muted-foreground text-muted-foreground">
                         {language === 'fr' 
                           ? '💡 Ajoutez votre date de naissance dans votre profil pour un calcul précis'
                           : '💡 Add your date of birth in your profile for accurate calculation'}
@@ -407,7 +407,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau d\'éducation' : 'Education level'}</Label>
                     <Select value={education} onValueChange={setEducation}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                      <SelectTrigger className="bg-card bg-foreground">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -424,7 +424,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">{language === 'fr' ? 'Niveau CLB' : 'CLB Level'}</Label>
                     <Select value={clbLevel.toString()} onValueChange={(v) => setClbLevel(parseInt(v))}>
-                      <SelectTrigger className="bg-white dark:bg-gray-800">
+                      <SelectTrigger className="bg-card bg-foreground">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -497,9 +497,9 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
  }`}>
                         {calculatedScore}
                       </span>
-                      <span className="text-gray-500 text-lg">{language === 'fr' ? 'points' : 'points'}</span>
+                      <span className="text-muted-foreground text-lg">{language === 'fr' ? 'points' : 'points'}</span>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-2">{language === 'fr' ? 'Score CRS estimé' : 'Estimated CRS score'}</p>
+                    <p className="text-muted-foreground text-muted-foreground mb-2">{language === 'fr' ? 'Score CRS estimé' : 'Estimated CRS score'}</p>
                     <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
  calculatedScore >= 450 
  ? 'bg-muted text-foreground bg-muted text-foreground' 
@@ -516,8 +516,8 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                     </div>
                     
                     {/* Score Tips */}
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-xs text-gray-500">
+                    <div className="mt-4 pt-4 border-t border-border dark:border-border">
+                      <p className="text-xs text-muted-foreground">
                         {language === 'fr' 
                           ? '💡 Conseil: Améliorez votre score en augmentant votre niveau CLB ou en accumulant plus d\'expérience.'
                           : '💡 Tip: Improve your score by increasing your CLB level or gaining more experience.'}
@@ -600,7 +600,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">{language === 'fr' ? 'Type de programme' : 'Program type'}</Label>
                   <Select value={pgwpProgramType} onValueChange={(v: any) => setPgwpProgramType(v)}>
-                    <SelectTrigger className="bg-white dark:bg-gray-800">
+                    <SelectTrigger className="bg-card bg-foreground">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -638,10 +638,10 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
               {/* Additional Criteria */}
               <div className="grid sm:grid-cols-3 gap-4">
                 {/* Full-time Status */}
-                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                <div className="flex items-center justify-between p-3 bg-card bg-foreground rounded-lg border">
                   <div>
                     <p className="text-sm font-medium">{language === 'fr' ? 'Temps plein' : 'Full-time'}</p>
-                    <p className="text-xs text-gray-500">{language === 'fr' ? 'Pendant vos études' : 'During your studies'}</p>
+                    <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Pendant vos études' : 'During your studies'}</p>
                   </div>
                   <Checkbox 
                     checked={pgwpIsFullTime} 
@@ -651,10 +651,10 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                 </div>
 
                 {/* Distance Learning */}
-                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                <div className="flex items-center justify-between p-3 bg-card bg-foreground rounded-lg border">
                   <div>
                     <p className="text-sm font-medium">{language === 'fr' ? 'À distance' : 'Distance learning'}</p>
-                    <p className="text-xs text-gray-500">{language === 'fr' ? '100% en ligne' : '100% online'}</p>
+                    <p className="text-xs text-muted-foreground">{language === 'fr' ? '100% en ligne' : '100% online'}</p>
                   </div>
                   <Checkbox 
                     checked={pgwpIsDistance} 
@@ -664,10 +664,10 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                 </div>
 
                 {/* FSL Program */}
-                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                <div className="flex items-center justify-between p-3 bg-card bg-foreground rounded-lg border">
                   <div>
                     <p className="text-sm font-medium">{language === 'fr' ? 'Programme FLS' : 'FSL Program'}</p>
-                    <p className="text-xs text-gray-500">{language === 'fr' ? 'Français langue seconde' : 'French as Second Language'}</p>
+                    <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Français langue seconde' : 'French as Second Language'}</p>
                   </div>
                   <Checkbox 
                     checked={pgwpIsFSL} 
@@ -710,18 +710,18 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                           : (language === 'fr' ? '❌ Non éligible' : '❌ Not eligible')
                         }
                       </p>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                      <p className="text-muted-foreground text-muted-foreground text-sm mb-3">
                         {pgwpResult.message}
                       </p>
                       
                       {pgwpResult.eligible && (
                         <div className="flex items-center gap-3">
-                          <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
-                            <p className="text-xs text-gray-500">{language === 'fr' ? 'Durée du PGWP' : 'PGWP Duration'}</p>
+                          <div className="px-4 py-2 bg-card bg-foreground rounded-lg border shadow-sm">
+                            <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Durée du PGWP' : 'PGWP Duration'}</p>
                             <p className="font-bold text-lg text-foreground">{pgwpResult.duration}</p>
                           </div>
-                          <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
-                            <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais' : 'Fee'}</p>
+                          <div className="px-4 py-2 bg-card bg-foreground rounded-lg border shadow-sm">
+                            <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Frais' : 'Fee'}</p>
                             <p className="font-bold text-lg">$255 CAD</p>
                           </div>
                         </div>
@@ -745,7 +745,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                         href="https://www.canada.ca/fr/immigration-refugis-citoyennete/services/travailler-canada/permis/post-diplome.html" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-card bg-foreground border rounded-lg text-sm font-medium bg-muted dark:hover:bg-foreground transition-colors"
                       >
                         <BookOpen className="w-4 h-4" />
                         {language === 'fr' ? 'Guide officiel' : 'Official guide'}
@@ -757,17 +757,17 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
 
               {/* Timeline Info */}
               <div className="grid sm:grid-cols-3 gap-3 text-center">
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="p-3 bg-muted bg-foreground/50 rounded-lg">
                   <p className="text-2xl font-bold text-foreground">180</p>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Jours pour appliquer après les études' : 'Days to apply after graduation'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Jours pour appliquer après les études' : 'Days to apply after graduation'}</p>
                 </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="p-3 bg-muted bg-foreground/50 rounded-lg">
                   <p className="text-2xl font-bold text-foreground">80-100</p>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Jours de traitement' : 'Processing days'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Jours de traitement' : 'Processing days'}</p>
                 </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="p-3 bg-muted bg-foreground/50 rounded-lg">
                   <p className="text-2xl font-bold text-foreground">3</p>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Ans max (selon programme)' : 'Years max (based on program)'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Ans max (selon programme)' : 'Years max (based on program)'}</p>
                 </div>
               </div>
             </CardContent>
@@ -795,7 +795,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Statut' : 'Status'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Statut' : 'Status'}</p>
                   <p className="font-semibold text-sm">{t(`status.${user?.immigrationStatus}`, language)}</p>
                 </div>
               </div>
@@ -810,7 +810,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Province' : 'Province'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Province' : 'Province'}</p>
                   <p className="font-semibold text-sm">{provinces.find(p => p.code === user?.province)?.name || '-'}</p>
                 </div>
               </div>
@@ -825,7 +825,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Arrivée' : 'Arrival'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Arrivée' : 'Arrival'}</p>
                   <p className="font-semibold text-sm">{user?.arrivalDate ? new Date(user.arrivalDate).toLocaleDateString() : '-'}</p>
                 </div>
               </div>
@@ -840,7 +840,7 @@ export function ImmigrationModule({ language, user, tasks, onTaskUpdate }: {
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{language === 'fr' ? 'Tâches en attente' : 'Pending tasks'}</p>
+                  <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Tâches en attente' : 'Pending tasks'}</p>
                   <p className="font-semibold text-sm">{immigrationTasks.filter(t => t.status === 'PENDING').length}</p>
                 </div>
               </div>

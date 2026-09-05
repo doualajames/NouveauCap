@@ -25,7 +25,7 @@ export function StatsCard({
 }: StatsCardProps) {
   return (
     <div className={cn(
-      "relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-xl",
+      "relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-xl",
       "border border-white/20 shadow-none shadow-gray-200/50",
       "p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-none",
       className
@@ -38,12 +38,12 @@ export function StatsCard({
       
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{value}</p>
           {trend !== undefined && (
             <p className={cn(
               "mt-2 flex items-center text-sm",
-              trend > 0 ? 'text-foreground' : trend < 0 ? 'text-destructive' : 'text-gray-500'
+              trend > 0 ? 'text-foreground' : trend < 0 ? 'text-destructive' : 'text-muted-foreground'
             )}>
               {trend > 0 ? (
                 <TrendingUp className="mr-1 h-4 w-4" />
@@ -87,10 +87,10 @@ export function FeatureCard({
     <div 
       onClick={onClick}
       className={cn(
-        "group relative overflow-hidden rounded-2xl bg-white p-6",
-        "border border-gray-100 cursor-pointer",
+        "group relative overflow-hidden rounded-2xl bg-card p-6",
+        "border border-border cursor-pointer",
         "transition-all duration-300",
-        "hover:border-gray-200 hover:shadow-none hover:shadow-gray-200/50",
+        "hover:border-border hover:shadow-none hover:shadow-gray-200/50",
         "hover:-translate-y-1"
       )}
     >
@@ -115,8 +115,8 @@ export function FeatureCard({
         </span>
       )}
       
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="mt-2 text-sm text-gray-500 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{description}</p>
     </div>
   )
 }
@@ -170,8 +170,8 @@ export function ProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {value && <span className="text-2xl font-bold text-gray-900">{value}</span>}
-        {label && <span className="text-xs text-gray-500">{label}</span>}
+        {value && <span className="text-2xl font-bold text-foreground">{value}</span>}
+        {label && <span className="text-xs text-muted-foreground">{label}</span>}
       </div>
     </div>
   )
@@ -197,8 +197,8 @@ export function TaskCard({
 }: TaskCardProps) {
   return (
     <div className={cn(
-      "group relative flex items-center gap-4 rounded-xl bg-white p-4",
-      "border border-gray-100 shadow-sm hover:shadow-none hover:border-gray-200",
+      "group relative flex items-center gap-4 rounded-xl bg-card p-4",
+      "border border-border shadow-sm hover:shadow-none hover:border-border",
       "transition-all duration-200",
       completed && "opacity-60"
     )}>
@@ -210,7 +210,7 @@ export function TaskCard({
           "border-2 transition-all shrink-0",
           completed 
             ? "border-border bg-muted" 
-            : "border-gray-300 border-destructive/40 bg-destructive/10"
+            : "border-border border-destructive/40 bg-destructive/10"
         )}
       >
         {completed && (
@@ -223,13 +223,13 @@ export function TaskCard({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className={cn(
-          "font-medium text-gray-900 truncate",
-          completed && "line-through text-gray-400"
+          "font-medium text-foreground truncate",
+          completed && "line-through text-muted-foreground"
         )}>
           {title}
         </p>
         {description && (
-          <p className="text-sm text-gray-500 truncate">{description}</p>
+          <p className="text-sm text-muted-foreground truncate">{description}</p>
         )}
       </div>
       
@@ -238,7 +238,7 @@ export function TaskCard({
         "px-2.5 py-1 rounded-full text-xs font-medium shrink-0",
         priority === 'HIGH' && "bg-destructive/10 text-destructive",
         priority === 'MEDIUM' && "bg-muted text-muted-foreground",
-        priority === 'LOW' && "bg-gray-100 text-gray-700"
+        priority === 'LOW' && "bg-muted text-muted-foreground"
       )}>
         {priority === 'HIGH' ? 'Urgent' : priority === 'MEDIUM' ? 'Normal' : 'Faible'}
       </span>

@@ -299,7 +299,7 @@ export function FinanceModule({ language, user }: {
   }
 
   return (
-    <div className="min-h-screen bg-muted to-white">
+    <div className="min-h-screen bg-muted">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -307,15 +307,15 @@ export function FinanceModule({ language, user }: {
             <Wallet className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:">
               {t('modules.finance.title', language)}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400">{t('modules.finance.description', language)}</p>
+            <p className="text-muted-foreground text-muted-foreground">{t('modules.finance.description', language)}</p>
           </div>
         </div>
 
         {/* Bank Comparator Table */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm overflow-hidden">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm overflow-hidden">
           <CardHeader className="bg-primary text-primary-foreground border-b">
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -323,7 +323,7 @@ export function FinanceModule({ language, user }: {
               </div>
               {language === 'fr' ? '🏦 Comparateur Bancaire Nouveaux Arrivants' : '🏦 Newcomer Bank Comparator'}
             </CardTitle>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {language === 'fr' 
                 ? 'Comparez les meilleures offres bancaires pour nouveaux arrivants au Canada' 
                 : 'Compare the best banking offers for newcomers to Canada'}
@@ -357,7 +357,7 @@ export function FinanceModule({ language, user }: {
               {sortedBanks.map((bank) => (
                 <div 
                   key={bank.id} 
-                  className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${selectedBank?.id === bank.id ? 'bg-muted bg-muted' : ''}`}
+                  className={`p-4 bg-muted dark:hover:bg-foreground/50 transition-colors ${selectedBank?.id === bank.id ? 'bg-muted bg-muted' : ''}`}
                   onClick={() => setSelectedBank(bank)}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -367,7 +367,7 @@ export function FinanceModule({ language, user }: {
                       </div>
                       <div>
                         <p className="font-bold text-lg">{language === 'fr' ? bank.nameFr : bank.name}</p>
-                        <p className="text-sm text-gray-500">{language === 'fr' ? bank.accountNameFr : bank.accountName}</p>
+                        <p className="text-sm text-muted-foreground">{language === 'fr' ? bank.accountNameFr : bank.accountName}</p>
                       </div>
                     </div>
                     {bank.recommended && (
@@ -389,11 +389,11 @@ export function FinanceModule({ language, user }: {
                   
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <div className="bg-muted bg-muted rounded-lg p-2 text-center">
-                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais/mois' : 'Fee/month'}</p>
+                      <p className="text-xs text-muted-foreground">{language === 'fr' ? 'Frais/mois' : 'Fee/month'}</p>
                       <p className="font-bold text-foreground">${bank.monthlyFee}</p>
                     </div>
                     <div className="bg-muted bg-muted rounded-lg p-2 text-center">
-                      <p className="text-xs text-gray-500">{language === 'fr' ? '1ère année' : '1st year'}</p>
+                      <p className="text-xs text-muted-foreground">{language === 'fr' ? '1ère année' : '1st year'}</p>
                       <p className="font-bold text-foreground">{language === 'fr' ? 'Gratuite' : 'Free'}</p>
                     </div>
                   </div>
@@ -421,27 +421,27 @@ export function FinanceModule({ language, user }: {
             {/* Desktop Table View */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                <thead className="bg-muted bg-foreground/50">
                   <tr>
-                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '🏦 Banque' : '🏦 Bank'}
                     </th>
-                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '📦 Compte' : '📦 Account'}
                     </th>
-                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '💰 Frais/mois' : '💰 Fee/month'}
                     </th>
-                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '🎁 Bonus' : '🎁 Bonus'}
                     </th>
-                    <th className="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-left p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '✨ Avantages clés' : '✨ Key benefits'}
                     </th>
-                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '⏱️ Délai' : '⏱️ Time'}
                     </th>
-                    <th className="text-center p-4 font-semibold text-gray-700 dark:text-gray-300">
+                    <th className="text-center p-4 font-semibold text-muted-foreground text-muted-foreground">
                       {language === 'fr' ? '🔗 Lien' : '🔗 Link'}
                     </th>
                   </tr>
@@ -450,9 +450,9 @@ export function FinanceModule({ language, user }: {
                   {sortedBanks.map((bank, index) => (
                     <tr 
                       key={bank.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
+                      className={`bg-muted dark:hover:bg-foreground/50 transition-colors ${
  selectedBank?.id === bank.id ? 'bg-muted bg-muted' : ''
- } ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50/50 dark:bg-gray-800/30'}`}
+ } ${index % 2 === 0 ? 'bg-card bg-foreground' : 'bg-muted/50 bg-foreground/30'}`}
                       onClick={() => setSelectedBank(bank)}
                     >
                       <td className="p-4">
@@ -488,7 +488,7 @@ export function FinanceModule({ language, user }: {
                       <td className="p-4 text-center">
                         <div className="inline-flex flex-col items-center">
                           <span className="text-2xl font-bold text-foreground">${bank.monthlyFee}</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-muted-foreground">
                             {bank.firstYearFree ? (language === 'fr' ? '(1ère année gratuite)' : '(1st year free)') : ''}
                           </span>
                         </div>
@@ -501,7 +501,7 @@ export function FinanceModule({ language, user }: {
                       <td className="p-4">
                         <ul className="space-y-1">
                           {(language === 'fr' ? bank.featuresFr : bank.features).slice(0, 3).map((feature, i) => (
-                            <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground text-muted-foreground">
                               <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
                               {feature}
                             </li>
@@ -531,15 +531,15 @@ export function FinanceModule({ language, user }: {
               </table>
             </div>
           </CardContent>
-          <CardFooter className="bg-gray-50 dark:bg-gray-800/50 border-t px-6 py-4">
+          <CardFooter className="bg-muted bg-foreground/50 border-t px-6 py-4">
             <div className="flex flex-wrap items-center justify-between gap-4 w-full">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {language === 'fr' 
                   ? '💡 Conseil: Les 5 grandes banques (RBC, TD, Scotia, BMO, CIBC) offrent toutes des programmes spéciaux nouveaux arrivants avec des bonus compétitifs.'
                   : '💡 Tip: The Big 5 banks (RBC, TD, Scotia, BMO, CIBC) all offer special newcomer programs with competitive bonuses.'}
               </p>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">{language === 'fr' ? 'Dernière mise à jour:' : 'Last updated:'}</span>
+                <span className="text-xs text-muted-foreground">{language === 'fr' ? 'Dernière mise à jour:' : 'Last updated:'}</span>
                 <span className="text-xs font-medium">2025</span>
               </div>
             </div>
@@ -557,7 +557,7 @@ export function FinanceModule({ language, user }: {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold">{language === 'fr' ? selectedBank.nameFr : selectedBank.name}</h3>
-                    <p className="text-gray-500">{language === 'fr' ? selectedBank.accountNameFr : selectedBank.accountName}</p>
+                    <p className="text-muted-foreground">{language === 'fr' ? selectedBank.accountNameFr : selectedBank.accountName}</p>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setSelectedBank(null)}>
@@ -566,40 +566,40 @@ export function FinanceModule({ language, user }: {
               </div>
               
               <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
+                <div className="bg-card bg-foreground rounded-xl p-4">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-foreground" />
                     {language === 'fr' ? 'Avantages complets' : 'Full benefits'}
                   </h4>
                   <ul className="space-y-2">
                     {(language === 'fr' ? selectedBank.featuresFr : selectedBank.features).map((feature: string, i: number) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground text-muted-foreground">
                         <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
+                <div className="bg-card bg-foreground rounded-xl p-4">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-foreground" />
                     {language === 'fr' ? 'Détails de l\'offre' : 'Offer details'}
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{language === 'fr' ? 'Frais mensuels:' : 'Monthly fee:'}</span>
+                      <span className="text-muted-foreground">{language === 'fr' ? 'Frais mensuels:' : 'Monthly fee:'}</span>
                       <span className="font-semibold text-foreground">${selectedBank.monthlyFee}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{language === 'fr' ? '1ère année:' : '1st year:'}</span>
+                      <span className="text-muted-foreground">{language === 'fr' ? '1ère année:' : '1st year:'}</span>
                       <span className="font-semibold text-foreground">{language === 'fr' ? 'Gratuite' : 'Free'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{language === 'fr' ? 'Bonus:' : 'Bonus:'}</span>
+                      <span className="text-muted-foreground">{language === 'fr' ? 'Bonus:' : 'Bonus:'}</span>
                       <span className="font-semibold text-muted-foreground">{language === 'fr' ? selectedBank.bonusOfferFr : selectedBank.bonusOffer}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{language === 'fr' ? 'Ouverture:' : 'Opening:'}</span>
+                      <span className="text-muted-foreground">{language === 'fr' ? 'Ouverture:' : 'Opening:'}</span>
                       <span className="font-medium">{language === 'fr' ? selectedBank.processingTimeFr : selectedBank.processingTime}</span>
                     </div>
                   </div>
@@ -621,7 +621,7 @@ export function FinanceModule({ language, user }: {
 
         {/* Credit & Tax Guides */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -637,20 +637,20 @@ export function FinanceModule({ language, user }: {
                 { step: 3, title: language === 'fr' ? 'Maintenir l\'utilisation basse' : 'Keep utilization low', desc: language === 'fr' ? '<30% de votre limite' : '<30% of your limit', emoji: '📊' },
                 { step: 4, title: language === 'fr' ? 'Vérifier votre score' : 'Check your score', desc: language === 'fr' ? 'Equifax ou TransUnion' : 'Equifax or TransUnion', emoji: '🔍' },
               ].map((item) => (
-                <div key={item.step} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div key={item.step} className="flex items-center gap-3 p-3 bg-muted bg-foreground rounded-xl bg-muted dark:hover:bg-foreground transition-colors">
                   <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg">
                     {item.step}
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{item.emoji} {item.title}</p>
-                    <p className="text-sm text-gray-500">{item.desc}</p>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -666,15 +666,15 @@ export function FinanceModule({ language, user }: {
                 { title: 'GST/HST Credit', desc: language === 'fr' ? 'Crédit TPS/TVH' : 'GST/HST credit', emoji: '💰' },
                 { title: 'Canada Child Benefit', desc: language === 'fr' ? 'Allocation canadienne enfants' : 'Canada Child Benefit', emoji: '👨‍👩‍👧' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+                <div key={i} className="flex items-center justify-between p-3 bg-muted bg-foreground rounded-xl bg-muted dark:hover:bg-foreground transition-colors cursor-pointer group">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{item.emoji}</span>
                     <div>
                       <p className="font-medium">{item.title}</p>
-                      <p className="text-sm text-gray-500">{item.desc}</p>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                 </div>
               ))}
             </CardContent>
@@ -682,7 +682,7 @@ export function FinanceModule({ language, user }: {
         </div>
 
         {/* Money Transfer */}
-        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
@@ -704,7 +704,7 @@ export function FinanceModule({ language, user }: {
                   <CardContent className="p-5 text-center">
                     <p className="font-bold text-xl">{service.name}</p>
                     <p className="text-xs text-foreground text-foreground font-medium mt-1">{service.note}</p>
-                    <p className="text-sm text-gray-500 mt-1">{language === 'fr' ? 'Frais' : 'Fee'}: {service.fee}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{language === 'fr' ? 'Frais' : 'Fee'}: {service.fee}</p>
                     <Badge className="mt-2">{service.time}</Badge>
                     <p className="text-xs mt-2">{service.rating}</p>
                   </CardContent>

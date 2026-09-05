@@ -10,13 +10,13 @@ import { Loader2 } from 'lucide-react'
 // =====================================================
 
 const moduleCardVariants = cva(
-  'relative overflow-hidden bg-white rounded-2xl border p-6 transition-all duration-300 group',
+  'relative overflow-hidden bg-card rounded-2xl border p-6 transition-all duration-300 group',
   {
     variants: {
       variant: {
-        default: 'border-gray-100',
+        default: 'border-border',
         elevated: 'border border-border shadow-none',
-        gradient: 'border border-border bg-muted from-white ',
+        gradient: 'border border-border bg-muted ',
       },
       interactive: {
         true: 'cursor-pointer hover:shadow-none hover:-translate-y-1',
@@ -86,9 +86,9 @@ export function ModuleCard({
             </div>
           )}
           <div>
-            <h3 className="font-semibold text-lg text-gray-900">{title}</h3>
+            <h3 className="font-semibold text-lg text-foreground">{title}</h3>
             {description && (
-              <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+              <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
             )}
           </div>
         </div>
@@ -115,7 +115,7 @@ export function ModuleCard({
 
       {/* Footer */}
       {footer && (
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t border-border">
           {footer}
         </div>
       )}
@@ -160,15 +160,15 @@ export function StatCard({
     <div className={cn('stat-card', className)} {...props}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="text-sm text-muted-foreground">{label}</p>
+          <p className="text-3xl font-bold text-foreground mt-1">{value}</p>
           {change && (
             <div className={cn(
               'flex items-center gap-1 mt-2 text-sm font-medium',
               change.type === 'increase' ? 'text-foreground' : 'text-destructive'
             )}>
               {change.type === 'increase' ? '↑' : '↓'} {Math.abs(change.value)}%
-              <span className="text-gray-400 font-normal">vs. mois dernier</span>
+              <span className="text-muted-foreground font-normal">vs. mois dernier</span>
             </div>
           )}
         </div>
@@ -274,14 +274,14 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
     return (
       <div className="space-y-1.5">
         {label && (
-          <label htmlFor={id} className="text-sm font-medium text-gray-700">
+          <label htmlFor={id} className="text-sm font-medium text-muted-foreground">
             {label}
             {props.required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <div className="relative">
           {LeftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <LeftIcon className="w-5 h-5" />
             </div>
           )}
@@ -299,7 +299,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             {...props}
           />
           {RightIcon && !rightElement && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <RightIcon className="w-5 h-5" />
             </div>
           )}
@@ -320,7 +320,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           </p>
         )}
         {hint && !error && !success && (
-          <p className="text-sm text-gray-400">{hint}</p>
+          <p className="text-sm text-muted-foreground">{hint}</p>
         )}
       </div>
     )
@@ -346,7 +346,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
     return (
       <div className="space-y-1.5">
         {label && (
-          <label htmlFor={id} className="text-sm font-medium text-gray-700">
+          <label htmlFor={id} className="text-sm font-medium text-muted-foreground">
             {label}
             {props.required && <span className="text-destructive ml-1">*</span>}
           </label>
@@ -472,7 +472,7 @@ export function ProgressSteps({ steps, currentStep, className }: ProgressStepsPr
                   'mt-2 text-xs font-medium',
                   isCompleted && 'text-foreground',
                   isCurrent && 'text-primary-600',
-                  isPending && 'text-gray-400'
+                  isPending && 'text-muted-foreground'
                 )}
               >
                 {step.label}
@@ -482,7 +482,7 @@ export function ProgressSteps({ steps, currentStep, className }: ProgressStepsPr
               <div
                 className={cn(
                   'flex-1 h-0.5 mx-2',
-                  isCompleted ? 'bg-muted' : 'bg-gray-200'
+                  isCompleted ? 'bg-muted' : 'bg-muted'
                 )}
               />
             )}
@@ -509,13 +509,13 @@ export function EmptyState({ icon: Icon, title, description, action, className }
   return (
     <div className={cn('text-center py-12', className)}>
       {Icon && (
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
-          <Icon className="w-8 h-8 text-gray-400" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
+          <Icon className="w-8 h-8 text-muted-foreground" />
         </div>
       )}
-      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      <h3 className="text-lg font-medium text-foreground">{title}</h3>
       {description && (
-        <p className="mt-2 text-sm text-gray-500 max-w-sm mx-auto">{description}</p>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">{description}</p>
       )}
       {action && <div className="mt-6">{action}</div>}
     </div>
@@ -572,12 +572,12 @@ export function FeatureCard({ icon: Icon, title, description, color = 'primary',
   }
 
   return (
-    <div className={cn('p-6 bg-white rounded-2xl border border-gray-100 hover:shadow-none transition-all duration-300', className)} {...props}>
+    <div className={cn('p-6 bg-card rounded-2xl border border-border hover:shadow-none transition-all duration-300', className)} {...props}>
       <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center mb-4', colorClasses[color])}>
         <Icon className="w-6 h-6" />
       </div>
-      <h3 className="font-semibold text-lg text-gray-900 mb-2">{title}</h3>
-      <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
+      <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
     </div>
   )
 }
