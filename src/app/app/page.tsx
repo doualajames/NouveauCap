@@ -203,11 +203,12 @@ export default function NouveauCapApp() {
       // déconnecter proprement et renvoyer vers la connexion.
       if (res.status === 401) {
         try { await fetch('/api/auth/logout', { method: 'POST' }) } catch {}
+        // Purge la session locale persistée et renvoie réellement vers la connexion.
         useAppStore.setState({ user: null })
-        setError(language === 'fr'
-          ? 'Votre session a expiré. Reconnectez-vous pour continuer.'
-          : 'Your session has expired. Please sign in again to continue.')
-        setIsLoading(false)
+        try { localStorage.removeItem('nouveau-cap-storage') } catch {}
+        if (typeof window !== 'undefined') {
+          window.location.href = '/app?reauth=1'
+        }
         return
       }
 
