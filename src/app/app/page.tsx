@@ -310,7 +310,7 @@ export default function NouveauCapApp() {
                 <MapPin className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
+                <span className="text-xl font-bold text-foreground">NouveauCap</span>
               </div>
             </div>
             
@@ -1043,16 +1043,17 @@ export default function NouveauCapApp() {
                 </div>
               </div>
               <div className="p-2 space-y-1">
-                <button onClick={() => { setActiveModule(null); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-muted transition-colors">
-                  <Home className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-medium text-muted-foreground">{t('dashboard.title', language)}</span>
+                <button onClick={() => { setActiveModule(null); setMobileMenuOpen(false) }} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${activeModule === null ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}>
+                  <Home className={`w-5 h-5 ${activeModule === null ? 'text-foreground' : 'text-muted-foreground'}`} />
+                  <span className={`font-medium ${activeModule === null ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>{t('dashboard.title', language)}</span>
                 </button>
                 {modules.map(m => {
                   const Icon = m.icon
+                  const active = activeModule === m.id
                   return (
-                    <button key={m.id} onClick={() => { setActiveModule(m.id); setMobileMenuOpen(false) }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-muted transition-colors">
-                      <Icon className={`w-5 h-5 ${m.color}`} />
-                      <span className="font-medium text-muted-foreground">{t(`modules.${m.id}.title`, language)}</span>
+                    <button key={m.id} onClick={() => { setActiveModule(m.id); setMobileMenuOpen(false) }} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${active ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}>
+                      <Icon className={`w-5 h-5 ${active ? 'text-foreground' : 'text-muted-foreground'}`} />
+                      <span className={`font-medium ${active ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>{t(`modules.${m.id}.title`, language)}</span>
                     </button>
                   )
                 })}
@@ -1080,7 +1081,7 @@ export default function NouveauCapApp() {
                 <MapPin className="w-6 h-6" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
+                <span className="text-xl font-bold text-foreground">NouveauCap</span>
                 <p className="text-xs text-muted-foreground truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
               </div>
             </div>
@@ -1092,7 +1093,7 @@ export default function NouveauCapApp() {
               
               <button
                 onClick={() => setActiveModule(null)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === null ? 'bg-muted shadow-sm border border-border' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === null ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
               >
                 <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
                   <Home className="w-5 h-5" />
@@ -1104,22 +1105,13 @@ export default function NouveauCapApp() {
               
               {modules.filter(m => m.id !== 'admin').map(m => {
                 const Icon = m.icon
-                const gradients: Record<string, string> = {
-                  'province': ' ',
-                  'immigration': ' ',
-                  'employment': ' ',
-                  'housing': ' ',
-                  'finance': ' ',
-                  'health': ' ',
-                  'community': ' ',
-                }
                 return (
                   <button
                     key={m.id}
                     onClick={() => setActiveModule(m.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === m.id ? 'bg-muted shadow-sm border border-border' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === m.id ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
                   >
-                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-muted ${gradients[m.id] || ' '}  shadow-none` : 'bg-muted text-muted-foreground'}`}>
+                    <div className={`relative shrink-0 rounded-lg p-2 transition-colors ${activeModule === m.id ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -1134,7 +1126,7 @@ export default function NouveauCapApp() {
               
               <button
                 onClick={() => setActiveModule('admin')}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-muted ${activeModule === 'admin' ? 'bg-muted shadow-sm border border-border' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeModule === 'admin' ? 'bg-muted border border-foreground/80' : 'hover:bg-muted'}`}
               >
                 <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-primary text-primary-foreground shadow-none' : 'bg-muted text-muted-foreground'}`}>
                   <Settings className="w-5 h-5" />
