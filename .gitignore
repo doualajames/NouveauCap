@@ -46,9 +46,20 @@ dev.log
 test
 prompt
 
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/sessions/
+
 server.log
 # Skills directory
 /skills/
+# claude-flow / ruflo / swarm litter (non lié à l'app)
+.agents/
+.claude-flow/
+.swarm/
+.mcp.json
+.roomodes
+CLAUDE.md
 # SQLite databases (never commit user data)
 *.db
 *.db-journal

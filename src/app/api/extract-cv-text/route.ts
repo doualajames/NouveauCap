@@ -2,9 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth-jwt'
 
-// Server-side only - use require for compatibility with Turbopack
-const pdfParse = require('pdf-parse')
-const mammoth = require('mammoth')
+// pdf-parse (pdfjs) référence DOMMatrix au chargement du module : l'importer
+// en top-level casse la collecte de pages au build. On force le runtime Node,
+// on désactive l'évaluation statique et on charge les libs à la demande.
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,11 +26,13 @@ export async function POST(request: NextRequest) {
     const fileName = file.name.toLowerCase()
     let text = ''
 
-    // Extract text based on file type
+    // Extract text based on file type (libs chargées à la demande, cf. runtime Node)
     if (fileName.endsWith('.pdf')) {
+      const pdfParse = require('pdf-parse')
       const pdfData = await pdfParse(buffer)
       text = pdfData.text
     } else if (fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
+      const mammoth = require('mammoth')
       const result = await mammoth.extractRawText({ buffer })
       text = result.value
     } else if (fileName.endsWith('.txt')) {
