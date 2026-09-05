@@ -55,6 +55,92 @@ model User {
   events            EventRegistration[]
   alerts            Alert[]
   jobApplications   JobApplication[]
+  profile           Profile?
+  onboarding        Onboarding?
+  subscription      Subscription?
+}
+
+model Profile {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  immigrationStatus   String?
+  province            String?
+  city                String?
+  arrivalDate         DateTime?
+  plannedArrivalDate  DateTime?
+  alreadyInCanada     Boolean   @default(true)
+
+  professionalSector  String?
+  yearsOfExperience   Int?
+  educationLevel      String?
+
+  preferredLanguage   String    @default("fr")
+  needsFrenchClasses  Boolean   @default(false)
+  needsEnglishClasses Boolean   @default(false)
+
+  familyStatus        String?
+  numberOfChildren    Int?
+  primaryGoal         String?
+
+  onboardingCompleted Boolean   @default(false)
+  profileCompletion   Int       @default(0)
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Onboarding {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  immigrationStatus   String?
+  province            String?
+  city                String?
+  arrivalDate         DateTime?
+  plannedArrivalDate  DateTime?
+  alreadyInCanada     Boolean   @default(true)
+
+  professionalSector  String?
+  yearsOfExperience   Int?
+  educationLevel      String?
+
+  preferredLanguage   String    @default("fr")
+  needsFrenchClasses  Boolean   @default(false)
+  needsEnglishClasses Boolean   @default(false)
+
+  familyStatus        String?
+  numberOfChildren    Int?
+  primaryGoal         String?
+
+  currentStep         Int       @default(1)
+  completed           Boolean   @default(false)
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Subscription {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan            String    @default("FREE")
+  status          String    @default("ACTIVE")
+
+  startDate       DateTime?
+  endDate         DateTime?
+
+  alertsLimit     Int       @default(3)
+  alertsUsed      Int       @default(0)
+
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Task {
