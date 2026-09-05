@@ -193,10 +193,10 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
                 <button
                   key={chip.id}
                   onClick={() => setFilter(chip.id)}
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium border transition-colors ${active ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/50'}`}
+                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium border transition-colors ${active ? 'bg-[hsl(var(--foreground))] text-[hsl(var(--background))] border-[hsl(var(--foreground))]' : 'bg-card text-muted-foreground border-border hover:border-foreground/50'}`}
                 >
                   {chip.label}
-                  <span className={`text-xs tabular-nums ${active ? 'text-background/70' : 'text-muted-foreground/70'}`}>{chip.count}</span>
+                  <span className={`text-xs tabular-nums ${active ? 'text-white/70' : 'text-muted-foreground/70'}`}>{chip.count}</span>
                 </button>
               )
             })}
@@ -252,7 +252,7 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
                   <span className="text-sm font-bold tabular-nums">{m.completed}/{m.total}</span>
                 </div>
                 <div className="mt-3 h-1.5 w-full rounded bg-muted">
-                  <div className="h-1.5 rounded bg-foreground" style={{ width: `${Math.max(pct === 0 ? 0 : 4, pct)}%` }} />
+                  <div className="h-1.5 rounded bg-[hsl(var(--foreground))]" style={{ width: `${Math.max(pct === 0 ? 0 : 4, pct)}%` }} />
                 </div>
               </button>
             )
@@ -261,13 +261,13 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
       )}
 
       {user?.subscriptionTier === 'FREE' && (
-        <Card className="bg-foreground text-background border-0">
+        <Card className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))] border-0">
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Crown className="w-10 h-10 flex-none" />
               <div>
                 <p className="font-bold text-lg">{language === 'fr' ? 'Passez à Premium' : 'Upgrade to Premium'}</p>
-                <p className="text-background/70">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
+                <p className="text-white/70">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
               </div>
             </div>
             <Button variant="secondary" className="flex-none">
