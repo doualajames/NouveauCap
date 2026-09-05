@@ -246,10 +246,10 @@ export default function NouveauCapApp() {
   // Added fallback timeout to prevent infinite loading
   if (!isHydrated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-muted via-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-lg shadow-red-500/30">
-            <MapPin className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-none shadow-red-500/30">
+            <MapPin className="w-8 h-8" />
           </div>
           <p className="text-gray-500">Chargement...</p>
         </div>
@@ -263,20 +263,20 @@ export default function NouveauCapApp() {
       <div className="min-h-screen bg-gray-50 overflow-hidden">
         {/* Background Pattern & Orbs */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-red-500/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-destructive/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-muted blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-muted blur-3xl" />
         </div>
 
         {/* Header */}
         <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl z-50 border-b border-gray-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30">
-                <MapPin className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none shadow-red-500/30">
+                <MapPin className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+                <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
               </div>
             </div>
             
@@ -285,7 +285,7 @@ export default function NouveauCapApp() {
                 <Globe className="w-4 h-4" />
                 {language === 'fr' ? 'EN' : 'FR'}
               </Button>
-              <Button className="rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/20" onClick={() => { setCurrentView('auth'); setAuthMode('signIn') }}>
+              <Button className="rounded-xl bg-primary text-primary-foreground shadow-none shadow-red-500/20" onClick={() => { setCurrentView('auth'); setAuthMode('signIn') }}>
                 {t('auth.signIn', language)}
               </Button>
             </div>
@@ -298,16 +298,16 @@ export default function NouveauCapApp() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Content */}
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-red-50 border border-red-100 px-4 py-2 mb-6">
-                  <Sparkles className="h-4 w-4 text-red-500" />
-                  <span className="text-sm font-medium text-red-700">
+                <div className="inline-flex items-center gap-2 rounded-full bg-destructive/10 border border-destructive/40 px-4 py-2 mb-6">
+                  <Sparkles className="h-4 w-4 text-destructive" />
+                  <span className="text-sm font-medium text-destructive">
                     {language === 'fr' ? 'Nouveau au Canada? On vous accompagne!' : 'New to Canada? We guide you!'}
                   </span>
                 </div>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">
                   {language === 'fr' ? 'Votre nouveau départ' : 'Your new beginning'}
-                  <span className="block bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
+                  <span className="block bg-primary text-primary-foreground bg-clip-text text-transparent">
                     {language === 'fr' ? 'au Canada commence ici' : 'in Canada starts here'}
                   </span>
                 </h1>
@@ -319,7 +319,7 @@ export default function NouveauCapApp() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="text-lg px-8 h-14 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-xl shadow-red-500/30 gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
+                  <Button size="lg" className="text-lg px-8 h-14 rounded-xl bg-primary text-primary-foreground shadow-none shadow-red-500/30 gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
                     {t('auth.createAccount', language)}
                     <ChevronRight className="w-5 h-5" />
                   </Button>
@@ -333,7 +333,7 @@ export default function NouveauCapApp() {
                 <div className="mt-12 flex items-center gap-6">
                   <div className="flex -space-x-3">
                     {[1,2,3,4,5].map(i => (
-                      <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                      <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-none">
                         {['JD', 'MK', 'SL', 'AR', 'PT'][i-1]}
                       </div>
                     ))}
@@ -347,26 +347,26 @@ export default function NouveauCapApp() {
 
               {/* Illustration / Dashboard Preview */}
               <div className="relative hidden lg:block">
-                <div className="relative rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-1 shadow-2xl shadow-red-500/30">
+                <div className="relative rounded-3xl bg-primary text-primary-foreground p-1 shadow-none shadow-red-500/30">
                   <div className="rounded-[22px] bg-white p-6">
                     {/* Mini Dashboard Preview */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="h-6 w-24 rounded-lg bg-gray-100" />
-                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
-                          <User className="h-4 w-4 text-red-600" />
+                        <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                          <User className="h-4 w-4 text-destructive" />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         {[
-                          { icon: Shield, label: 'Immigration', value: '75%', color: 'from-purple-500 to-pink-500' },
-                          { icon: Briefcase, label: 'Emploi', value: '3', color: 'from-green-500 to-emerald-500' },
-                          { icon: Heart, label: 'Santé', value: 'Active', color: 'from-red-500 to-rose-500' },
-                          { icon: Wallet, label: 'Finance', value: 'Setup', color: 'from-amber-500 to-orange-500' },
+                          { icon: Shield, label: 'Immigration', value: '75%', color: ' ' },
+                          { icon: Briefcase, label: 'Emploi', value: '3', color: ' ' },
+                          { icon: Heart, label: 'Santé', value: 'Active', color: ' ' },
+                          { icon: Wallet, label: 'Finance', value: 'Setup', color: ' ' },
                         ].map((item, i) => (
                           <div key={i} className="rounded-xl bg-gray-50 p-3">
-                            <div className={`inline-flex rounded-lg bg-gradient-to-br ${item.color} p-1.5 mb-2 shadow-md`}>
-                              <item.icon className="h-3 w-3 text-white" />
+                            <div className={`inline-flex rounded-lg bg-muted ${item.color} p-1.5 mb-2 shadow-none`}>
+                              <item.icon className="h-3 w-3" />
                             </div>
                             <p className="text-xs text-gray-500">{item.label}</p>
                             <p className="font-semibold text-gray-900">{item.value}</p>
@@ -374,8 +374,8 @@ export default function NouveauCapApp() {
                         ))}
                       </div>
                       <div className="h-16 rounded-xl bg-gray-50 flex items-center px-4 gap-3">
-                        <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-foreground" />
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</p>
@@ -387,22 +387,22 @@ export default function NouveauCapApp() {
                 </div>
 
                 {/* Floating Cards */}
-                <div className="absolute -left-8 top-1/4 rounded-xl bg-white p-3 shadow-xl border border-gray-100 animate-bounce" style={{ animationDuration: '3s' }}>
+                <div className="absolute -left-8 top-1/4 rounded-xl bg-white p-3 shadow-none border border-gray-100 animate-bounce" style={{ animationDuration: '3s' }}>
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                      <CheckCircle2 className="h-4 w-4 text-foreground" />
                     </div>
                     <div>
                       <p className="text-xs font-medium">{language === 'fr' ? 'CRS: 468' : 'CRS: 468'}</p>
-                      <p className="text-[10px] text-green-600">+15 {language === 'fr' ? 'points' : 'points'}</p>
+                      <p className="text-[10px] text-foreground">+15 {language === 'fr' ? 'points' : 'points'}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="absolute -right-4 bottom-1/3 rounded-xl bg-white p-3 shadow-xl border border-gray-100">
+                <div className="absolute -right-4 bottom-1/3 rounded-xl bg-white p-3 shadow-none border border-gray-100">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <Shield className="h-4 w-4 text-blue-600" />
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                      <Shield className="h-4 w-4 text-foreground" />
                     </div>
                     <div>
                       <p className="text-xs font-medium">{language === 'fr' ? 'RP Éligible' : 'PR Eligible'}</p>
@@ -431,28 +431,28 @@ export default function NouveauCapApp() {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: language === 'fr' ? 'Immigration' : 'Immigration', desc: language === 'fr' ? 'Suivi de permis, simulateurs CRS, alertes de dates limites' : 'Permit tracking, CRS simulators, deadline alerts', color: 'from-purple-500 to-pink-500', badge: language === 'fr' ? 'Populaire' : 'Popular' },
-                { icon: Briefcase, title: language === 'fr' ? 'Emploi' : 'Employment', desc: language === 'fr' ? 'Optimisation CV IA, préparation entretiens, offres ciblées' : 'AI CV optimization, interview prep, targeted offers', color: 'from-green-500 to-emerald-500' },
-                { icon: Building, title: language === 'fr' ? 'Logement' : 'Housing', desc: language === 'fr' ? 'Guides locatifs, calculateur budget, conseils premiers locataires' : 'Rental guides, budget calculator, first renter tips', color: 'from-blue-500 to-cyan-500' },
-                { icon: Wallet, title: language === 'fr' ? 'Finances' : 'Finance', desc: language === 'fr' ? 'Comparateur bancaire, guide du crédit, outils budgétaires' : 'Bank comparator, credit guide, budgeting tools', color: 'from-amber-500 to-orange-500' },
-                { icon: Heart, title: language === 'fr' ? 'Santé' : 'Health', desc: language === 'fr' ? 'Assurance maladie, annuaire cliniques, rendez-vous médicaux' : 'Health insurance, clinic directory, medical appointments', color: 'from-red-500 to-rose-500', badge: language === 'fr' ? 'Nouveau' : 'New' },
-                { icon: Users, title: language === 'fr' ? 'Communauté' : 'Community', desc: language === 'fr' ? 'Forum, événements locaux, programme de mentorat' : 'Forum, local events, mentorship program', color: 'from-indigo-500 to-violet-500' },
+                { icon: Shield, title: language === 'fr' ? 'Immigration' : 'Immigration', desc: language === 'fr' ? 'Suivi de permis, simulateurs CRS, alertes de dates limites' : 'Permit tracking, CRS simulators, deadline alerts', color: ' ', badge: language === 'fr' ? 'Populaire' : 'Popular' },
+                { icon: Briefcase, title: language === 'fr' ? 'Emploi' : 'Employment', desc: language === 'fr' ? 'Optimisation CV IA, préparation entretiens, offres ciblées' : 'AI CV optimization, interview prep, targeted offers', color: ' ' },
+                { icon: Building, title: language === 'fr' ? 'Logement' : 'Housing', desc: language === 'fr' ? 'Guides locatifs, calculateur budget, conseils premiers locataires' : 'Rental guides, budget calculator, first renter tips', color: ' ' },
+                { icon: Wallet, title: language === 'fr' ? 'Finances' : 'Finance', desc: language === 'fr' ? 'Comparateur bancaire, guide du crédit, outils budgétaires' : 'Bank comparator, credit guide, budgeting tools', color: ' ' },
+                { icon: Heart, title: language === 'fr' ? 'Santé' : 'Health', desc: language === 'fr' ? 'Assurance maladie, annuaire cliniques, rendez-vous médicaux' : 'Health insurance, clinic directory, medical appointments', color: ' ', badge: language === 'fr' ? 'Nouveau' : 'New' },
+                { icon: Users, title: language === 'fr' ? 'Communauté' : 'Community', desc: language === 'fr' ? 'Forum, événements locaux, programme de mentorat' : 'Forum, local events, mentorship program', color: ' ' },
               ].map((feature, i) => (
                 <div 
                   key={i} 
-                  className="group relative overflow-hidden rounded-2xl bg-white p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 cursor-pointer hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl bg-white p-6 border border-gray-100 shadow-sm hover:shadow-none hover:shadow-gray-200/50 transition-all duration-300 cursor-pointer hover:-translate-y-1"
                 >
                   {/* Background Gradient on Hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`} />
+                  <div className={`absolute inset-0 bg-muted ${feature.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`} />
                   
-                  <div className={`w-12 h-12 rounded-xl mb-4 bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-                    <feature.icon className="w-6 h-6 text-white" />
+                  <div className={`w-12 h-12 rounded-xl mb-4 bg-muted ${feature.color} flex items-center justify-center shadow-none transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                    <feature.icon className="w-6 h-6" />
                   </div>
                   
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
                     {feature.badge && (
-                      <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-medium">
+                      <span className="px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-medium">
                         {feature.badge}
                       </span>
                     )}
@@ -460,7 +460,7 @@ export default function NouveauCapApp() {
                   
                   <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
                   
-                  <div className="mt-4 flex items-center text-sm font-medium text-gray-400 transition-colors group-hover:text-red-500">
+                  <div className="mt-4 flex items-center text-sm font-medium text-gray-400 transition-colors group-text-destructive">
                     {language === 'fr' ? 'Explorer' : 'Explore'}
                     <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </div>
@@ -473,20 +473,20 @@ export default function NouveauCapApp() {
         {/* CTA Section */}
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-8 md:p-12 shadow-2xl shadow-red-500/30">
+            <div className="relative overflow-hidden rounded-3xl bg-primary text-primary-foreground p-8 md:p-12 shadow-none shadow-red-500/30">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
               
               <div className="relative text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
                   {language === 'fr' ? 'Prêt à commencer votre aventure?' : 'Ready to start your adventure?'}
                 </h2>
-                <p className="text-white/80 mb-8 max-w-xl mx-auto">
+                <p className="/80 mb-8 max-w-xl mx-auto">
                   {language === 'fr' 
                     ? 'Rejoignez des milliers de nouveaux arrivants qui ont fait confiance à NouveauCap pour leur installation.'
                     : 'Join thousands of newcomers who trusted NouveauCap for their settlement.'}
                 </p>
-                <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 text-lg px-8 h-14 rounded-xl shadow-xl gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
+                <Button size="lg" className="bg-white text-destructive hover:bg-gray-100 text-lg px-8 h-14 rounded-xl shadow-none gap-2" onClick={() => { setCurrentView('auth'); setAuthMode('signUp') }}>
                   {t('auth.createAccount', language)}
                   <ChevronRight className="w-5 h-5" />
                 </Button>
@@ -499,10 +499,10 @@ export default function NouveauCapApp() {
         <footer className="py-8 px-4 border-t bg-white">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-md shadow-red-500/30">
-                <MapPin className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center shadow-none shadow-red-500/30">
+                <MapPin className="w-4 h-4" />
               </div>
-              <span className="font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+              <span className="font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
             </div>
             <p className="text-gray-500 text-sm">© 2025 NouveauCap. {language === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
             <div className="flex items-center gap-4 text-gray-500 text-sm">
@@ -518,11 +518,11 @@ export default function NouveauCapApp() {
   // ==================== RENDER AUTH ====================
   if (currentView === 'auth') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-        <Card className="w-full max-w-md shadow-2xl border-0">
+      <div className="min-h-screen flex items-center justify-center bg-muted via-white p-4">
+        <Card className="w-full max-w-md shadow-none border border-border">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/30">
-              <Plane className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-none shadow-red-500/30">
+              <Plane className="w-8 h-8" />
             </div>
             <CardTitle className="text-2xl">
               {authMode === 'signIn' ? t('auth.welcomeBack', language) : t('auth.joinUs', language)}
@@ -559,7 +559,7 @@ export default function NouveauCapApp() {
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
             </div>
             
-            <Button className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30" onClick={handleAuth} disabled={isLoading}>
+            <Button className="w-full bg-primary text-primary-foreground shadow-none shadow-red-500/30" onClick={handleAuth} disabled={isLoading}>
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {authMode === 'signIn' ? t('auth.signIn', language) : t('auth.signUp', language)}
             </Button>
@@ -605,7 +605,7 @@ export default function NouveauCapApp() {
     const progressPercent = ((onboardingStep + 1) / totalSteps) * 100
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      <div className="min-h-screen bg-muted via-white p-4">
         <div className="max-w-2xl mx-auto pt-8">
           <div className="mb-8">
             <div className="flex justify-between text-sm text-gray-500 mb-2">
@@ -615,7 +615,7 @@ export default function NouveauCapApp() {
             <Progress value={progressPercent} className="h-2" />
           </div>
 
-          <Card className="shadow-xl">
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="text-2xl text-center">
                 {onboardingStep === 0 && t('onboarding.status.title', language)}
@@ -641,7 +641,7 @@ export default function NouveauCapApp() {
             <CardContent className="space-y-6">
               {/* Error Alert */}
               {error && (
-                <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-2">
+                <Alert variant="destructive" className="animate-in fade-in slide-in-">
                   <AlertCircle className="w-4 h-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
@@ -649,7 +649,7 @@ export default function NouveauCapApp() {
               
               {/* Success Alert */}
               {success && (
-                <Alert className="bg-green-50 border-green-200 text-green-800 animate-in fade-in slide-in-from-top-2">
+                <Alert className="bg-muted border-border text-foreground animate-in fade-in slide-in-">
                   <CheckCircle2 className="w-4 h-4" />
                   <AlertDescription>{success}</AlertDescription>
                 </Alert>
@@ -665,17 +665,17 @@ export default function NouveauCapApp() {
                     return (
                       <Card 
                         key={status.code}
-                        className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950' : ''}`}
+                        className={`cursor-pointer transition-all hover:shadow-none ${isSelected ? 'ring-2 ring-blue-500 bg-muted bg-muted' : ''}`}
                         onClick={() => setOnboardingData({ immigrationStatus: status.code as ImmigrationStatus })}
                       >
                         <CardContent className="p-4 flex items-center gap-3">
                           <div className={`w-12 h-12 ${status.color} rounded-xl flex items-center justify-center`}>
-                            <Icon className="w-6 h-6 text-white" />
+                            <Icon className="w-6 h-6" />
                           </div>
                           <div>
                             <p className="font-medium">{label}</p>
                           </div>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-500 ml-auto" />}
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-foreground ml-auto" />}
                         </CardContent>
                       </Card>
                     )
@@ -686,8 +686,8 @@ export default function NouveauCapApp() {
               {/* Country of Origin - Step 1 for Foreign Students only */}
               {onboardingStep === 1 && isForeignStudent && (
                 <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+                    <p className="text-sm text-foreground text-foreground">
                       <strong>{language === 'fr' ? '💡 Pourquoi cette question?' : '💡 Why this question?'}</strong>
                       <br />
                       {language === 'fr' 
@@ -698,7 +698,7 @@ export default function NouveauCapApp() {
                   
                   {/* Countries with Quebec Agreement */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                    <p className="text-sm font-medium text-foreground text-foreground">
                       {language === 'fr' ? '🏥 Pays avec entente de sécurité sociale (RAMQ éligible au Québec):' : '🏥 Countries with social security agreement (RAMQ eligible in Quebec):'}
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -708,7 +708,7 @@ export default function NouveauCapApp() {
                           <Button
                             key={country.code}
                             variant={isSelected ? 'default' : 'outline'}
-                            className={`h-auto py-2 justify-start ${isSelected ? 'bg-green-500 hover:bg-green-600' : ''}`}
+                            className={`h-auto py-2 justify-start ${isSelected ? 'bg-muted bg-muted' : ''}`}
                             onClick={() => setOnboardingData({ countryOfOrigin: country.code })}
                           >
                             <span className="mr-2">{country.flag}</span>
@@ -781,8 +781,8 @@ export default function NouveauCapApp() {
               {/* Document Expiry - Step 3 for non-student temp residents, Step 4 for foreign students */}
               {((onboardingStep === 3 && isTemporaryResident && !isForeignStudent) || (onboardingStep === 4 && isForeignStudent)) && (
                 <div className="space-y-6">
-                  <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800">
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                  <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+                    <p className="text-sm text-muted-foreground text-muted-foreground">
                       <strong>{language === 'fr' ? '💡 Pourquoi ces dates?' : '💡 Why these dates?'}</strong>
                       <br />
                       {language === 'fr' 
@@ -795,7 +795,7 @@ export default function NouveauCapApp() {
                   {onboardingData.immigrationStatus === 'FOREIGN_STUDENT' && (
                     <div className="space-y-2">
                       <Label className="text-sm font-medium flex items-center gap-2">
-                        <GraduationCap className="w-4 h-4 text-blue-500" />
+                        <GraduationCap className="w-4 h-4 text-foreground" />
                         {language === 'fr' ? 'Date d\'expiration du permis d\'études' : 'Study permit expiry date'}
                       </Label>
                       <Input
@@ -816,7 +816,7 @@ export default function NouveauCapApp() {
                   {(onboardingData.immigrationStatus === 'OPEN_WORK_PERMIT' || onboardingData.immigrationStatus === 'CLOSED_WORK_PERMIT') && (
                     <div className="space-y-2">
                       <Label className="text-sm font-medium flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-purple-500" />
+                        <Briefcase className="w-4 h-4 text-foreground" />
                         {language === 'fr' ? 'Date d\'expiration du permis de travail' : 'Work permit expiry date'}
                       </Label>
                       <Input
@@ -836,7 +836,7 @@ export default function NouveauCapApp() {
                   {/* Passport Expiry */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-green-500" />
+                      <FileText className="w-4 h-4 text-foreground" />
                       {language === 'fr' ? 'Date d\'expiration du passeport' : 'Passport expiry date'}
                     </Label>
                     <Input
@@ -852,8 +852,8 @@ export default function NouveauCapApp() {
                     </p>
                   </div>
 
-                  <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+                    <p className="text-sm text-foreground text-foreground">
                       <strong>{language === 'fr' ? '⚠️ Statut implicite' : '⚠️ Implied status'}</strong>
                       <br />
                       {language === 'fr' 
@@ -892,16 +892,16 @@ export default function NouveauCapApp() {
                     return (
                       <Card
                         key={lang}
-                        className={`cursor-pointer transition-all hover:shadow-md flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                        className={`cursor-pointer transition-all hover:shadow-none flex-1 max-w-[200px] ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
                         onClick={() => {
                           setOnboardingData({ preferredLanguage: lang as Language })
                           setLanguage(lang as Language)
                         }}
                       >
                         <CardContent className="p-6 text-center">
-                          <Globe className="w-12 h-12 mx-auto mb-3 text-blue-500" />
+                          <Globe className="w-12 h-12 mx-auto mb-3 text-foreground" />
                           <p className="font-medium text-lg">{lang === 'fr' ? 'Français' : 'English'}</p>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-500 mt-2 mx-auto" />}
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-foreground mt-2 mx-auto" />}
                         </CardContent>
                       </Card>
                     )
@@ -976,10 +976,10 @@ export default function NouveauCapApp() {
         <header className="lg:hidden fixed top-0 w-full bg-white/95 backdrop-blur-xl z-50 border-b border-gray-200 shadow-sm">
           <div className="px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30">
-                <MapPin className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none shadow-red-500/30">
+                <MapPin className="w-5 h-5" />
               </div>
-              <span className="font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+              <span className="font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
             </div>
             
             <div className="flex items-center gap-1">
@@ -996,10 +996,10 @@ export default function NouveauCapApp() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" onClick={() => setMobileMenuOpen(false)}>
-            <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-2xl animate-slide-in" onClick={e => e.stopPropagation()}>
+            <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-none animate-slide-in" onClick={e => e.stopPropagation()}>
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-none">
                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                   <div>
@@ -1028,7 +1028,7 @@ export default function NouveauCapApp() {
                   <span className="font-medium text-gray-700">{language === 'fr' ? 'Mon Profil' : 'My Profile'}</span>
                 </button>
                 <Separator className="my-2" />
-                <button onClick={() => { logout(); setCurrentView('landing') }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-50 transition-colors text-red-600">
+                <button onClick={() => { logout(); setCurrentView('landing') }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-destructive/10 transition-colors text-destructive">
                   <LogOut className="w-5 h-5" />
                   <span className="font-medium">{t('auth.signOut', language)}</span>
                 </button>
@@ -1042,11 +1042,11 @@ export default function NouveauCapApp() {
           <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-200 min-h-screen fixed">
             {/* Logo Header */}
             <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
-              <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30 shrink-0">
-                <MapPin className="w-6 h-6 text-white" />
+              <div className="h-11 w-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-none shadow-red-500/30 shrink-0">
+                <MapPin className="w-6 h-6" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">NouveauCap</span>
+                <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">NouveauCap</span>
                 <p className="text-xs text-gray-500 truncate">{language === 'fr' ? 'Votre guide au Canada' : 'Your guide to Canada'}</p>
               </div>
             </div>
@@ -1058,9 +1058,9 @@ export default function NouveauCapApp() {
               
               <button
                 onClick={() => setActiveModule(null)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === null ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === null ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === null ? 'bg-primary text-primary-foreground shadow-none' : 'bg-gray-100 text-gray-600'}`}>
                   <Home className="w-5 h-5" />
                 </div>
                 <span className={`flex-1 text-left font-medium ${activeModule === null ? 'text-gray-900' : 'text-gray-600'}`}>
@@ -1071,21 +1071,21 @@ export default function NouveauCapApp() {
               {modules.filter(m => m.id !== 'admin').map(m => {
                 const Icon = m.icon
                 const gradients: Record<string, string> = {
-                  'province': 'from-cyan-500 to-teal-500',
-                  'immigration': 'from-purple-500 to-pink-500',
-                  'employment': 'from-green-500 to-emerald-500',
-                  'housing': 'from-violet-500 to-purple-500',
-                  'finance': 'from-amber-500 to-orange-500',
-                  'health': 'from-red-500 to-rose-500',
-                  'community': 'from-indigo-500 to-violet-500',
+                  'province': ' ',
+                  'immigration': ' ',
+                  'employment': ' ',
+                  'housing': ' ',
+                  'finance': ' ',
+                  'health': ' ',
+                  'community': ' ',
                 }
                 return (
                   <button
                     key={m.id}
                     onClick={() => setActiveModule(m.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === m.id ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === m.id ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
                   >
-                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-gradient-to-br ${gradients[m.id] || 'from-gray-500 to-gray-600'} text-white shadow-lg` : 'bg-gray-100 text-gray-600'}`}>
+                    <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === m.id ? `bg-muted ${gradients[m.id] || ' '}  shadow-none` : 'bg-gray-100 text-gray-600'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <span className={`flex-1 text-left font-medium ${activeModule === m.id ? 'text-gray-900' : 'text-gray-600'}`}>
@@ -1100,9 +1100,9 @@ export default function NouveauCapApp() {
               
               <button
                 onClick={() => setActiveModule('admin')}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === 'admin' ? 'bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100' : ''}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-gray-50 ${activeModule === 'admin' ? 'bg-muted to-white shadow-sm border border-gray-100' : ''}`}
               >
-                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-gradient-to-br from-gray-600 to-gray-700 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}>
+                <div className={`relative shrink-0 rounded-lg p-2 transition-all ${activeModule === 'admin' ? 'bg-primary text-primary-foreground shadow-none' : 'bg-gray-100 text-gray-600'}`}>
                   <Settings className="w-5 h-5" />
                 </div>
                 <span className={`flex-1 text-left font-medium ${activeModule === 'admin' ? 'text-gray-900' : 'text-gray-600'}`}>
@@ -1113,15 +1113,15 @@ export default function NouveauCapApp() {
             
             {/* Premium Banner */}
             {user?.subscriptionTier === 'FREE' && (
-              <div className="mx-3 mb-3 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+              <div className="mx-3 mb-3 p-4 rounded-xl bg-muted border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <Crown className="w-5 h-5 text-amber-500" />
-                  <span className="font-semibold text-amber-900">{language === 'fr' ? 'Passez Premium' : 'Go Premium'}</span>
+                  <Crown className="w-5 h-5 text-muted-foreground" />
+                  <span className="font-semibold text-muted-foreground">{language === 'fr' ? 'Passez Premium' : 'Go Premium'}</span>
                 </div>
-                <p className="text-xs text-amber-700 mb-3">
+                <p className="text-xs text-muted-foreground mb-3">
                   {language === 'fr' ? 'Accédez à tous les outils et support prioritaire' : 'Access all tools and priority support'}
                 </p>
-                <Button size="sm" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                <Button size="sm" className="w-full bg-primary text-primary-foreground">
                   {language === 'fr' ? 'Découvrir' : 'Discover'}
                 </Button>
               </div>
@@ -1133,7 +1133,7 @@ export default function NouveauCapApp() {
                 onClick={() => setActiveModule('profile')}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-gray-50 cursor-pointer ${activeModule === 'profile' ? 'bg-gray-50' : ''}`}
               >
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shrink-0 flex items-center justify-center text-white font-semibold shadow-md">
+                <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold shadow-none">
                   {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -1142,11 +1142,11 @@ export default function NouveauCapApp() {
                     <span className="text-xs text-gray-500">
                       {user?.subscriptionTier === 'FREE' ? t('subscription.free.name', language) : user?.subscriptionTier}
                     </span>
-                    {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-amber-500" />}
+                    {user?.subscriptionTier !== 'FREE' && <Crown className="h-3 w-3 text-muted-foreground" />}
                   </div>
                 </div>
                 <button 
-                  className="shrink-0 p-2 rounded-lg hover:bg-red-50 transition-colors" 
+                  className="shrink-0 p-2 rounded-lg bg-destructive/10 transition-colors" 
                   onClick={(e) => { e.stopPropagation(); logout(); setCurrentView('landing') }}
                   title={t('auth.signOut', language)}
                 >
@@ -1160,9 +1160,9 @@ export default function NouveauCapApp() {
           <main className="flex-1 lg:ml-72 pt-16 lg:pt-0">
             {success && (
               <div className="fixed top-20 right-4 z-50">
-                <Alert className="bg-green-50 border-green-200">
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
-                  <AlertDescription className="text-green-700">{success}</AlertDescription>
+                <Alert className="bg-muted border-border">
+                  <CheckCircle2 className="w-4 h-4 text-foreground" />
+                  <AlertDescription className="text-foreground">{success}</AlertDescription>
                 </Alert>
               </div>
             )}
@@ -1298,15 +1298,15 @@ export default function NouveauCapApp() {
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  selectedTask?.status === 'COMPLETED' 
-                    ? 'bg-green-500' 
-                    : selectedTask?.priority === 'HIGH' 
-                    ? 'bg-red-500' 
-                    : 'bg-blue-500'
-                }`}>
+ selectedTask?.status === 'COMPLETED' 
+ ? 'bg-muted' 
+ : selectedTask?.priority === 'HIGH' 
+ ? 'bg-destructive/10' 
+ : 'bg-muted'
+ }`}>
                   {selectedTask?.status === 'COMPLETED' 
-                    ? <CheckCircle2 className="w-5 h-5 text-white" />
-                    : <ListChecks className="w-5 h-5 text-white" />
+                    ? <CheckCircle2 className="w-5 h-5" />
+                    : <ListChecks className="w-5 h-5" />
                   }
                 </div>
                 <div>
@@ -1321,15 +1321,15 @@ export default function NouveauCapApp() {
             <div className="space-y-4">
               {/* Task Type Banner */}
               <div className={`p-3 rounded-lg border ${
-                selectedTask?.status === 'COMPLETED' 
-                  ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800' 
-                  : 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
-              }`}>
+ selectedTask?.status === 'COMPLETED' 
+ ? 'bg-muted bg-muted border-border border-border' 
+ : 'bg-muted bg-muted border-border border-border'
+ }`}>
                 <p className={`text-sm font-medium ${
-                  selectedTask?.status === 'COMPLETED' 
-                    ? 'text-green-700 dark:text-green-300' 
-                    : 'text-blue-700 dark:text-blue-300'
-                }`}>
+ selectedTask?.status === 'COMPLETED' 
+ ? 'text-foreground text-foreground' 
+ : 'text-foreground text-foreground'
+ }`}>
                   {selectedTask?.status === 'COMPLETED' 
                     ? (language === 'fr' ? '✅ Cette tâche est complétée!' : '✅ This task is completed!')
                     : (language === 'fr' 
@@ -1349,8 +1349,8 @@ export default function NouveauCapApp() {
                   </pre>
                 </div>
               ) : (
-                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                <div className="p-4 bg-muted bg-muted rounded-lg border border-border border-border">
+                  <p className="text-sm text-muted-foreground text-muted-foreground">
                     {language === 'fr' 
                       ? '📋 Aucune description détaillée pour cette tâche. Complétez l\'action et marquez-la comme terminée.'
                       : '📋 No detailed description for this task. Complete the action and mark it as done.'}
@@ -1364,7 +1364,7 @@ export default function NouveauCapApp() {
                   href={selectedTask.source} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center gap-2 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="flex items-center gap-2 p-3 bg-muted rounded-lg bg-muted transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span className="font-medium">{language === 'fr' ? 'Accéder à la source officielle' : 'Access official source'}</span>
@@ -1379,7 +1379,7 @@ export default function NouveauCapApp() {
                    (language === 'fr' ? '📋 Basse priorité' : '📋 Low priority')}
                 </Badge>
                 {selectedTask?.isRequired && (
-                  <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">
+                  <Badge variant="outline" className="bg-destructive/10 text-destructive bg-destructive/10 text-destructive">
                     {language === 'fr' ? '⚠️ Obligatoire' : '⚠️ Required'}
                   </Badge>
                 )}
@@ -1401,14 +1401,14 @@ export default function NouveauCapApp() {
               {selectedTask?.status !== 'COMPLETED' && (
                 <Button 
                   onClick={() => { handleTaskUpdate(selectedTask!.id, 'COMPLETED'); setTaskModalOpen(false) }}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                  className="bg-primary text-primary-foreground"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                   {language === 'fr' ? 'Marquer comme terminé' : 'Mark as completed'}
                 </Button>
               )}
               {selectedTask?.status === 'COMPLETED' && (
-                <div className="flex items-center gap-2 text-green-600 p-2">
+                <div className="flex items-center gap-2 text-foreground p-2">
                   <CheckCircle2 className="w-5 h-5" />
                   <span className="font-medium">{language === 'fr' ? 'Tâche complétée!' : 'Task completed!'}</span>
                 </div>
