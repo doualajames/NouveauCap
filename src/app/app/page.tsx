@@ -199,16 +199,28 @@ export default function NouveauCapApp() {
         })
       })
       
+      // Session expirée / invalide : ne pas afficher « Unauthorized » brut,
+      // déconnecter proprement et renvoyer vers la connexion.
+      if (res.status === 401) {
+        try { await fetch('/api/auth/logout', { method: 'POST' }) } catch {}
+        useAppStore.setState({ user: null })
+        setError(language === 'fr'
+          ? 'Votre session a expiré. Reconnectez-vous pour continuer.'
+          : 'Your session has expired. Please sign in again to continue.')
+        setIsLoading(false)
+        return
+      }
+
       const data = await res.json()
-      
+
       if (data.success) {
         useAppStore.setState({ user: data.user })
         if (data.tasks) setTasks(data.tasks)
         completeOnboarding()
         setSuccess(language === 'fr' ? 'Profil complété avec succès!' : 'Profile completed successfully!')
       } else {
-        setError(data.error || (language === 'fr' 
-          ? 'Une erreur est survenue lors de la sauvegarde.' 
+        setError(data.error || (language === 'fr'
+          ? 'Une erreur est survenue lors de la sauvegarde.'
           : 'An error occurred while saving.'))
       }
     } catch (e) {
