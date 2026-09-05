@@ -18,6 +18,7 @@ export interface AdminStats {
   usersByStatus: { status: string; count: number }[]
   usersByProvince: { province: string; count: number }[]
   taskStats: { completed: number; pending: number; inProgress: number }
+  funnel?: Record<string, number>
 }
 
 export function AdminModule({ language }: { language: Language }) {
@@ -26,7 +27,7 @@ export function AdminModule({ language }: { language: Language }) {
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0, activeUsers: 0, newUsersToday: 0, premiumSubscribers: 0, freeUsers: 0,
     monthlyRevenue: 0, signupsPerDay: [], usersByStatus: [], usersByProvince: [],
-    taskStats: { completed: 0, pending: 0, inProgress: 0 }
+    taskStats: { completed: 0, pending: 0, inProgress: 0 }, funnel: {}
   })
   const [tickets, setTickets] = useState<any[]>([])
 
@@ -116,6 +117,59 @@ export function AdminModule({ language }: { language: Language }) {
               <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-muted-foreground">{openTicketsCount}</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Tickets ouverts' : 'Open tickets'}</p></div>
               <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm text-center"><p className="text-2xl font-bold text-foreground">{stats.totalUsers > 0 ? ((stats.premiumSubscribers / stats.totalUsers) * 100).toFixed(1) : 0}%</p><p className="text-sm text-gray-500">{language === 'fr' ? 'Conversion' : 'Conversion'}</p></div>
             </div>
+
+            {/* Funnel d'acquisition (30 j, sessions distinctes) */}
+            <Card className="border border-border shadow-none">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChart className="w-5 h-5 text-foreground" />
+                  {language === 'fr' ? "Funnel d'acquisition (30 j)" : 'Acquisition funnel (30d)'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const f = stats.funnel || {}
+                  const stages = [
+                    { key: 'page_view', label: language === 'fr' ? 'Visites' : 'Visits' },
+                    { key: 'tool_used', label: language === 'fr' ? 'Outil utilisé' : 'Tool used' },
+                    { key: 'lead_captured', label: language === 'fr' ? 'Email laissé' : 'Email captured' },
+                    { key: 'survey_submitted', label: language === 'fr' ? 'Sondage prix' : 'Price survey' },
+                    { key: 'signup', label: language === 'fr' ? 'Inscription' : 'Signup' },
+                  ]
+                  const top = Math.max(f.page_view || 0, 1)
+                  return (
+                    <div className="space-y-3">
+                      {stages.map((s, i) => {
+                        const v = f[s.key] || 0
+                        const prev = i > 0 ? (f[stages[i - 1].key] || 0) : v
+                        const stepConv = i > 0 && prev > 0 ? Math.round((v / prev) * 100) : null
+                        return (
+                          <div key={s.key}>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="font-medium">{s.label}</span>
+                              <span className="tabular-nums">
+                                <span className="font-bold">{v.toLocaleString()}</span>
+                                {stepConv !== null && (
+                                  <span className="ml-2 text-muted-foreground">({stepConv}% {language === 'fr' ? 'de l\'étape préc.' : 'of prev'})</span>
+                                )}
+                              </span>
+                            </div>
+                            <div className="mt-1 h-3 w-full rounded bg-muted">
+                              <div className="h-3 rounded bg-foreground" style={{ width: `${Math.max(2, (v / top) * 100)}%` }} />
+                            </div>
+                          </div>
+                        )
+                      })}
+                      <p className="pt-2 text-xs text-muted-foreground">
+                        {language === 'fr'
+                          ? 'Sessions distinctes (identifiant anonyme, sans cookie). Visite → outil → email → inscription.'
+                          : 'Distinct sessions (anonymous id, no cookie). Visit → tool → email → signup.'}
+                      </p>
+                    </div>
+                  )
+                })()}
+              </CardContent>
+            </Card>
           </div>
         )}
 
