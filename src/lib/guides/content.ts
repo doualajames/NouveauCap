@@ -16,7 +16,7 @@ export type Guide = {
   metaTitle: string // <title> si différent (SEO)
   description: string // meta description
   keywords: string[]
-  category: 'Démarches' | 'Santé' | 'Finances' | 'Logement' | 'Emploi'
+  category: 'Démarches' | 'Santé' | 'Finances' | 'Logement' | 'Emploi' | 'Famille' | 'Transport' | 'Langue'
   readingTime: number // minutes
   intro: string[]
   sections: GuideSection[]
@@ -310,6 +310,309 @@ export const guides: Guide[] = [
     sources: [
       { label: 'CMHC — Se loger au Canada', url: 'https://www.cmhc-schl.gc.ca/fr' },
     ],
+    relatedTools: [{ label: 'Pack Atterrissage', href: '/pack-atterrissage' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'echanger-permis-de-conduire',
+    title: 'Échanger votre permis de conduire étranger au Canada',
+    metaTitle: 'Échange de permis de conduire au Canada par province (2026)',
+    description:
+      "Comment échanger votre permis étranger contre un permis canadien : accords de réciprocité, délai pour conduire, examens selon la province.",
+    keywords: ['échange permis de conduire Canada', 'permis étranger Québec SAAQ', 'conduire nouvel arrivant', 'permis international Canada'],
+    category: 'Transport',
+    readingTime: 4,
+    intro: [
+      "Le permis de conduire est provincial. Vous pouvez généralement conduire quelques mois avec votre permis étranger, mais devez ensuite l'échanger contre un permis local.",
+      "Certains pays ont un accord de réciprocité (échange sans examen). Sinon, examens théorique et pratique sont requis.",
+    ],
+    sections: [
+      { heading: 'Le délai pour conduire', body: ["À l'arrivée, vous pouvez conduire avec votre permis étranger (parfois accompagné d'un permis international) pendant une période limitée, souvent 60 à 90 jours selon la province. Passé ce délai, un permis local est obligatoire."] },
+      { heading: 'Accords de réciprocité', body: ["Plusieurs pays (France, Suisse, Belgique et d'autres selon la province) ont un accord permettant l'échange sans examen. Renseignez-vous auprès de l'organisme provincial (SAAQ au Québec, ServiceOntario en Ontario)."] },
+      { heading: 'Sans accord', body: ['Sans réciprocité, prévoyez :'], steps: ['Un examen théorique (code de la route).', 'Un examen pratique de conduite.', "Parfois un examen de la vue et une période de permis probatoire."] },
+    ],
+    faq: [
+      { q: 'Puis-je conduire dès mon arrivée ?', a: 'Oui, temporairement avec votre permis étranger (souvent 60 à 90 jours), un permis de conduire international aide. Ensuite, échange obligatoire.' },
+      { q: 'Mon expérience de conduite compte-t-elle ?', a: "Oui : une preuve d'ancienneté (relevé de votre pays) peut réduire la période probatoire et les frais d'assurance." },
+    ],
+    sources: [{ label: 'SAAQ — Nouveaux arrivants', url: 'https://saaq.gouv.qc.ca/' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'inscrire-enfants-ecole',
+    title: 'Inscrire vos enfants à l\'école au Canada',
+    metaTitle: 'Inscrire son enfant à l\'école au Canada : démarches nouvel arrivant',
+    description:
+      "L'école est gratuite et obligatoire. Comment inscrire vos enfants à l'arrivée : documents, secteur scolaire, classes d'accueil et francisation.",
+    keywords: ['inscrire enfant école Canada', 'école nouvel arrivant', 'classe accueil francisation', 'commission scolaire inscription'],
+    category: 'Famille',
+    readingTime: 4,
+    intro: [
+      "L'école publique est gratuite et obligatoire (généralement de 5-6 ans jusqu'à 16-18 ans selon la province). Inscrivez vos enfants dès l'arrivée, même en cours d'année.",
+      "Des classes d'accueil aident les enfants non francophones/anglophones à rattraper la langue.",
+    ],
+    sections: [
+      { heading: 'Où inscrire', body: ["L'inscription se fait auprès du centre de services scolaire (ou conseil scolaire) de votre quartier. L'école dépend de votre adresse : ayez un justificatif de domicile."] },
+      { heading: 'Documents habituels', body: ['Prévoyez :'], steps: ["Preuve de statut de l'enfant (passeport, carte RP, permis).", "Preuve d'adresse.", 'Carnet de vaccination / dossier médical.', 'Bulletins scolaires du pays d\'origine (traduits si possible).'] },
+      { heading: 'Classes d\'accueil et soutien', body: ["Les enfants ne maîtrisant pas la langue d'enseignement sont souvent placés en classe d'accueil ou reçoivent un soutien linguistique, puis intègrent le cursus régulier."] },
+    ],
+    faq: [
+      { q: "Puis-je inscrire en cours d'année ?", a: "Oui. L'inscription est possible toute l'année ; l'école évalue le niveau et place l'enfant." },
+      { q: 'Combien ça coûte ?', a: "L'école publique est gratuite. Restent des frais mineurs (fournitures, sorties, parfois service de garde)." },
+    ],
+    sources: [{ label: 'Gouvernement du Québec — Scolarisation', url: 'https://www.quebec.ca/education' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'reconnaissance-diplomes-equivalence',
+    title: 'Faire reconnaître vos diplômes étrangers au Canada',
+    metaTitle: 'Équivalence de diplômes au Canada : reconnaissance des acquis (2026)',
+    description:
+      "Comment faire évaluer vos diplômes étrangers pour l'emploi ou les études : évaluation comparative, ordres professionnels et métiers réglementés.",
+    keywords: ['équivalence diplôme Canada', 'reconnaissance diplôme étranger', 'évaluation comparative études', 'ordre professionnel métier réglementé'],
+    category: 'Emploi',
+    readingTime: 5,
+    intro: [
+      "Vos diplômes étrangers ne sont pas automatiquement reconnus. Une évaluation comparative situe votre niveau par rapport au système canadien — utile pour l'emploi et les études.",
+      "Pour les métiers réglementés (santé, ingénierie, droit, enseignement), un ordre professionnel encadre l'accès et impose souvent des étapes supplémentaires.",
+    ],
+    sections: [
+      { heading: 'Évaluation comparative', body: ["Des organismes provinciaux ou nationaux émettent une évaluation comparant votre diplôme au niveau canadien. Ce document rassure les employeurs, mais ne donne pas le droit d'exercer un métier réglementé."] },
+      { heading: 'Métiers réglementés', body: ["Environ 20 % des professions sont réglementées. Pour exercer, il faut l'autorisation de l'ordre concerné : examens, stage, parfois formation d'appoint. Renseignez-vous AVANT le départ, les délais sont longs."] },
+      { heading: 'Métiers non réglementés', body: ["Pour la majorité des emplois, aucun permis n'est requis : l'employeur décide. Un CV canadien et l'évaluation comparative suffisent souvent."] },
+    ],
+    faq: [
+      { q: "L'évaluation me permet-elle d'exercer ?", a: "Non pour un métier réglementé : elle atteste seulement du niveau. Le droit d'exercer vient de l'ordre professionnel." },
+      { q: 'Quand commencer ?', a: 'Le plus tôt possible, idéalement avant le départ : les procédures des ordres prennent des mois.' },
+    ],
+    sources: [{ label: 'IRCC — Faire évaluer ses diplômes', url: 'https://www.canada.ca/fr/immigration-refugies-citoyennete.html' }],
+    relatedTools: [{ label: 'Simulateur de score CRS', href: '/simulateur-crs' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'premiere-declaration-impots',
+    title: 'Votre première déclaration d\'impôts au Canada',
+    metaTitle: 'Première déclaration d\'impôts au Canada pour nouvel arrivant (2026)',
+    description:
+      "Pourquoi déclarer même sans revenu, quand et comment produire votre déclaration, et les prestations débloquées (crédit TPS/TVH, allocation enfants).",
+    keywords: ['première déclaration impôts Canada', 'déclaration revenus nouvel arrivant', 'crédit TPS TVH', 'ARC nouvel arrivant impôts'],
+    category: 'Finances',
+    readingTime: 5,
+    intro: [
+      "Produire une déclaration de revenus, même sans revenu, débloque des prestations : crédit pour la TPS/TVH, allocation canadienne pour enfants, crédits provinciaux.",
+      "La date limite est généralement le 30 avril pour l'année précédente.",
+    ],
+    sections: [
+      { heading: 'Pourquoi déclarer même sans revenu', body: ["Beaucoup de prestations sont calculées à partir de votre déclaration. Sans elle, vous ne recevez pas le crédit TPS/TVH ni certaines allocations. C'est souvent de l'argent laissé sur la table."] },
+      { heading: "L'année d'arrivée", body: ["Pour votre première déclaration, vous indiquez votre date d'entrée : vous êtes imposé sur les revenus mondiaux à partir de cette date. Rassemblez vos revenus canadiens et la date exacte d'établissement."] },
+      { heading: 'Comment produire', body: ['Options :'], steps: ['En ligne via un logiciel certifié par l\'ARC (plusieurs gratuits).', "Par un comptable ou une clinique d'impôts bénévole (pour revenus modestes).", 'Sur papier en dernier recours.'] },
+    ],
+    faq: [
+      { q: 'Dois-je déclarer si je viens d\'arriver ?', a: 'Oui, dès la première année fiscale où vous résidez, même partielle et même sans revenu : cela débloque vos prestations.' },
+      { q: 'Quels revenus déclarer ?', a: "Vos revenus canadiens, et vos revenus mondiaux à partir de la date où vous devenez résident fiscal. En cas de doute, consultez l'ARC ou un professionnel." },
+    ],
+    sources: [{ label: 'ARC — Nouveaux arrivants au Canada', url: 'https://www.canada.ca/fr/agence-revenu.html' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'allocation-canadienne-enfants-ace',
+    title: 'Allocation canadienne pour enfants (ACE) : y avoir droit',
+    metaTitle: 'Allocation canadienne pour enfants (ACE) nouvel arrivant : demande 2026',
+    description:
+      "L'ACE est un versement mensuel non imposable par enfant de moins de 18 ans. Conditions pour les nouveaux arrivants, comment la demander et le rôle de la déclaration d'impôts.",
+    keywords: ['allocation canadienne enfants ACE', 'ACE nouvel arrivant', 'prestation enfant Canada', 'demande ACE ARC'],
+    category: 'Finances',
+    readingTime: 4,
+    intro: [
+      "L'Allocation canadienne pour enfants (ACE) est un versement mensuel, non imposable, pour aider à couvrir le coût d'un enfant de moins de 18 ans. Le montant dépend du revenu familial.",
+      "Les nouveaux arrivants peuvent y avoir droit dès qu'ils remplissent les conditions de résidence.",
+    ],
+    sections: [
+      { heading: 'Conditions', body: ["Il faut résider au Canada, vivre avec l'enfant et en être le principal responsable, et avoir un statut admissible (résident permanent, protégé, ou temporaire remplissant certaines conditions de durée)."] },
+      { heading: 'Comment la demander', body: ['Deux voies :'], steps: ["Au moment de déclarer la naissance (pour un enfant né au Canada).", "En remplissant le formulaire de demande de l'ARC et en fournissant les preuves de statut et de résidence.", 'Vous et votre conjoint devez produire une déclaration de revenus chaque année pour continuer à la recevoir.'] },
+      { heading: 'Le lien avec les impôts', body: ["Le montant est recalculé chaque année selon votre revenu de l'année précédente. Ne pas déclarer = versements suspendus."] },
+    ],
+    faq: [
+      { q: 'Faut-il être résident permanent ?', a: "Pas forcément : certains résidents temporaires y ont droit après une période de résidence. La déclaration de statut et de résidence est requise." },
+      { q: "Quand arrive le premier versement ?", a: "Généralement dans les 8 semaines suivant une demande complète, versé mensuellement ensuite." },
+    ],
+    sources: [{ label: 'ARC — Allocation canadienne pour enfants', url: 'https://www.canada.ca/fr/agence-revenu/services/prestations-enfants-familles.html' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'cours-francais-anglais-gratuits',
+    title: 'Cours de français et d\'anglais gratuits pour nouveaux arrivants',
+    metaTitle: 'Cours de langue gratuits au Canada : francisation, CLIC/LINC (2026)',
+    description:
+      "Des cours de langue gratuits financés par le gouvernement : francisation au Québec, CLIC/LINC ailleurs. Qui y a droit et comment s'inscrire.",
+    keywords: ['cours français gratuit Canada', 'francisation Québec', 'cours anglais gratuit immigrant', 'CLIC LINC nouvel arrivant'],
+    category: 'Langue',
+    readingTime: 3,
+    intro: [
+      "La maîtrise de la langue est le premier levier d'intégration et d'emploi. Le gouvernement finance des cours gratuits pour les nouveaux arrivants.",
+      "Certains programmes offrent aussi une aide financière, la garde d'enfants ou le transport pendant la formation.",
+    ],
+    sections: [
+      { heading: 'Au Québec — francisation', body: ["Des cours de français gratuits (temps plein ou partiel, en présentiel ou en ligne) sont offerts, parfois avec allocation. L'inscription se fait via les services d'intégration du gouvernement du Québec."] },
+      { heading: 'Ailleurs — CLIC / LINC', body: ["Les Cours de langue pour les immigrants au Canada (CLIC en français, LINC en anglais) sont gratuits pour les résidents permanents et certains autres statuts, financés par IRCC."] },
+      { heading: "S'inscrire", body: ["Passez par un organisme d'accueil des nouveaux arrivants : il évalue votre niveau et vous oriente vers le bon cours."] },
+    ],
+    faq: [
+      { q: 'Est-ce vraiment gratuit ?', a: 'Oui pour les publics admissibles. Certains programmes ajoutent une allocation, la garde d\'enfants ou le transport.' },
+      { q: 'Puis-je travailler en même temps ?', a: "Oui : des cours à temps partiel et en soirée existent pour les personnes qui travaillent." },
+    ],
+    sources: [{ label: 'IRCC — Cours de langue gratuits', url: 'https://www.canada.ca/fr/immigration-refugies-citoyennete.html' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'cv-canadien',
+    title: 'Adapter votre CV au format canadien',
+    metaTitle: 'CV canadien : comment adapter votre CV pour le marché (2026)',
+    description:
+      "Le CV canadien a ses codes : pas de photo, pas d'âge, ciblé sur les résultats. Comment adapter le vôtre pour passer les filtres et décrocher des entrevues.",
+    keywords: ['CV canadien', 'adapter CV Canada', 'CV nouvel arrivant emploi', 'lettre présentation Canada', 'ATS CV'],
+    category: 'Emploi',
+    readingTime: 4,
+    intro: [
+      "Un CV étranger tel quel passe mal au Canada. Le format local est court, factuel, orienté résultats — et souvent lu d'abord par un logiciel (ATS) avant un humain.",
+      "Adapter votre CV double vos chances d'entrevue.",
+    ],
+    sections: [
+      { heading: 'Les règles de base', body: ['Un CV canadien :'], steps: ['Ne contient ni photo, ni âge, ni situation familiale, ni religion.', 'Fait 1 à 2 pages maximum.', 'Met en avant des réalisations chiffrées, pas des tâches.', 'Utilise les mots-clés de l\'offre (pour passer les filtres ATS).'] },
+      { heading: 'Structure recommandée', body: ["En-tête (nom, ville, téléphone, courriel, LinkedIn), résumé de profil en 2-3 lignes, expériences (verbe d'action + résultat), formation, compétences, langues."] },
+      { heading: "L'expérience étrangère", body: ["Ne la cachez pas : traduisez les intitulés en équivalents canadiens et expliquez le contexte si l'employeur est inconnu ici."] },
+    ],
+    faq: [
+      { q: 'Faut-il mettre une photo ?', a: 'Non. Photo, âge et statut familial sont à proscrire au Canada pour éviter tout biais et respecter les usages.' },
+      { q: "Qu'est-ce qu'un ATS ?", a: "Un logiciel qui filtre les CV par mots-clés avant lecture humaine. Reprenez les termes exacts de l'offre pour passer ce filtre." },
+    ],
+    sources: [{ label: 'Guichet-Emplois du Canada', url: 'https://www.guichetemplois.gc.ca/' }],
+    relatedTools: [{ label: 'Pack Atterrissage', href: '/pack-atterrissage' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'forfait-mobile-internet-nouvel-arrivant',
+    title: 'Choisir un forfait mobile et internet à l\'arrivée',
+    metaTitle: 'Forfait mobile et internet nouvel arrivant au Canada (2026)',
+    description:
+      "Comment obtenir une ligne mobile sans historique de crédit, éviter les frais cachés et choisir un forfait internet adapté dès votre arrivée.",
+    keywords: ['forfait mobile nouvel arrivant Canada', 'téléphone sans crédit Canada', 'forfait internet immigrant', 'SIM prépayée Canada'],
+    category: 'Démarches',
+    readingTime: 3,
+    intro: [
+      "Une ligne canadienne est nécessaire pour l'emploi, la banque et les démarches. Sans historique de crédit, un forfait prépayé ou un fournisseur à bas coût est le point de départ.",
+      "Les prix sont élevés au Canada : comparez avant de signer.",
+    ],
+    sections: [
+      { heading: 'Prépayé vs forfait', body: ["Sans historique de crédit, commencez par un forfait prépayé (aucune vérification). Après quelques mois de factures payées, vous accédez aux forfaits mensuels moins chers au Go."] },
+      { heading: 'Marques à bas coût', body: ["Les grands opérateurs ont des marques secondaires (souvent moins chères) et des fournisseurs indépendants existent. Regardez le prix APRÈS promotion et les frais d'activation."] },
+      { heading: 'Internet à domicile', body: ["Pour internet, comparez les offres de votre quartier ; des fournisseurs indépendants sont souvent moins chers que les gros. Vérifiez la durée d'engagement."] },
+    ],
+    faq: [
+      { q: 'Puis-je avoir une ligne sans crédit ?', a: 'Oui : un forfait prépayé ne demande aucune vérification de crédit. Idéal les premiers mois.' },
+      { q: 'Pourquoi c\'est si cher ?', a: "Le marché canadien est concentré. Les marques secondaires et les fournisseurs indépendants réduisent la facture." },
+    ],
+    sources: [{ label: 'CRTC — Services de communication', url: 'https://crtc.gc.ca/fra/accueil-home.htm' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'trouver-garderie-place-cpe',
+    title: 'Trouver une garderie ou une place en CPE',
+    metaTitle: 'Garderie et CPE au Canada : trouver une place (nouvel arrivant 2026)',
+    description:
+      "Les places de garde sont rares et se réservent tôt. Types de garde, coûts, listes d'attente et aides financières selon la province.",
+    keywords: ['garderie Canada nouvel arrivant', 'place CPE Québec', 'coût garderie Canada', 'liste attente garderie'],
+    category: 'Famille',
+    readingTime: 4,
+    intro: [
+      "Les places de garde sont très demandées : inscrivez-vous sur les listes d'attente dès que possible, parfois avant même l'arrivée.",
+      "Les coûts et aides varient beaucoup selon la province — certaines subventionnent fortement la garde.",
+    ],
+    sections: [
+      { heading: 'Types de garde', body: ["Garde subventionnée (places à tarif réduit, listes d'attente longues), garde privée non subventionnée (plus chère, plus de disponibilité), et garde en milieu familial."] },
+      { heading: "S'inscrire tôt", body: ["Inscrivez votre enfant sur les listes d'attente le plus tôt possible. Au Québec, un guichet unique centralise les demandes de places subventionnées."] },
+      { heading: 'Aides financières', body: ["Selon la province, des crédits d'impôt ou subventions réduisent le coût. Renseignez-vous sur le soutien disponible pour votre revenu."] },
+    ],
+    faq: [
+      { q: "Puis-je m'inscrire avant d'arriver ?", a: "Souvent oui, sur les listes d'attente. Vu la demande, plus tôt vaut mieux." },
+      { q: 'Combien ça coûte ?', a: "Très variable : de quelques dollars par jour en place subventionnée à plusieurs dizaines en privé. Vérifiez les aides de votre province." },
+    ],
+    sources: [{ label: 'Québec — Guichet unique places (La Place 0-5)', url: 'https://www.laplace0-5.com/' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'se-deplacer-transport-voiture',
+    title: 'Se déplacer au Canada : transport en commun et voiture',
+    metaTitle: 'Transport au Canada nouvel arrivant : bus, métro, acheter une voiture',
+    description:
+      "Cartes de transport en commun, faut-il une voiture, assurance auto obligatoire et coûts à prévoir selon la ville.",
+    keywords: ['transport en commun Canada', 'carte OPUS Presto', 'acheter voiture nouvel arrivant', 'assurance auto Canada'],
+    category: 'Transport',
+    readingTime: 3,
+    intro: [
+      "Dans les grandes villes, le transport en commun suffit souvent au départ. Ailleurs, une voiture devient vite nécessaire — avec une assurance obligatoire.",
+      "Anticipez les coûts : l'auto (achat, assurance, essence) pèse lourd dans un budget de nouvel arrivant.",
+    ],
+    sections: [
+      { heading: 'Transport en commun', body: ["Chaque ville a sa carte rechargeable (OPUS à Montréal, Presto à Toronto, Compass à Vancouver). Des tarifs réduits existent pour étudiants et aînés."] },
+      { heading: 'Faut-il une voiture ?', body: ["En centre urbain, non au départ. En banlieue ou petite ville, souvent oui. Comparez le coût total (assurance + essence + stationnement) au transport en commun avant d'acheter."] },
+      { heading: 'Assurance auto', body: ["L'assurance auto est obligatoire pour conduire. Le tarif dépend de votre historique : apportez une preuve d'ancienneté et de bon dossier de votre pays pour le réduire."] },
+    ],
+    faq: [
+      { q: 'Puis-je conduire ma voiture sans assurance ?', a: 'Non. L\'assurance responsabilité est obligatoire partout au Canada pour conduire légalement.' },
+      { q: 'Comment payer moins cher l\'assurance ?', a: "Fournissez une lettre d'expérience de votre ancien assureur : elle prouve votre ancienneté et fait baisser la prime." },
+    ],
+    sources: [{ label: 'Gouvernement du Canada — Vivre au Canada', url: 'https://www.canada.ca/fr/immigration-refugies-citoyennete.html' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'maintenir-carte-residence-permanente',
+    title: 'Maintenir et renouveler votre carte de résident permanent',
+    metaTitle: 'Carte de RP : obligation de résidence et renouvellement (2026)',
+    description:
+      "L'obligation de résidence (730 jours sur 5 ans), quand renouveler votre carte de RP et comment voyager sans la perdre.",
+    keywords: ['carte résident permanent renouvellement', 'obligation de résidence RP', '730 jours sur 5 ans', 'perdre statut résident permanent'],
+    category: 'Démarches',
+    readingTime: 4,
+    intro: [
+      "Le statut de résident permanent s'accompagne d'une obligation : être physiquement présent au Canada au moins 730 jours sur 5 ans. La carte de RP, elle, se renouvelle.",
+      "Anticipez : voyager beaucoup ou laisser expirer votre carte peut compliquer votre retour et votre statut.",
+    ],
+    sections: [
+      { heading: "L'obligation de résidence", body: ["Vous devez cumuler au moins 730 jours de présence au Canada sur toute période de 5 ans. Certaines absences (accompagner un conjoint citoyen, travail pour une entreprise canadienne à l'étranger) peuvent compter."] },
+      { heading: 'Renouveler la carte', body: ["La carte de RP a une durée de validité (souvent 5 ans). Renouvelez-la avant expiration si vous prévoyez de voyager : elle sert de document de voyage pour rentrer par avion."] },
+      { heading: 'Voyager sans la perdre', body: ["Une carte expirée ne fait pas perdre le statut, mais complique le retour. Sans carte valide à l'étranger, un titre de voyage spécial peut être nécessaire."] },
+    ],
+    faq: [
+      { q: 'Je voyage beaucoup, vais-je perdre mon statut ?', a: "Risque si vous descendez sous 730 jours de présence sur 5 ans. Suivez vos jours de présence de près." },
+      { q: 'Ma carte expire, ai-je perdu mon statut ?', a: "Non : la carte est un document, pas le statut. Mais renouvelez-la avant de voyager par avion." },
+    ],
+    sources: [{ label: 'IRCC — Obligation de résidence', url: 'https://www.canada.ca/fr/immigration-refugies-citoyennete.html' }],
+    updated: '2026-09-04',
+  },
+  {
+    slug: 'budget-premieres-semaines',
+    title: 'Budget des premières semaines au Canada',
+    metaTitle: 'Budget d\'installation au Canada : combien prévoir à l\'arrivée (2026)',
+    description:
+      "Les dépenses à anticiper le premier mois : dépôt de loyer, meubles, épicerie, transport, téléphone. Comment éviter les mauvaises surprises.",
+    keywords: ['budget installation Canada', 'coût premier mois immigrant', 'combien argent arriver Canada', 'dépenses nouvel arrivant'],
+    category: 'Finances',
+    readingTime: 4,
+    intro: [
+      "Le premier mois concentre beaucoup de dépenses en une fois : logement, meubles, dépôts, épicerie. Un coussin financier évite le stress.",
+      "Les montants varient fortement selon la ville : Toronto et Vancouver coûtent bien plus que la moyenne.",
+    ],
+    sections: [
+      { heading: 'Les gros postes du premier mois', body: ['À prévoir dès l\'arrivée :'], steps: ['Logement : premier (et parfois dernier) mois de loyer + éventuel dépôt.', 'Meubles et électroménagers de base (l\'occasion fait économiser).', 'Épicerie et produits ménagers de départ.', 'Téléphone + transport + éventuellement assurance santé temporaire.'] },
+      { heading: 'Réduire la facture', body: ["Achetez d'occasion (groupes d'entraide, marchés en ligne), profitez des banques alimentaires et organismes d'accueil, et comparez systématiquement avant de signer un engagement."] },
+      { heading: 'Garder une réserve', body: ["Gardez de quoi couvrir plusieurs semaines sans revenu : trouver un emploi prend du temps, et les premières paies arrivent en décalé."] },
+    ],
+    faq: [
+      { q: 'Combien faut-il prévoir ?', a: "Cela dépend de la ville et de la taille du foyer. Prévoyez plusieurs mois de dépenses courantes en réserve, au-delà des minimums exigés par l'immigration." },
+      { q: 'Où trouver des meubles pas chers ?', a: "Marchés en ligne d'occasion, groupes d'entraide de nouveaux arrivants, ventes de déménagement et organismes communautaires." },
+    ],
+    sources: [{ label: 'IRCC — Préparer son installation', url: 'https://www.canada.ca/fr/immigration-refugies-citoyennete.html' }],
     relatedTools: [{ label: 'Pack Atterrissage', href: '/pack-atterrissage' }],
     updated: '2026-09-04',
   },
