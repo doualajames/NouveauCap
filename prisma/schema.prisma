@@ -377,6 +377,19 @@ model Testimonial {
   createdAt DateTime @default(now())
 }
 
+// Funnel first-party — mesure visite→outil→email→signup, sans GA ni cookies
+model FunnelEvent {
+  id        String   @id @default(cuid())
+  name      String
+  path      String?
+  source    String?
+  sessionId String
+  createdAt DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([sessionId])
+}
+
 // Templates de tâches d'onboarding (corpus administrable — remplace le hardcode)
 model TaskTemplate {
   id            String   @id @default(cuid())

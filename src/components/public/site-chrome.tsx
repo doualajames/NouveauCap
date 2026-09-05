@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import { PageView } from './page-view'
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/90 backdrop-blur">
+      <PageView />
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-bold text-gray-900">
           <span aria-hidden>🍁</span> NouveauCap

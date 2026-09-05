@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@/lib/track'
 
 export function LeadForm({
   source,
@@ -25,6 +26,7 @@ export function LeadForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source, locale: 'fr' }),
       })
+      if (res.ok) track('lead_captured', { source })
       setStatus(res.ok ? 'success' : 'error')
     } catch {
       setStatus('error')

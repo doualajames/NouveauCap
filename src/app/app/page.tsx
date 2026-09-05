@@ -144,8 +144,12 @@ export default function NouveauCapApp() {
       if (data.error) {
         setError(data.error)
       } else {
-        useAppStore.setState({ 
-          user: data.user, 
+        if (authMode !== 'signIn') {
+          const { track } = await import('@/lib/track')
+          track('signup', { source: 'app' })
+        }
+        useAppStore.setState({
+          user: data.user,
           isAuthenticated: true,
           currentView: data.user.onboardingCompleted ? 'dashboard' : 'onboarding'
         })

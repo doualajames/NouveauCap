@@ -67,19 +67,32 @@ export async function GET(request: NextRequest) {
       inProgress: allTasks.filter(t => t.status === 'IN_PROGRESS').length
     }
     
+    // Funnel first-party (30 j) : sessions distinctes par étape → taux de conversion réel
+    const funnelStages = ['page_view', 'tool_used', 'lead_captured', 'survey_submitted', 'signup']
+    const funnel: Record<string, number> = {}
+    for (const name of funnelStages) {
+      const rows = await prisma.funnelEvent.findMany({
+        where: { name, createdAt: { gte: thirtyDaysAgo } },
+        distinct: ['sessionId'],
+        select: { sessionId: true },
+      })
+      funnel[name] = rows.length
+    }
+
     return NextResponse.json({
       totalUsers, activeUsers, newUsersToday, premiumSubscribers, freeUsers,
       monthlyRevenue, signupsPerDay,
       usersByStatus: usersByStatus.map(s => ({ status: s.immigrationStatus, count: s._count })),
       usersByProvince: usersByProvince.map(p => ({ province: p.province, count: p._count })),
-      taskStats
+      taskStats,
+      funnel
     })
   } catch (error) {
     console.error('Admin stats error:', error)
     return NextResponse.json({ 
       totalUsers: 0, activeUsers: 0, newUsersToday: 0, premiumSubscribers: 0, freeUsers: 0,
       monthlyRevenue: 0, signupsPerDay: [], usersByStatus: [], usersByProvince: [],
-      taskStats: { completed: 0, pending: 0, inProgress: 0 }
+      taskStats: { completed: 0, pending: 0, inProgress: 0 }, funnel: {}
     })
   }
 }

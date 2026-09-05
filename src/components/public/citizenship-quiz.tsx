@@ -17,6 +17,7 @@ export function CitizenshipQuiz() {
 
   const validate = () => {
     if (selected === null) return
+    if (current === 0) import('@/lib/track').then(m => m.track('tool_used', { source: 'quiz' })).catch(() => {})
     if (selected === q.correctAnswer) setCorrectCount(c => c + 1)
     setAnswered(true)
   }

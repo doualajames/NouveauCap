@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@/lib/track'
 
 type Format = 'one-shot' | 'monthly' | 'freemium'
 type Who = 'self' | 'relative' | 'employer'
@@ -37,6 +38,7 @@ export function PriceSurvey() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, format, maxPrice, whoPays, comment }),
       })
+      if (res.ok) track('survey_submitted', { source: 'temoignages' })
       setStatus(res.ok ? 'done' : 'error')
     } catch {
       setStatus('error')

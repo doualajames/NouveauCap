@@ -61,6 +61,7 @@ export function CrsCalculator() {
       foreignXpPoints(foreignXp) +
       100 // facteurs de transférabilité (base simplifiée)
     setScore(total)
+    import('@/lib/track').then(m => m.track('tool_used', { source: 'crs' })).catch(() => {})
   }
 
   const field = 'block text-sm font-medium text-gray-700'
