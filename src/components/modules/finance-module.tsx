@@ -78,7 +78,7 @@ export function FinanceModule({ language, user }: {
       name: 'RBC Royal Bank',
       nameFr: 'RBC Banque Royale',
       logo: '🦁',
-      color: 'from-blue-600 to-blue-800',
+      color: ' ',
       accountName: 'RBC Newcomer Account',
       accountNameFr: 'Compte Nouvel Arrivant RBC',
       monthlyFee: 0,
@@ -100,7 +100,7 @@ export function FinanceModule({ language, user }: {
       name: 'TD Canada Trust',
       nameFr: 'TD Canada Trust',
       logo: '🟢',
-      color: 'from-green-600 to-green-800',
+      color: ' ',
       accountName: 'TD New to Canada',
       accountNameFr: 'TD Nouveau au Canada',
       monthlyFee: 0,
@@ -122,7 +122,7 @@ export function FinanceModule({ language, user }: {
       name: 'Scotiabank',
       nameFr: 'Banque Scotia',
       logo: '🔴',
-      color: 'from-red-600 to-red-800',
+      color: ' ',
       accountName: 'Scotiabank StartRight',
       accountNameFr: 'Scotiabank StartRight',
       monthlyFee: 0,
@@ -144,7 +144,7 @@ export function FinanceModule({ language, user }: {
       name: 'BMO Bank of Montreal',
       nameFr: 'BMO Banque de Montréal',
       logo: '🔵',
-      color: 'from-blue-500 to-blue-700',
+      color: ' ',
       accountName: 'BMO NewStart',
       accountNameFr: 'BMO Nouveau Départ',
       monthlyFee: 0,
@@ -166,7 +166,7 @@ export function FinanceModule({ language, user }: {
       name: 'CIBC',
       nameFr: 'CIBC',
       logo: '🟠',
-      color: 'from-amber-500 to-amber-700',
+      color: ' ',
       accountName: 'CIBC Newcomer',
       accountNameFr: 'CIBC Nouvel Arrivant',
       monthlyFee: 0,
@@ -188,7 +188,7 @@ export function FinanceModule({ language, user }: {
       name: 'National Bank',
       nameFr: 'Banque Nationale',
       logo: '🟣',
-      color: 'from-purple-600 to-purple-800',
+      color: ' ',
       accountName: 'NBC Newcomer Package',
       accountNameFr: 'Forfait Nouvel Arrivant NBC',
       monthlyFee: 0,
@@ -210,7 +210,7 @@ export function FinanceModule({ language, user }: {
       name: 'Desjardins',
       nameFr: 'Desjardins',
       logo: '🟤',
-      color: 'from-emerald-600 to-emerald-800',
+      color: ' ',
       accountName: 'Desjardins Newcomer',
       accountNameFr: 'Desjardins Nouvel Arrivant',
       monthlyFee: 0,
@@ -232,7 +232,7 @@ export function FinanceModule({ language, user }: {
       name: 'Tangerine (Online)',
       nameFr: 'Tangerine (En ligne)',
       logo: '🟡',
-      color: 'from-orange-500 to-orange-700',
+      color: ' ',
       accountName: 'Tangerine No-Fee Daily Chequing',
       accountNameFr: 'Compte-chèques sans frais Tangerine',
       monthlyFee: 0,
@@ -254,7 +254,7 @@ export function FinanceModule({ language, user }: {
       name: 'Simpli Financial',
       nameFr: 'Simpli Financial',
       logo: '⭐',
-      color: 'from-pink-500 to-pink-700',
+      color: ' ',
       accountName: 'Simpli No Fee Chequing',
       accountNameFr: 'Compte-chèques sans frais Simpli',
       monthlyFee: 0,
@@ -299,15 +299,15 @@ export function FinanceModule({ language, user }: {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white dark:from-amber-950/20 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-200 dark:shadow-amber-900/30">
-            <Wallet className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-amber-200 dark:shadow-amber-900/30">
+            <Wallet className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
               {t('modules.finance.title', language)}
             </h1>
             <p className="text-gray-500 dark:text-gray-400">{t('modules.finance.description', language)}</p>
@@ -315,11 +315,11 @@ export function FinanceModule({ language, user }: {
         </div>
 
         {/* Bank Comparator Table */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-b">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="bg-primary text-primary-foreground border-b">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <Landmark className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <Landmark className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '🏦 Comparateur Bancaire Nouveaux Arrivants' : '🏦 Newcomer Bank Comparator'}
             </CardTitle>
@@ -331,18 +331,18 @@ export function FinanceModule({ language, user }: {
           </CardHeader>
           
           {/* Province-specific banner */}
-          <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 px-6 py-4 border-b">
+          <div className="bg-muted px-6 py-4 border-b">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center">
+                <MapPin className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-purple-800 dark:text-purple-200">
+                <p className="font-semibold text-foreground text-foreground">
                   {language === 'fr' 
                     ? `📍 Recommandations pour votre province: ${provinces.find(p => p.code === userProvince)?.name || userProvince}`
                     : `📍 Recommendations for your province: ${provinces.find(p => p.code === userProvince)?.nameEn || userProvince}`}
                 </p>
-                <p className="text-sm text-purple-600 dark:text-purple-300">
+                <p className="text-sm text-foreground text-foreground">
                   {language === 'fr' 
                     ? provinceBankInfo[userProvince]?.notesFr 
                     : provinceBankInfo[userProvince]?.notes}
@@ -357,12 +357,12 @@ export function FinanceModule({ language, user }: {
               {sortedBanks.map((bank) => (
                 <div 
                   key={bank.id} 
-                  className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${selectedBank?.id === bank.id ? 'bg-amber-50 dark:bg-amber-900/20' : ''}`}
+                  className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${selectedBank?.id === bank.id ? 'bg-muted bg-muted' : ''}`}
                   onClick={() => setSelectedBank(bank)}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${bank.color} rounded-xl flex items-center justify-center text-white text-xl`}>
+                      <div className={`w-12 h-12 bg-muted ${bank.color} rounded-xl flex items-center justify-center text-xl`}>
                         {bank.logo}
                       </div>
                       <div>
@@ -371,35 +371,35 @@ export function FinanceModule({ language, user }: {
                       </div>
                     </div>
                     {bank.recommended && (
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+                      <Badge className="bg-primary text-primary-foreground border border-border text-xs">
                         ⭐ {language === 'fr' ? 'Recommandé' : 'Recommended'}
                       </Badge>
                     )}
                     {isProvinceRecommended(bank.id) && !bank.recommended && (
-                      <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-xs">
+                      <Badge className="bg-primary text-primary-foreground border border-border text-xs">
                         🎯 {language === 'fr' ? 'Top pour votre province' : 'Top for your province'}
                       </Badge>
                     )}
                     {bank.provinceNote && bank.recommendedProvinces?.includes(userProvince) && (
-                      <span className="text-xs text-purple-600 dark:text-purple-400 ml-2">
+                      <span className="text-xs text-foreground text-foreground ml-2">
                         {language === 'fr' ? bank.provinceNoteFr : bank.provinceNote}
                       </span>
                     )}
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2 text-center">
+                    <div className="bg-muted bg-muted rounded-lg p-2 text-center">
                       <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais/mois' : 'Fee/month'}</p>
-                      <p className="font-bold text-green-600">${bank.monthlyFee}</p>
+                      <p className="font-bold text-foreground">${bank.monthlyFee}</p>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 text-center">
+                    <div className="bg-muted bg-muted rounded-lg p-2 text-center">
                       <p className="text-xs text-gray-500">{language === 'fr' ? '1ère année' : '1st year'}</p>
-                      <p className="font-bold text-blue-600">{language === 'fr' ? 'Gratuite' : 'Free'}</p>
+                      <p className="font-bold text-foreground">{language === 'fr' ? 'Gratuite' : 'Free'}</p>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 rounded-lg p-2 mb-3">
-                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                  <div className="bg-muted rounded-lg p-2 mb-3">
+                    <p className="text-sm font-semibold text-muted-foreground text-muted-foreground">
                       🎁 {language === 'fr' ? bank.bonusOfferFr : bank.bonusOffer}
                     </p>
                   </div>
@@ -408,7 +408,7 @@ export function FinanceModule({ language, user }: {
                     href={bank.newcomersUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium"
+                    className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground py-2 rounded-lg transition-all text-sm font-medium"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -451,31 +451,31 @@ export function FinanceModule({ language, user }: {
                     <tr 
                       key={bank.id}
                       className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
-                        selectedBank?.id === bank.id ? 'bg-amber-50 dark:bg-amber-900/20' : ''
-                      } ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50/50 dark:bg-gray-800/30'}`}
+ selectedBank?.id === bank.id ? 'bg-muted bg-muted' : ''
+ } ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50/50 dark:bg-gray-800/30'}`}
                       onClick={() => setSelectedBank(bank)}
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 bg-gradient-to-br ${bank.color} rounded-xl flex items-center justify-center text-white text-lg shadow-md`}>
+                          <div className={`w-10 h-10 bg-muted ${bank.color} rounded-xl flex items-center justify-center text-lg shadow-none`}>
                             {bank.logo}
                           </div>
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="font-bold">{language === 'fr' ? bank.nameFr : bank.name}</p>
                               {bank.recommended && (
-                                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-1.5 py-0">
+                                <Badge className="bg-primary text-primary-foreground border border-border text-[10px] px-1.5 py-0">
                                   ⭐ TOP
                                 </Badge>
                               )}
                               {isProvinceRecommended(bank.id) && !bank.recommended && (
-                                <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-[10px] px-1.5 py-0">
+                                <Badge className="bg-primary text-primary-foreground border border-border text-[10px] px-1.5 py-0">
                                   🎯 {language === 'fr' ? 'Province' : 'Province'}
                                 </Badge>
                               )}
                             </div>
                             {bank.provinceNote && bank.recommendedProvinces?.includes(userProvince) && (
-                              <p className="text-xs text-purple-600 dark:text-purple-400 mt-0.5">
+                              <p className="text-xs text-foreground text-foreground mt-0.5">
                                 {language === 'fr' ? bank.provinceNoteFr : bank.provinceNote}
                               </p>
                             )}
@@ -487,14 +487,14 @@ export function FinanceModule({ language, user }: {
                       </td>
                       <td className="p-4 text-center">
                         <div className="inline-flex flex-col items-center">
-                          <span className="text-2xl font-bold text-green-600">${bank.monthlyFee}</span>
+                          <span className="text-2xl font-bold text-foreground">${bank.monthlyFee}</span>
                           <span className="text-xs text-gray-500">
                             {bank.firstYearFree ? (language === 'fr' ? '(1ère année gratuite)' : '(1st year free)') : ''}
                           </span>
                         </div>
                       </td>
                       <td className="p-4 text-center">
-                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-amber-700 dark:text-amber-300 px-3 py-1.5 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center gap-1 bg-muted text-muted-foreground text-muted-foreground px-3 py-1.5 rounded-full text-sm font-semibold">
                           🎁 {language === 'fr' ? bank.bonusOfferFr : bank.bonusOffer}
                         </span>
                       </td>
@@ -502,7 +502,7 @@ export function FinanceModule({ language, user }: {
                         <ul className="space-y-1">
                           {(language === 'fr' ? bank.featuresFr : bank.features).slice(0, 3).map((feature, i) => (
                             <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
                               {feature}
                             </li>
                           ))}
@@ -518,7 +518,7 @@ export function FinanceModule({ language, user }: {
                           href={bank.newcomersUrl} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all"
+                          className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-none hover:shadow-none transition-all"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -548,11 +548,11 @@ export function FinanceModule({ language, user }: {
 
         {/* Selected Bank Details Modal */}
         {selectedBank && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+          <Card className="border border-border shadow-none bg-muted">
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${selectedBank.color} rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg`}>
+                  <div className={`w-16 h-16 bg-muted ${selectedBank.color} rounded-2xl flex items-center justify-center text-2xl shadow-none`}>
                     {selectedBank.logo}
                   </div>
                   <div>
@@ -568,13 +568,13 @@ export function FinanceModule({ language, user }: {
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <CheckCircle2 className="w-4 h-4 text-foreground" />
                     {language === 'fr' ? 'Avantages complets' : 'Full benefits'}
                   </h4>
                   <ul className="space-y-2">
                     {(language === 'fr' ? selectedBank.featuresFr : selectedBank.features).map((feature: string, i: number) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
@@ -582,21 +582,21 @@ export function FinanceModule({ language, user }: {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-blue-500" />
+                    <CreditCard className="w-4 h-4 text-foreground" />
                     {language === 'fr' ? 'Détails de l\'offre' : 'Offer details'}
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">{language === 'fr' ? 'Frais mensuels:' : 'Monthly fee:'}</span>
-                      <span className="font-semibold text-green-600">${selectedBank.monthlyFee}</span>
+                      <span className="font-semibold text-foreground">${selectedBank.monthlyFee}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">{language === 'fr' ? '1ère année:' : '1st year:'}</span>
-                      <span className="font-semibold text-green-600">{language === 'fr' ? 'Gratuite' : 'Free'}</span>
+                      <span className="font-semibold text-foreground">{language === 'fr' ? 'Gratuite' : 'Free'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">{language === 'fr' ? 'Bonus:' : 'Bonus:'}</span>
-                      <span className="font-semibold text-amber-600">{language === 'fr' ? selectedBank.bonusOfferFr : selectedBank.bonusOffer}</span>
+                      <span className="font-semibold text-muted-foreground">{language === 'fr' ? selectedBank.bonusOfferFr : selectedBank.bonusOffer}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">{language === 'fr' ? 'Ouverture:' : 'Opening:'}</span>
@@ -610,7 +610,7 @@ export function FinanceModule({ language, user }: {
                 href={selectedBank.newcomersUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-xl font-medium shadow-lg transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium shadow-none transition-all"
               >
                 <ExternalLink className="w-5 h-5" />
                 {language === 'fr' ? `Ouvrir un compte chez ${selectedBank.nameFr}` : `Open an account with ${selectedBank.name}`}
@@ -621,11 +621,11 @@ export function FinanceModule({ language, user }: {
 
         {/* Credit & Tax Guides */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-foreground text-foreground" />
                 </div>
                 {language === 'fr' ? '📈 Construire votre crédit' : '📈 Build Your Credit'}
               </CardTitle>
@@ -638,7 +638,7 @@ export function FinanceModule({ language, user }: {
                 { step: 4, title: language === 'fr' ? 'Vérifier votre score' : 'Check your score', desc: language === 'fr' ? 'Equifax ou TransUnion' : 'Equifax or TransUnion', emoji: '🔍' },
               ].map((item) => (
                 <div key={item.step} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg">
                     {item.step}
                   </div>
                   <div className="flex-1">
@@ -650,11 +650,11 @@ export function FinanceModule({ language, user }: {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                  <Receipt className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                  <Receipt className="w-4 h-4 text-foreground text-foreground" />
                 </div>
                 {language === 'fr' ? '🧾 Guide fiscal simplifié' : '🧾 Simplified Tax Guide'}
               </CardTitle>
@@ -682,11 +682,11 @@ export function FinanceModule({ language, user }: {
         </div>
 
         {/* Money Transfer */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <Send className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '💸 Transferts d\'argent internationaux' : '💸 International Money Transfers'}
             </CardTitle>
@@ -694,16 +694,16 @@ export function FinanceModule({ language, user }: {
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { name: 'Wise', fee: '~0.5%', time: language === 'fr' ? '1-2 jours' : '1-2 days', color: 'from-green-400 to-green-600', rating: '⭐⭐⭐⭐⭐', note: language === 'fr' ? 'Meilleurs taux' : 'Best rates' },
-                { name: 'Remitly', fee: '~1%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-blue-400 to-blue-600', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Rapide' : 'Fast' },
-                { name: 'Tap Tap Send', fee: '~0-2%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-purple-400 to-pink-600', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Populaire pour Afrique' : 'Popular for Africa' },
-                { name: 'Western Union', fee: '~3%', time: language === 'fr' ? 'Instantané' : 'Instant', color: 'from-yellow-400 to-yellow-600', rating: '⭐⭐⭐', note: language === 'fr' ? 'Partout' : 'Everywhere' },
+                { name: 'Wise', fee: '~0.5%', time: language === 'fr' ? '1-2 jours' : '1-2 days', color: ' ', rating: '⭐⭐⭐⭐⭐', note: language === 'fr' ? 'Meilleurs taux' : 'Best rates' },
+                { name: 'Remitly', fee: '~1%', time: language === 'fr' ? 'Instantané' : 'Instant', color: ' ', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Rapide' : 'Fast' },
+                { name: 'Tap Tap Send', fee: '~0-2%', time: language === 'fr' ? 'Instantané' : 'Instant', color: ' ', rating: '⭐⭐⭐⭐', note: language === 'fr' ? 'Populaire pour Afrique' : 'Popular for Africa' },
+                { name: 'Western Union', fee: '~3%', time: language === 'fr' ? 'Instantané' : 'Instant', color: ' ', rating: '⭐⭐⭐', note: language === 'fr' ? 'Partout' : 'Everywhere' },
               ].map((service, i) => (
-                <Card key={i} className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
-                  <div className={`h-2 bg-gradient-to-r ${service.color}`} />
+                <Card key={i} className="overflow-hidden hover:shadow-none transition-all duration-300 group cursor-pointer">
+                  <div className={`h-2 bg-muted ${service.color}`} />
                   <CardContent className="p-5 text-center">
                     <p className="font-bold text-xl">{service.name}</p>
-                    <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mt-1">{service.note}</p>
+                    <p className="text-xs text-foreground text-foreground font-medium mt-1">{service.note}</p>
                     <p className="text-sm text-gray-500 mt-1">{language === 'fr' ? 'Frais' : 'Fee'}: {service.fee}</p>
                     <Badge className="mt-2">{service.time}</Badge>
                     <p className="text-xs mt-2">{service.rating}</p>

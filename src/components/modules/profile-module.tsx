@@ -125,16 +125,16 @@ export function ProfileModule({ language, user, onUpdate }: {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30">
-              <User className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-indigo-200 dark:shadow-indigo-900/30">
+              <User className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
                 {language === 'fr' ? 'Mon Profil' : 'My Profile'}
               </h1>
               <p className="text-gray-500 dark:text-gray-400">
@@ -142,7 +142,7 @@ export function ProfileModule({ language, user, onUpdate }: {
               </p>
             </div>
           </div>
-          <Button onClick={handleSave} disabled={isLoading} className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg">
+          <Button onClick={handleSave} disabled={isLoading} className="bg-primary text-primary-foreground shadow-none">
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
             {language === 'fr' ? 'Enregistrer' : 'Save'}
           </Button>
@@ -159,7 +159,7 @@ export function ProfileModule({ language, user, onUpdate }: {
             const Icon = section.icon
             return (
               <Button key={section.id} variant={activeSection === section.id ? 'default' : 'outline'}
-                className={`flex items-center gap-2 whitespace-nowrap ${activeSection === section.id ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : ''}`}
+                className={`flex items-center gap-2 whitespace-nowrap ${activeSection === section.id ? 'bg-primary text-primary-foreground' : ''}`}
                 onClick={() => setActiveSection(section.id as any)}>
                 <Icon className="w-4 h-4" />
                 {section.label}
@@ -171,18 +171,18 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Personal Information Section */}
         {activeSection === 'personal' && (
           <div className="grid lg:grid-cols-3 gap-6">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20">
+            <Card className="border border-border shadow-none bg-muted">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                    <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                    <User className="w-4 h-4 text-foreground text-foreground" />
                   </div>
                   {language === 'fr' ? 'Photo de profil' : 'Profile Picture'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
-                <div className="w-32 h-32 mx-auto bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-xl">
-                  <span className="text-4xl font-bold text-white">
+                <div className="w-32 h-32 mx-auto bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-4 shadow-none">
+                  <span className="text-4xl font-bold">
                     {name ? name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) : 'NC'}
                   </span>
                 </div>
@@ -190,11 +190,11 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-2 border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="lg:col-span-2 border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-foreground text-foreground" />
                   </div>
                   {language === 'fr' ? 'Informations personnelles' : 'Personal Information'}
                 </CardTitle>
@@ -215,7 +215,7 @@ export function ProfileModule({ language, user, onUpdate }: {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-indigo-500" />
+                      <Calendar className="w-4 h-4 text-foreground" />
                       {language === 'fr' ? 'Date de naissance' : 'Date of birth'}
                     </Label>
                     <Input 
@@ -263,11 +263,11 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Immigration Section */}
         {activeSection === 'immigration' && (
           <div className="space-y-6">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-foreground text-foreground" />
                   </div>
                   {language === 'fr' ? 'Statut d\'immigration' : 'Immigration Status'}
                 </CardTitle>
@@ -279,10 +279,10 @@ export function ProfileModule({ language, user, onUpdate }: {
                     <Select value={immigrationStatus} onValueChange={setImmigrationStatus}>
                       <SelectTrigger><SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="PERMANENT_RESIDENT"><Shield className="w-4 h-4 text-green-500 inline mr-2" />{language === 'fr' ? 'Résident permanent' : 'Permanent Resident'}</SelectItem>
-                        <SelectItem value="FOREIGN_STUDENT"><GraduationCap className="w-4 h-4 text-blue-500 inline mr-2" />{language === 'fr' ? 'Étudiant étranger' : 'Foreign Student'}</SelectItem>
-                        <SelectItem value="OPEN_WORK_PERMIT"><Briefcase className="w-4 h-4 text-purple-500 inline mr-2" />{language === 'fr' ? 'Permis ouvert' : 'Open Work Permit'}</SelectItem>
-                        <SelectItem value="CLOSED_WORK_PERMIT"><Building2 className="w-4 h-4 text-orange-500 inline mr-2" />{language === 'fr' ? 'Permis fermé' : 'Closed Work Permit'}</SelectItem>
+                        <SelectItem value="PERMANENT_RESIDENT"><Shield className="w-4 h-4 text-foreground inline mr-2" />{language === 'fr' ? 'Résident permanent' : 'Permanent Resident'}</SelectItem>
+                        <SelectItem value="FOREIGN_STUDENT"><GraduationCap className="w-4 h-4 text-foreground inline mr-2" />{language === 'fr' ? 'Étudiant étranger' : 'Foreign Student'}</SelectItem>
+                        <SelectItem value="OPEN_WORK_PERMIT"><Briefcase className="w-4 h-4 text-foreground inline mr-2" />{language === 'fr' ? 'Permis ouvert' : 'Open Work Permit'}</SelectItem>
+                        <SelectItem value="CLOSED_WORK_PERMIT"><Building2 className="w-4 h-4 text-muted-foreground inline mr-2" />{language === 'fr' ? 'Permis fermé' : 'Closed Work Permit'}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -297,7 +297,7 @@ export function ProfileModule({ language, user, onUpdate }: {
                   </div>
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-indigo-500" />
+                      <MapPin className="w-4 h-4 text-foreground" />
                       {language === 'fr' ? 'Code postal' : 'Postal Code'}
                     </Label>
                     <Input 
@@ -322,10 +322,10 @@ export function ProfileModule({ language, user, onUpdate }: {
             </Card>
 
             {['FOREIGN_STUDENT', 'OPEN_WORK_PERMIT', 'CLOSED_WORK_PERMIT'].includes(immigrationStatus) && (
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+              <Card className="border border-border shadow-none bg-muted">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-amber-600" />
+                    <Calendar className="w-5 h-5 text-muted-foreground" />
                     {language === 'fr' ? 'Dates d\'expiration' : 'Expiry Dates'}
                   </CardTitle>
                 </CardHeader>
@@ -333,18 +333,18 @@ export function ProfileModule({ language, user, onUpdate }: {
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {immigrationStatus === 'FOREIGN_STUDENT' && (
                       <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><GraduationCap className="w-4 h-4 text-blue-500" />{language === 'fr' ? 'Permis d\'études' : 'Study Permit'}</Label>
+                        <Label className="flex items-center gap-2"><GraduationCap className="w-4 h-4 text-foreground" />{language === 'fr' ? 'Permis d\'études' : 'Study Permit'}</Label>
                         <Input type="date" value={studyPermitExpiry} onChange={(e) => setStudyPermitExpiry(e.target.value)} />
                       </div>
                     )}
                     {(immigrationStatus === 'OPEN_WORK_PERMIT' || immigrationStatus === 'CLOSED_WORK_PERMIT') && (
                       <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-purple-500" />{language === 'fr' ? 'Permis travail' : 'Work Permit'}</Label>
+                        <Label className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-foreground" />{language === 'fr' ? 'Permis travail' : 'Work Permit'}</Label>
                         <Input type="date" value={workPermitExpiry} onChange={(e) => setWorkPermitExpiry(e.target.value)} />
                       </div>
                     )}
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2"><FileText className="w-4 h-4 text-green-500" />{language === 'fr' ? 'Passeport' : 'Passport'}</Label>
+                      <Label className="flex items-center gap-2"><FileText className="w-4 h-4 text-foreground" />{language === 'fr' ? 'Passeport' : 'Passport'}</Label>
                       <Input type="date" value={passportExpiry} onChange={(e) => setPassportExpiry(e.target.value)} />
                     </div>
                   </div>
@@ -357,10 +357,10 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Professional Section */}
         {activeSection === 'professional' && (
           <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                  <GraduationCap className="w-5 h-5 text-foreground" />
                   {language === 'fr' ? 'Éducation et expérience' : 'Education & Experience'}
                 </CardTitle>
               </CardHeader>
@@ -393,10 +393,10 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-blue-600" />
+                  <Globe className="w-5 h-5 text-foreground" />
                   {language === 'fr' ? 'Compétences linguistiques' : 'Language Skills'}
                 </CardTitle>
               </CardHeader>
@@ -423,10 +423,10 @@ export function ProfileModule({ language, user, onUpdate }: {
         {/* Preferences Section */}
         {activeSection === 'preferences' && (
           <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-indigo-600" />
+                  <Globe className="w-5 h-5 text-foreground" />
                   {language === 'fr' ? 'Langue' : 'Language'}
                 </CardTitle>
               </CardHeader>
@@ -438,10 +438,10 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-amber-600" />
+                  <Bell className="w-5 h-5 text-muted-foreground" />
                   {language === 'fr' ? 'Notifications' : 'Notifications'}
                 </CardTitle>
               </CardHeader>
@@ -463,7 +463,7 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-2 border-0 shadow-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+            <Card className="lg:col-span-2 border border-border shadow-none bg-muted">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Crown className="w-5 h-5 text-gray-600" />
@@ -472,10 +472,10 @@ export function ProfileModule({ language, user, onUpdate }: {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600">
+                  <Badge className="bg-primary text-primary-foreground">
                     {user?.subscriptionTier === 'FREE' ? (language === 'fr' ? 'GRATUIT' : 'FREE') : user?.subscriptionTier}
                   </Badge>
-                  <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
+                  <Button className="bg-primary text-primary-foreground">
                     <Star className="w-4 h-4 mr-2" />
                     {language === 'fr' ? 'Passer à Premium' : 'Upgrade to Premium'}
                   </Button>

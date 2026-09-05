@@ -199,10 +199,10 @@ export function EmploymentModule({ language, user }: {
   }
 
   const statusConfig: Record<string, { bg: string; text: string; icon: string }> = {
-    APPLIED: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', icon: '📤' },
-    INTERVIEW: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', icon: '🎤' },
-    OFFER: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-300', icon: '🎉' },
-    REJECTED: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', icon: '❌' },
+    APPLIED: { bg: 'bg-muted bg-muted', text: 'text-foreground text-foreground', icon: '📤' },
+    INTERVIEW: { bg: 'bg-muted bg-muted', text: 'text-muted-foreground text-muted-foreground', icon: '🎤' },
+    OFFER: { bg: 'bg-muted bg-muted', text: 'text-foreground text-foreground', icon: '🎉' },
+    REJECTED: { bg: 'bg-destructive/10 bg-destructive/10', text: 'text-destructive text-destructive', icon: '❌' },
   }
 
   const appliedCount = applications.filter(a => a.status === 'APPLIED').length
@@ -210,16 +210,16 @@ export function EmploymentModule({ language, user }: {
   const offerCount = applications.filter(a => a.status === 'OFFER').length
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50/50 to-white dark:from-blue-950/20 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-blue-900/30">
-              <Briefcase className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-blue-200 dark:shadow-blue-900/30">
+              <Briefcase className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
                 {t('modules.employment.title', language)}
               </h1>
               <p className="text-gray-500 dark:text-gray-400">{t('modules.employment.description', language)}</p>
@@ -230,15 +230,15 @@ export function EmploymentModule({ language, user }: {
           <div className="flex gap-3">
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Candidatures' : 'Applications'}</p>
-              <p className="font-bold text-blue-600">{applications.length}</p>
+              <p className="font-bold text-foreground">{applications.length}</p>
             </div>
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Entretiens' : 'Interviews'}</p>
-              <p className="font-bold text-amber-600">{interviewCount}</p>
+              <p className="font-bold text-muted-foreground">{interviewCount}</p>
             </div>
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Offres' : 'Offers'}</p>
-              <p className="font-bold text-green-600">{offerCount}</p>
+              <p className="font-bold text-foreground">{offerCount}</p>
             </div>
           </div>
         </div>
@@ -246,14 +246,14 @@ export function EmploymentModule({ language, user }: {
         {/* Mobile Tabs */}
         <div className="flex lg:hidden bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border">
           <button
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'cv' ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'cv' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
             onClick={() => setActiveTab('cv')}
           >
             <Brain className="w-4 h-4 inline mr-2" />
             {language === 'fr' ? 'CV IA' : 'AI CV'}
           </button>
           <button
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tracker' ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === 'tracker' ? 'bg-muted shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
             onClick={() => setActiveTab('tracker')}
           >
             <Target className="w-4 h-4 inline mr-2" />
@@ -265,11 +265,11 @@ export function EmploymentModule({ language, user }: {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* AI CV Optimizer */}
           <div className={`${activeTab !== 'cv' ? 'hidden lg:block' : ''}`}>
-            <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                    <Brain className="w-4 h-4 text-foreground text-foreground" />
                   </div>
                   {language === 'fr' ? 'Optimisation CV avec IA' : 'AI CV Optimization'}
                 </CardTitle>
@@ -281,7 +281,7 @@ export function EmploymentModule({ language, user }: {
                 {/* Job URL Input */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4 text-blue-500" />
+                    <ExternalLink className="w-4 h-4 text-foreground" />
                     {language === 'fr' ? '🔗 Lien de l\'offre d\'emploi (optionnel)' : '🔗 Job posting URL (optional)'}
                   </Label>
                   <div className="flex gap-2">
@@ -313,15 +313,15 @@ export function EmploymentModule({ language, user }: {
 
                 {/* Extracted Keywords */}
                 {extractedKeywords.length > 0 && (
-                  <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                  <div className="p-3 bg-muted bg-muted rounded-lg border border-border border-border">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                      <span className="text-sm font-medium text-foreground text-foreground">
                         🏷️ {language === 'fr' ? 'Mots-clés ATS détectés' : 'ATS Keywords detected'} ({extractedKeywords.length})
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {extractedKeywords.map((keyword, i) => (
-                        <Badge key={i} variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs">
+                        <Badge key={i} variant="secondary" className="bg-muted text-foreground bg-muted text-foreground text-xs">
                           {keyword}
                         </Badge>
                       ))}
@@ -362,9 +362,9 @@ export function EmploymentModule({ language, user }: {
                   </div>
                   
                   {fileName && (
-                    <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-sm">
-                      <FileCheck className="w-4 h-4 text-blue-500" />
-                      <span className="text-blue-700 dark:text-blue-300">{fileName}</span>
+                    <div className="flex items-center gap-2 p-2 bg-muted bg-muted rounded-lg text-sm">
+                      <FileCheck className="w-4 h-4 text-foreground" />
+                      <span className="text-foreground text-foreground">{fileName}</span>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -396,7 +396,7 @@ export function EmploymentModule({ language, user }: {
                 <Button 
                   onClick={handleCvOptimize} 
                   disabled={aiLoading || !cvContent.trim()}
-                  className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
+                  className="w-full py-6 text-lg font-semibold bg-primary text-primary-foreground shadow-none shadow-blue-200 dark:shadow-blue-900/30 transition-all duration-300"
                 >
                   {aiLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -407,10 +407,10 @@ export function EmploymentModule({ language, user }: {
                 </Button>
                 
                 {aiResult && (
-                  <div className="space-y-4 mt-4 p-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-xl border border-purple-100 dark:border-purple-800">
+                  <div className="space-y-4 mt-4 p-4 bg-muted rounded-xl border border-border border-border">
                     <div>
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
-                        <FileCheck className="w-4 h-4 text-green-500" />
+                        <FileCheck className="w-4 h-4 text-foreground" />
                         {language === 'fr' ? 'CV Optimisé' : 'Optimized CV'}
                       </h4>
                       <pre className="whitespace-pre-wrap text-sm bg-white dark:bg-gray-900 p-4 rounded-lg border max-h-40 overflow-auto">
@@ -432,7 +432,7 @@ export function EmploymentModule({ language, user }: {
                         <h4 className="font-semibold mb-2">🏷️ {language === 'fr' ? 'Mots-clés ATS' : 'ATS Keywords'}</h4>
                         <div className="flex flex-wrap gap-2">
                           {aiResult.keywords.map((k: string, i: number) => (
-                            <Badge key={i} variant="secondary" className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">{k}</Badge>
+                            <Badge key={i} variant="secondary" className="bg-muted text-foreground bg-muted text-foreground">{k}</Badge>
                           ))}
                         </div>
                       </div>
@@ -445,16 +445,16 @@ export function EmploymentModule({ language, user }: {
 
           {/* Job Applications Tracker */}
           <div className={`${activeTab !== 'tracker' ? 'hidden lg:block' : ''}`}>
-            <Card className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-none bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
-                      <Target className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                      <Target className="w-4 h-4 text-muted-foreground text-muted-foreground" />
                     </div>
                     {language === 'fr' ? 'Suivi des candidatures' : 'Application Tracker'}
                   </CardTitle>
-                  <Button size="sm" onClick={() => setShowAddApplication(true)} className="bg-gradient-to-r from-blue-500 to-blue-600">
+                  <Button size="sm" onClick={() => setShowAddApplication(true)} className="bg-primary text-primary-foreground">
                     <Plus className="w-4 h-4 mr-1" />
                     {language === 'fr' ? 'Ajouter' : 'Add'}
                   </Button>
@@ -480,7 +480,7 @@ export function EmploymentModule({ language, user }: {
                       return (
                         <div 
                           key={app.id} 
-                          className="group p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-all duration-300 bg-white dark:bg-gray-800"
+                          className="group p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-none transition-all duration-300 bg-white dark:bg-gray-800"
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
@@ -495,7 +495,7 @@ export function EmploymentModule({ language, user }: {
                               </p>
                             </div>
                             <Select value={app.status} onValueChange={(v) => updateApplicationStatus(app.id, v)}>
-                              <SelectTrigger className={`w-28 h-8 ${config.bg} ${config.text} border-0 font-medium`}>
+                              <SelectTrigger className={`w-28 h-8 ${config.bg} ${config.text} border border-border font-medium`}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -521,7 +521,7 @@ export function EmploymentModule({ language, user }: {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Plus className="w-5 h-5 text-blue-500" />
+                <Plus className="w-5 h-5 text-foreground" />
                 {language === 'fr' ? 'Nouvelle candidature' : 'New Application'}
               </DialogTitle>
               <DialogDescription>
@@ -544,18 +544,18 @@ export function EmploymentModule({ language, user }: {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowAddApplication(false)}>{language === 'fr' ? 'Annuler' : 'Cancel'}</Button>
-              <Button onClick={handleAddApplication} className="bg-gradient-to-r from-blue-500 to-blue-600">{language === 'fr' ? 'Enregistrer' : 'Save'}</Button>
+              <Button onClick={handleAddApplication} className="bg-primary text-primary-foreground">{language === 'fr' ? 'Enregistrer' : 'Save'}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* In-Demand Jobs by Province */}
         {user?.province && inDemandJobsByProvince[user.province as Province]?.length > 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+          <Card className="border border-border shadow-none bg-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4" />
                 </div>
                 {language === 'fr' ? '💼 Métiers en demande' : '💼 In-Demand Jobs'}
               </CardTitle>
@@ -573,17 +573,17 @@ export function EmploymentModule({ language, user }: {
                       case 'VERY_HIGH':
                         return { 
                           label: language === 'fr' ? 'Très forte demande' : 'Very High Demand',
-                          className: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
+                          className: 'bg-destructive/10 text-destructive bg-destructive/10 text-destructive'
                         }
                       case 'HIGH':
                         return { 
                           label: language === 'fr' ? 'Forte demande' : 'High Demand',
-                          className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300'
+                          className: 'bg-muted text-muted-foreground bg-muted text-muted-foreground'
                         }
                       default:
                         return { 
                           label: language === 'fr' ? 'Demande modérée' : 'Moderate Demand',
-                          className: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                          className: 'bg-muted text-foreground bg-muted text-foreground'
                         }
                     }
                   }
@@ -593,7 +593,7 @@ export function EmploymentModule({ language, user }: {
                   return (
                     <div 
                       key={i} 
-                      className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300"
+                      className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-none transition-all duration-300"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
@@ -624,13 +624,13 @@ export function EmploymentModule({ language, user }: {
                       
                       <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-1">
-                          <DollarSign className="w-3 h-3 text-green-500" />
-                          <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                          <DollarSign className="w-3 h-3 text-foreground" />
+                          <span className="text-xs font-medium text-foreground text-foreground">
                             {job.avgSalary}
                           </span>
                         </div>
                         {job.immigrationBonus && (
-                          <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                          <Badge variant="secondary" className="text-xs bg-muted text-foreground bg-muted text-foreground">
                             ✨ {job.immigrationBonus}
                           </Badge>
                         )}
@@ -641,18 +641,18 @@ export function EmploymentModule({ language, user }: {
               </div>
               
               {/* Province Info Banner */}
-              <div className="mt-4 p-4 bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+              <div className="mt-4 p-4 bg-muted rounded-xl border border-border border-border">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-sm text-blue-800 dark:text-blue-200">
+                    <h4 className="font-medium text-sm text-foreground text-foreground">
                       {language === 'fr' 
                         ? `💡 Ces métiers en demande à ${provinces.find(p => p.code === user.province)?.name} peuvent faciliter votre immigration`
                         : `💡 These in-demand jobs in ${provinces.find(p => p.code === user.province)?.nameEn} can facilitate your immigration`}
                     </h4>
-                    <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                    <p className="text-xs text-foreground text-foreground mt-1">
                       {language === 'fr'
                         ? 'Les programmes provinciaux de nomination (PNP) accordent souvent la priorité aux candidats dans ces métiers.'
                         : 'Provincial Nominee Programs (PNP) often prioritize candidates in these occupations.'}
@@ -687,11 +687,11 @@ export function EmploymentModule({ language, user }: {
         {/* Resources */}
         <div className="grid sm:grid-cols-3 gap-4">
           {[
-            { icon: FileText, title: language === 'fr' ? 'Lettre de motivation' : 'Cover Letter', desc: language === 'fr' ? 'Modèles canadiens' : 'Canadian templates', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950' },
-            { icon: Award, title: language === 'fr' ? 'Reconnaissance diplômes' : 'Credential Recognition', desc: 'WES, IQAS, etc.', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950' },
-            { icon: TrendingUp, title: language === 'fr' ? 'Guide salarial' : 'Salary Guide', desc: language === 'fr' ? 'Par secteur et région' : 'By sector and region', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950' },
+            { icon: FileText, title: language === 'fr' ? 'Lettre de motivation' : 'Cover Letter', desc: language === 'fr' ? 'Modèles canadiens' : 'Canadian templates', color: 'text-foreground', bg: 'bg-muted bg-muted' },
+            { icon: Award, title: language === 'fr' ? 'Reconnaissance diplômes' : 'Credential Recognition', desc: 'WES, IQAS, etc.', color: 'text-foreground', bg: 'bg-muted bg-muted' },
+            { icon: TrendingUp, title: language === 'fr' ? 'Guide salarial' : 'Salary Guide', desc: language === 'fr' ? 'Par secteur et région' : 'By sector and region', color: 'text-foreground', bg: 'bg-muted bg-muted' },
           ].map((item, i) => (
-            <Card key={i} className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 group">
+            <Card key={i} className="cursor-pointer hover:shadow-none transition-all duration-300 border border-border group">
               <CardContent className={`p-5 ${item.bg} rounded-lg`}>
                 <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
                 <h3 className="font-semibold">{item.title}</h3>

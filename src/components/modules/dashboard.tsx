@@ -85,7 +85,7 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
           const completed = moduleTasks.filter(t => t.status === 'COMPLETED').length
           
           return (
-            <Card key={m.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onModuleClick(m.id)}>
+            <Card key={m.id} className="cursor-pointer hover:shadow-none transition-shadow" onClick={() => onModuleClick(m.id)}>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 ${m.bgColor} rounded-lg flex items-center justify-center`}>
@@ -106,7 +106,7 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
         <h2 className="text-lg font-semibold mb-4">{t('dashboard.priorityActions', language)}</h2>
         <div className="space-y-3">
           {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').slice(0, 5).map(task => (
-            <Card key={task.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => onTaskClick(task)}>
+            <Card key={task.id} className="hover:shadow-none transition-shadow cursor-pointer" onClick={() => onTaskClick(task)}>
               <CardContent className="p-4 flex items-center gap-4">
                 <Checkbox
                   checked={task.status === 'COMPLETED'}
@@ -125,9 +125,9 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
           ))}
           
           {tasks.filter(t => t.status === 'PENDING' && t.priority === 'HIGH').length === 0 && (
-            <Card className="bg-green-50 dark:bg-green-950 border-green-200">
+            <Card className="bg-muted bg-muted border-border">
               <CardContent className="p-4 text-center">
-                <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                <CheckCircle2 className="w-8 h-8 text-foreground mx-auto mb-2" />
                 <p>{language === 'fr' ? 'Toutes les tâches prioritaires sont complétées!' : 'All priority tasks are completed!'}</p>
               </CardContent>
             </Card>
@@ -136,10 +136,10 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
       </div>
 
       {/* All Tasks by Category */}
-      <Card className="border-0 shadow-lg">
+      <Card className="border border-border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ListChecks className="w-5 h-5 text-blue-500" />
+            <ListChecks className="w-5 h-5 text-foreground" />
             {language === 'fr' ? '📋 Toutes les tâches administratives' : '📋 All Administrative Tasks'}
           </CardTitle>
           <CardDescription>
@@ -170,21 +170,21 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
                       {t(`modules.${task.category.toLowerCase()}.title`, language)}
                     </Badge>
                     {task.isRequired && (
-                      <Badge className="text-xs bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+                      <Badge className="text-xs bg-destructive/10 text-destructive bg-destructive/10 text-destructive">
                         {language === 'fr' ? 'Obligatoire' : 'Required'}
                       </Badge>
                     )}
                   </div>
                 </div>
                 {task.priority === 'HIGH' && (
-                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <AlertCircle className="w-4 h-4 text-destructive" />
                 )}
               </div>
             ))}
             
             {tasks.filter(t => t.status !== 'COMPLETED').length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <CheckCircle2 className="w-12 h-12 text-foreground mx-auto mb-3" />
                 <p className="font-medium">{language === 'fr' ? 'Toutes les tâches sont terminées!' : 'All tasks completed!'}</p>
               </div>
             )}
@@ -193,13 +193,13 @@ export function DashboardHome({ language, user, tasks, progress, completedTasks,
       </Card>
 
       {user?.subscriptionTier === 'FREE' && (
-        <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+        <Card className="bg-primary text-primary-foreground">
           <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Crown className="w-12 h-12" />
               <div>
                 <p className="font-bold text-lg">{language === 'fr' ? 'Passez à Premium' : 'Upgrade to Premium'}</p>
-                <p className="text-blue-100">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
+                <p className="text-foreground">{language === 'fr' ? 'Débloquez l\'IA pour votre CV et le mentorat' : 'Unlock AI CV optimization and mentorship'}</p>
               </div>
             </div>
             <Button variant="secondary">
@@ -280,47 +280,47 @@ export function PermitExpiryAlerts({ language, user }: {
   const getStatusConfig = (status: string) => {
     const configs = {
       critical: {
-        bg: 'bg-red-50 dark:bg-red-950/30',
-        border: 'border-red-200 dark:border-red-800',
-        icon: 'bg-red-500',
-        badge: 'bg-red-500 text-white',
-        text: 'text-red-800 dark:text-red-200'
+        bg: 'bg-destructive/10 bg-destructive/10',
+        border: 'border-destructive/40 border-destructive/40',
+        icon: 'bg-destructive/10',
+        badge: 'bg-destructive/10 ',
+        text: 'text-destructive text-destructive'
       },
       urgent: {
-        bg: 'bg-orange-50 dark:bg-orange-950/30',
-        border: 'border-orange-200 dark:border-orange-800',
-        icon: 'bg-orange-500',
-        badge: 'bg-orange-500 text-white',
-        text: 'text-orange-800 dark:text-orange-200'
+        bg: 'bg-muted bg-muted',
+        border: 'border-border border-border',
+        icon: 'bg-muted',
+        badge: 'bg-muted ',
+        text: 'text-muted-foreground text-muted-foreground'
       },
       warning: {
-        bg: 'bg-yellow-50 dark:bg-yellow-950/30',
-        border: 'border-yellow-200 dark:border-yellow-800',
-        icon: 'bg-yellow-500',
-        badge: 'bg-yellow-500 text-white',
-        text: 'text-yellow-800 dark:text-yellow-200'
+        bg: 'bg-muted bg-muted',
+        border: 'border-border border-border',
+        icon: 'bg-muted',
+        badge: 'bg-muted ',
+        text: 'text-muted-foreground text-muted-foreground'
       },
       ok: {
-        bg: 'bg-green-50 dark:bg-green-950/30',
-        border: 'border-green-200 dark:border-green-800',
-        icon: 'bg-green-500',
-        badge: 'bg-green-500 text-white',
-        text: 'text-green-800 dark:text-green-200'
+        bg: 'bg-muted bg-muted',
+        border: 'border-border border-border',
+        icon: 'bg-muted',
+        badge: 'bg-muted ',
+        text: 'text-foreground text-foreground'
       }
     }
     return configs[status as keyof typeof configs]
   }
 
   return (
-    <Card className="border-0 shadow-lg overflow-hidden">
-      <div className="p-4 bg-gradient-to-r from-red-500 to-orange-500">
-        <div className="flex items-center gap-2 text-white">
+    <Card className="border border-border shadow-none overflow-hidden">
+      <div className="p-4 bg-primary text-primary-foreground">
+        <div className="flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
           <h3 className="font-semibold">
             {language === 'fr' ? '⚠️ Alertes de renouvellement' : '⚠️ Renewal Alerts'}
           </h3>
         </div>
-        <p className="text-white/80 text-sm mt-1">
+        <p className="/80 text-sm mt-1">
           {language === 'fr' 
             ? 'Vos documents nécessitent une action' 
             : 'Your documents require action'}
@@ -336,11 +336,11 @@ export function PermitExpiryAlerts({ language, user }: {
           return (
             <div 
               key={index}
-              className={`p-4 rounded-xl border ${statusConfig.bg} ${statusConfig.border} transition-all hover:shadow-md`}
+              className={`p-4 rounded-xl border ${statusConfig.bg} ${statusConfig.border} transition-all hover:shadow-none`}
             >
               <div className="flex items-start gap-3">
                 <div className={`w-10 h-10 ${statusConfig.icon} rounded-xl flex items-center justify-center`}>
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className="w-5 h-5" />
                 </div>
                 
                 <div className="flex-1">
@@ -365,7 +365,7 @@ export function PermitExpiryAlerts({ language, user }: {
 
                   {alert.status === 'critical' && alert.daysUntil > 0 && (
                     <div className="mt-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
-                      <p className="text-xs font-medium text-red-700 dark:text-red-300">
+                      <p className="text-xs font-medium text-destructive text-destructive">
                         {language === 'fr'
                           ? '🚨 ACTION IMMÉDIATE REQUISE! Appliquez avant l\'expiration pour maintenir le statut implicite.'
                           : '🚨 IMMEDIATE ACTION REQUIRED! Apply before expiry to maintain implied status.'}
@@ -396,8 +396,8 @@ export function PermitExpiryAlerts({ language, user }: {
         })}
 
         {/* Info box about implied status */}
-        <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-          <p className="text-xs text-blue-800 dark:text-blue-200">
+        <div className="p-3 bg-muted bg-muted rounded-lg border border-border border-border">
+          <p className="text-xs text-foreground text-foreground">
             <strong>{language === 'fr' ? 'ℹ️ Statut implicite:' : 'ℹ️ Implied status:'}</strong>
             <br />
             {language === 'fr'
@@ -522,11 +522,11 @@ export function SpousalWorkPermitEligibility({ language, user }: {
   const eligibility = getSpousalEligibility()
   
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:from-pink-950/20 dark:to-purple-950/20">
+    <Card className="border border-border shadow-none bg-muted">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-500 rounded-lg flex items-center justify-center">
-            <Users2 className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+            <Users2 className="w-4 h-4" />
           </div>
           {language === 'fr' ? '👥 Permis de travail pour votre conjoint' : '👥 Work Permit for Your Spouse'}
         </CardTitle>
@@ -540,31 +540,31 @@ export function SpousalWorkPermitEligibility({ language, user }: {
       <CardContent className="space-y-5">
         {/* Eligibility Status Banner */}
         <div className={`relative overflow-hidden rounded-xl p-4 ${
-          eligibility.eligible 
-            ? 'bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20 border border-green-200 dark:border-green-800' 
-            : 'bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20 border border-amber-200 dark:border-amber-800'
-        }`}>
+ eligibility.eligible 
+ ? 'bg-muted border border-border border-border' 
+ : 'bg-muted border border-border border-border'
+ }`}>
           <div className="flex items-start gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              eligibility.eligible ? 'bg-green-500' : 'bg-amber-500'
-            }`}>
+ eligibility.eligible ? 'bg-muted' : 'bg-muted'
+ }`}>
               {eligibility.eligible 
-                ? <CheckCircle2 className="w-5 h-5 text-white" />
-                : <AlertCircle className="w-5 h-5 text-white" />
+                ? <CheckCircle2 className="w-5 h-5" />
+                : <AlertCircle className="w-5 h-5" />
               }
             </div>
             <div>
               <p className={`font-semibold text-lg ${
-                eligibility.eligible ? 'text-green-800 dark:text-green-200' : 'text-amber-800 dark:text-amber-200'
-              }`}>
+ eligibility.eligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
+ }`}>
                 {eligibility.eligible 
                   ? (language === 'fr' ? '✅ Votre conjoint est éligible!' : '✅ Your spouse is eligible!')
                   : (language === 'fr' ? '⚠️ Éligibilité conditionnelle' : '⚠️ Conditional eligibility')
                 }
               </p>
               <p className={`text-sm ${
-                eligibility.eligible ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'
-              }`}>
+ eligibility.eligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
+ }`}>
                 {eligibility.permitType}
               </p>
             </div>
@@ -575,30 +575,30 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
             <p className="text-xs text-gray-500">{language === 'fr' ? 'Durée estimée' : 'Estimated duration'}</p>
-            <p className="font-bold text-purple-600">{eligibility.duration}</p>
+            <p className="font-bold text-foreground">{eligibility.duration}</p>
           </div>
           <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
             <p className="text-xs text-gray-500">{language === 'fr' ? 'Frais' : 'Fee'}</p>
-            <p className="font-bold text-green-600">{eligibility.fee}</p>
+            <p className="font-bold text-foreground">{eligibility.fee}</p>
           </div>
           <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
             <p className="text-xs text-gray-500">{language === 'fr' ? 'Délai de traitement' : 'Processing time'}</p>
-            <p className="font-bold text-blue-600">{eligibility.processingTime}</p>
+            <p className="font-bold text-foreground">{eligibility.processingTime}</p>
           </div>
         </div>
 
         {/* Requirements Checklist */}
         <div className="space-y-2">
           <h4 className="font-semibold text-sm flex items-center gap-2">
-            <ListChecks className="w-4 h-4 text-purple-500" />
+            <ListChecks className="w-4 h-4 text-foreground" />
             {language === 'fr' ? 'Critères d\'éligibilité:' : 'Eligibility criteria:'}
           </h4>
           <ul className="space-y-2">
             {eligibility.requirements.map((req, index) => (
               <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
                 {req.startsWith('⚠️') 
-                  ? <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                  : <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  ? <AlertCircle className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                  : <CheckCircle2 className="w-4 h-4 text-foreground mt-0.5 shrink-0" />
                 }
                 <span>{req}</span>
               </li>
@@ -607,8 +607,8 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         </div>
 
         {/* Important Notes */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+          <p className="text-sm text-foreground text-foreground">
             <strong>{language === 'fr' ? '📌 Information importante:' : '📌 Important note:'}</strong>
             <br />
             {eligibility.notes}
@@ -616,8 +616,8 @@ export function SpousalWorkPermitEligibility({ language, user }: {
         </div>
 
         {/* Policy Changes Alert - 2024 Changes */}
-        <div className="p-4 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800">
-          <p className="text-sm text-amber-800 dark:text-amber-200">
+        <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+          <p className="text-sm text-muted-foreground text-muted-foreground">
             <strong>{language === 'fr' ? '🆕 Changements de politique 2024:' : '🆕 2024 Policy Changes:'}</strong>
             <br />
             {language === 'fr'
@@ -633,7 +633,7 @@ export function SpousalWorkPermitEligibility({ language, user }: {
             href={eligibility.officialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-pink-600 hover:to-purple-700 transition-all shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-all shadow-none"
           >
             <ExternalLink className="w-4 h-4" />
             {language === 'fr' ? 'Vérifier sur Canada.ca' : 'Check on Canada.ca'}
@@ -708,11 +708,11 @@ export function CitizenshipEligibilityCard({ language, user }: {
   const progressPercentage = Math.min(100, Math.round((actualDaysInCanada / 1095) * 100))
   
   return (
-    <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20">
+    <Card className="h-full border border-border shadow-none bg-muted">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-            <Crown className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+            <Crown className="w-4 h-4" />
           </div>
           {language === 'fr' ? '🎓 Admissibilité à la citoyenneté canadienne' : '🎓 Canadian Citizenship Eligibility'}
         </CardTitle>
@@ -726,31 +726,31 @@ export function CitizenshipEligibilityCard({ language, user }: {
       <CardContent className="space-y-5">
         {/* Eligibility Status Banner */}
         <div className={`relative overflow-hidden rounded-xl p-4 ${
-          isEligible 
-            ? 'bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20 border border-green-200 dark:border-green-800' 
-            : 'bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20 border border-amber-200 dark:border-amber-800'
-        }`}>
+ isEligible 
+ ? 'bg-muted border border-border border-border' 
+ : 'bg-muted border border-border border-border'
+ }`}>
           <div className="flex items-start gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              isEligible ? 'bg-green-500' : 'bg-amber-500'
-            }`}>
+ isEligible ? 'bg-muted' : 'bg-muted'
+ }`}>
               {isEligible 
-                ? <CheckCircle2 className="w-5 h-5 text-white" />
-                : <Clock className="w-5 h-5 text-white" />
+                ? <CheckCircle2 className="w-5 h-5" />
+                : <Clock className="w-5 h-5" />
               }
             </div>
             <div>
               <p className={`font-semibold text-lg ${
-                isEligible ? 'text-green-800 dark:text-green-200' : 'text-amber-800 dark:text-amber-200'
-              }`}>
+ isEligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
+ }`}>
                 {isEligible 
                   ? (language === 'fr' ? '✅ Vous êtes éligible!' : '✅ You are eligible!')
                   : (language === 'fr' ? '⏳ Pas encore éligible' : '⏳ Not yet eligible')
                 }
               </p>
               <p className={`text-sm ${
-                isEligible ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'
-              }`}>
+ isEligible ? 'text-foreground text-foreground' : 'text-muted-foreground text-muted-foreground'
+ }`}>
                 {isEligible 
                   ? (language === 'fr' ? 'Vous pouvez soumettre votre demande de citoyenneté' : 'You can submit your citizenship application')
                   : (language === 'fr' ? 'Continuez à accumuler des jours de présence' : 'Continue accumulating days of presence')
@@ -764,7 +764,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <h4 className="font-semibold text-sm flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-amber-500" />
+              <MapPin className="w-4 h-4 text-muted-foreground" />
               {language === 'fr' ? 'Jours de présence au Canada' : 'Days present in Canada'}
             </h4>
             <Badge variant={actualDaysInCanada >= 1095 ? 'default' : 'secondary'} className="font-mono">
@@ -782,7 +782,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
         {/* Requirements Checklist */}
         <div className="space-y-3">
           <h4 className="font-semibold text-sm flex items-center gap-2">
-            <ListChecks className="w-4 h-4 text-amber-500" />
+            <ListChecks className="w-4 h-4 text-muted-foreground" />
             {language === 'fr' ? 'Critères d\'admissibilité:' : 'Eligibility criteria:'}
           </h4>
           
@@ -791,7 +791,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
             <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border">
               <div className="flex items-center gap-2">
                 {yearsAsPR >= 2 
-                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  ? <CheckCircle2 className="w-5 h-5 text-foreground" />
                   : <Circle className="w-5 h-5 text-gray-300" />
                 }
                 <span className="text-sm">{language === 'fr' ? 'Résident permanent depuis 2+ ans' : 'Permanent resident for 2+ years'}</span>
@@ -811,12 +811,12 @@ export function CitizenshipEligibilityCard({ language, user }: {
             
             {/* Taxes filed */}
             <div 
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer border-border transition-colors"
               onClick={() => setFiledTaxes(!filedTaxes)}
             >
               <div className="flex items-center gap-2">
                 {filedTaxes 
-                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  ? <CheckCircle2 className="w-5 h-5 text-foreground" />
                   : <Circle className="w-5 h-5 text-gray-300" />
                 }
                 <span className="text-sm">{language === 'fr' ? 'Impôts déposés (3 des 5 dernières années)' : 'Taxes filed (3 of last 5 years)'}</span>
@@ -828,12 +828,12 @@ export function CitizenshipEligibilityCard({ language, user }: {
             
             {/* Language proof */}
             <div 
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer border-border transition-colors"
               onClick={() => setLanguageProof(!languageProof)}
             >
               <div className="flex items-center gap-2">
                 {languageProof 
-                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  ? <CheckCircle2 className="w-5 h-5 text-foreground" />
                   : <Circle className="w-5 h-5 text-gray-300" />
                 }
                 <span className="text-sm">{language === 'fr' ? 'Preuve de compétences linguistiques (CLB 4+)' : 'Language skills proof (CLB 4+)'}</span>
@@ -845,12 +845,12 @@ export function CitizenshipEligibilityCard({ language, user }: {
             
             {/* Criminal record */}
             <div 
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer hover:border-amber-300 transition-colors"
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border cursor-pointer border-border transition-colors"
               onClick={() => setNoCriminalRecord(!noCriminalRecord)}
             >
               <div className="flex items-center gap-2">
                 {noCriminalRecord 
-                  ? <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  ? <CheckCircle2 className="w-5 h-5 text-foreground" />
                   : <Circle className="w-5 h-5 text-gray-300" />
                 }
                 <span className="text-sm">{language === 'fr' ? 'Aucun casier judiciaire' : 'No criminal record'}</span>
@@ -863,8 +863,8 @@ export function CitizenshipEligibilityCard({ language, user }: {
         </div>
 
         {/* Important Info */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+          <p className="text-sm text-foreground text-foreground">
             <strong>{language === 'fr' ? '📋 À propos du test de citoyenneté:' : '📋 About the citizenship test:'}</strong>
             <br />
             {language === 'fr' 
@@ -876,27 +876,27 @@ export function CitizenshipEligibilityCard({ language, user }: {
         {/* Application Process */}
         <div className="space-y-2">
           <h4 className="font-semibold text-sm flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-amber-500" />
+            <BookOpen className="w-4 h-4 text-muted-foreground" />
             {language === 'fr' ? 'Processus de demande:' : 'Application process:'}
           </h4>
           <div className="grid sm:grid-cols-3 gap-3">
             <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
-              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-2">
-                <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
+                <FileText className="w-4 h-4 text-muted-foreground text-muted-foreground" />
               </div>
               <p className="text-xs font-medium">{language === 'fr' ? '1. Soumettre la demande' : '1. Submit application'}</p>
               <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Frais: $630 CAD' : 'Fee: $630 CAD'}</p>
             </div>
             <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
-              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-2">
-                <FileCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
+                <FileCheck className="w-4 h-4 text-muted-foreground text-muted-foreground" />
               </div>
               <p className="text-xs font-medium">{language === 'fr' ? '2. Test & entrevue' : '2. Test & interview'}</p>
               <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Si 18-54 ans' : 'If 18-54 years'}</p>
             </div>
             <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border text-center">
-              <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Crown className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
+                <Crown className="w-4 h-4 text-foreground text-foreground" />
               </div>
               <p className="text-xs font-medium">{language === 'fr' ? '3. Cérémonie' : '3. Ceremony'}</p>
               <p className="text-[10px] text-gray-500">{language === 'fr' ? 'Délai: ~12 mois' : 'Timeline: ~12 months'}</p>
@@ -910,7 +910,7 @@ export function CitizenshipEligibilityCard({ language, user }: {
             href="https://www.canada.ca/en/immigration-refugis-citizenship/services/application/application-forms-application-citizenship-certificate/adult.html"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg text-sm font-medium hover:from-amber-600 hover:to-orange-700 transition-all shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-all shadow-none"
           >
             <ExternalLink className="w-4 h-4" />
             {language === 'fr' ? 'Vérifier sur Canada.ca' : 'Check on Canada.ca'}
@@ -927,8 +927,8 @@ export function CitizenshipEligibilityCard({ language, user }: {
         </div>
 
         {/* Processing Time */}
-        <div className="p-4 bg-green-50 dark:bg-green-950/50 rounded-xl border border-green-200 dark:border-green-800">
-          <p className="text-sm text-green-800 dark:text-green-200">
+        <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+          <p className="text-sm text-foreground text-foreground">
             <strong>{language === 'fr' ? '⏱️ Délai de traitement actuel:' : '⏱️ Current processing time:'}</strong>
             <br />
             {language === 'fr' 
@@ -1012,25 +1012,25 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
   
   if (!quizStarted) {
     return (
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+      <Card className="border border-border shadow-none bg-muted">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
             </div>
             {language === 'fr' ? '📝 Quiz de citoyenneté canadienne' : '📝 Canadian Citizenship Quiz'}
           </CardTitle>
           <CardDescription>{language === 'fr' ? 'Pratiquez pour le test officiel' : 'Practice for the official test'}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-green-50 dark:bg-green-950/50 rounded-xl border border-green-200 dark:border-green-800">
-            <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
+          <div className="p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+            <ul className="text-sm text-foreground text-foreground space-y-1">
               <li>• {language === 'fr' ? '20 questions à choix multiples' : '20 multiple choice questions'}</li>
               <li>• {language === 'fr' ? '15 bonnes réponses requises (75%)' : '15 correct answers required (75%)'}</li>
               <li>• {language === 'fr' ? 'Basé sur "Découvrir le Canada"' : 'Based on "Discover Canada"'}</li>
             </ul>
           </div>
-          <Button onClick={startQuiz} className="w-full bg-gradient-to-r from-green-500 to-emerald-600">
+          <Button onClick={startQuiz} className="w-full bg-primary text-primary-foreground">
             <Target className="w-4 h-4 mr-2" />
             {language === 'fr' ? 'Commencer le quiz' : 'Start quiz'}
           </Button>
@@ -1041,19 +1041,19 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
   
   if (quizCompleted) {
     return (
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+      <Card className="border border-border shadow-none bg-muted">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${passed ? 'bg-green-500' : 'bg-red-500'}`}>
-              {passed ? <CheckCircle2 className="w-4 h-4 text-white" /> : <AlertCircle className="w-4 h-4 text-white" />}
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${passed ? 'bg-muted' : 'bg-destructive/10'}`}>
+              {passed ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
             </div>
             {language === 'fr' ? '📊 Résultats' : '📊 Results'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className={`p-6 rounded-xl text-center ${passed ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'}`}>
-            <div className={`text-5xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}`}>{score}/20</div>
-            <div className={`text-lg font-semibold ${passed ? 'text-green-700' : 'text-red-700'}`}>
+          <div className={`p-6 rounded-xl text-center ${passed ? 'bg-muted bg-muted' : 'bg-destructive/10 bg-destructive/10'}`}>
+            <div className={`text-5xl font-bold mb-2 ${passed ? 'text-foreground' : 'text-destructive'}`}>{score}/20</div>
+            <div className={`text-lg font-semibold ${passed ? 'text-foreground' : 'text-destructive'}`}>
               {passed ? (language === 'fr' ? '🎉 Réussi!' : '🎉 Passed!') : (language === 'fr' ? '📚 Continuez!' : '📚 Keep studying!')}
             </div>
           </div>
@@ -1069,18 +1069,18 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
   }
   
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+    <Card className="border border-border shadow-none bg-muted">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
             </div>
             {language === 'fr' ? '📝 Quiz' : '📝 Quiz'}
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline">{currentQuestion + 1}/20</Badge>
-            <Badge className="bg-green-500">{language === 'fr' ? 'Score:' : 'Score:'} {selectedAnswers.filter((a, i) => a === shuffledQuestions[i]?.correctAnswer).length}</Badge>
+            <Badge className="bg-muted">{language === 'fr' ? 'Score:' : 'Score:'} {selectedAnswers.filter((a, i) => a === shuffledQuestions[i]?.correctAnswer).length}</Badge>
           </div>
         </div>
         <Progress value={(currentQuestion / 20) * 100} className="h-2 mt-2" />
@@ -1100,26 +1100,26 @@ export function CitizenshipQuizCard({ language }: { language: Language }) {
                 key={index}
                 variant="outline"
                 className={`w-full justify-start text-left h-auto py-3 px-4 ${
-                  showResult ? isCorrect ? 'bg-green-100 border-green-500' : isSelected ? 'bg-red-100 border-red-500' : '' : isSelected ? 'bg-blue-50 border-blue-500' : ''
-                }`}
+ showResult ? isCorrect ? 'bg-muted border-border' : isSelected ? 'bg-destructive/10 border-destructive/40' : '' : isSelected ? 'bg-muted border-border' : ''
+ }`}
                 onClick={() => !showExplanation && handleAnswer(index)}
                 disabled={showExplanation}
               >
                 <span className="mr-3 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold">{String.fromCharCode(65 + index)}</span>
                 <span className="flex-1">{option}</span>
-                {showResult && isCorrect && <CheckCircle2 className="w-5 h-5 text-green-500 ml-2" />}
-                {showResult && isSelected && !isCorrect && <X className="w-5 h-5 text-red-500 ml-2" />}
+                {showResult && isCorrect && <CheckCircle2 className="w-5 h-5 text-foreground ml-2" />}
+                {showResult && isSelected && !isCorrect && <X className="w-5 h-5 text-destructive ml-2" />}
               </Button>
             )
           })}
         </div>
         {showExplanation && (
-          <div className="p-4 rounded-xl border bg-amber-50 dark:bg-amber-950/50 border-amber-200">
+          <div className="p-4 rounded-xl border bg-muted bg-muted border-border">
             <p className="text-sm"><strong>💡 {language === 'fr' ? 'Explication:' : 'Explanation:'}</strong> {language === 'fr' ? currentQ.explanation : currentQ.explanationEn}</p>
           </div>
         )}
         {showExplanation && (
-          <Button onClick={handleNext} className="w-full bg-gradient-to-r from-green-500 to-emerald-600">
+          <Button onClick={handleNext} className="w-full bg-primary text-primary-foreground">
             {currentQuestion < 19 ? (language === 'fr' ? 'Question suivante' : 'Next question') : (language === 'fr' ? 'Voir les résultats' : 'See results')}
             <ChevronRight className="w-4 h-4 ml-2" />
           </Button>

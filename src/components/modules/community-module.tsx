@@ -32,16 +32,16 @@ export function CommunityModule({ language, user }: {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50/50 to-white dark:from-indigo-950/20 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30">
-              <Users className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-indigo-200 dark:shadow-indigo-900/30">
+              <Users className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
                 {t('modules.community.title', language)}
               </h1>
               <p className="text-gray-500 dark:text-gray-400">{t('modules.community.description', language)}</p>
@@ -52,21 +52,21 @@ export function CommunityModule({ language, user }: {
           <div className="flex gap-3">
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Inscriptions' : 'Registered'}</p>
-              <p className="font-bold text-indigo-600">{registeredEvents.length}</p>
+              <p className="font-bold text-foreground">{registeredEvents.length}</p>
             </div>
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Événements' : 'Events'}</p>
-              <p className="font-bold text-green-600">{events.length}</p>
+              <p className="font-bold text-foreground">{events.length}</p>
             </div>
           </div>
         </div>
 
         {/* Upcoming Events */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                <CalendarDays className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <CalendarDays className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '📅 Événements à venir' : '📅 Upcoming Events'}
             </CardTitle>
@@ -87,18 +87,18 @@ export function CommunityModule({ language, user }: {
                     <Card 
                       key={event.id} 
                       className={`overflow-hidden transition-all duration-300 ${
-                        isRegistered 
-                          ? 'ring-2 ring-green-500 bg-green-50/50 dark:bg-green-950/20' 
-                          : 'hover:shadow-lg'
-                      }`}
+ isRegistered 
+ ? 'ring-2 ring-green-500 bg-muted bg-muted' 
+ : 'hover:shadow-none'
+ }`}
                     >
-                      <div className={`h-1 ${isRegistered ? 'bg-gradient-to-r from-green-400 to-green-600' : 'bg-gradient-to-r from-indigo-400 to-indigo-600'}`} />
+                      <div className={`h-1 ${isRegistered ? 'bg-primary text-primary-foreground' : 'bg-primary text-primary-foreground'}`} />
                       <CardContent className="p-5">
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <h4 className="font-bold text-lg">{language === 'fr' ? event.title : event.titleEn}</h4>
-                              {isRegistered && <Badge className="bg-green-500">✓ {language === 'fr' ? 'Inscrit' : 'Registered'}</Badge>}
+                              {isRegistered && <Badge className="bg-muted">✓ {language === 'fr' ? 'Inscrit' : 'Registered'}</Badge>}
                             </div>
                             <p className="text-sm text-gray-500 mt-2">{language === 'fr' ? event.description : event.descriptionEn}</p>
                             <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
@@ -118,7 +118,7 @@ export function CommunityModule({ language, user }: {
                           <Button 
                             variant={isRegistered ? 'outline' : 'default'}
                             onClick={() => handleRegister(event.id)}
-                            className={isRegistered ? '' : 'bg-gradient-to-r from-indigo-500 to-indigo-600'}
+                            className={isRegistered ? '' : 'bg-primary text-primary-foreground'}
                           >
                             {isRegistered 
                               ? (language === 'fr' ? 'Annuler' : 'Cancel')
@@ -135,11 +135,11 @@ export function CommunityModule({ language, user }: {
         </Card>
 
         {/* Forum Preview */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '💬 Forum communautaire' : '💬 Community Forum'}
             </CardTitle>
@@ -178,11 +178,11 @@ export function CommunityModule({ language, user }: {
 
         {/* Cultural Guide & Associations */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-muted-foreground text-muted-foreground" />
                 </div>
                 {language === 'fr' ? '📚 Guide culturel canadien' : '📚 Canadian Cultural Guide'}
               </CardTitle>
@@ -205,11 +205,11 @@ export function CommunityModule({ language, user }: {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                  <Users2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                  <Users2 className="w-4 h-4 text-foreground text-foreground" />
                 </div>
                 {language === 'fr' ? '🤝 Associations ethnoculturelles' : '🤝 Ethnocultural Associations'}
               </CardTitle>

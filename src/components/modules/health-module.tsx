@@ -115,15 +115,15 @@ export function HealthModule({ language, user, onNavigate }: {
   }, [user?.province])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-50/50 to-white dark:from-red-950/20 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-200 dark:shadow-red-900/30">
-            <Heart className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-red-200 dark:shadow-red-900/30">
+            <Heart className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
               {t('modules.health.title', language)}
             </h1>
             <p className="text-gray-500 dark:text-gray-400">{t('modules.health.description', language)}</p>
@@ -132,14 +132,14 @@ export function HealthModule({ language, user, onNavigate }: {
 
         {/* ELIGIBILITY CHECKER */}
         {eligibility ? (
-          <Card className="border-0 shadow-lg overflow-hidden">
+          <Card className="border border-border shadow-none overflow-hidden">
             <div className={`p-4 ${eligibility.eligible 
-              ? (eligibility.conditional 
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500' 
-                : 'bg-gradient-to-r from-green-500 to-emerald-500')
-              : 'bg-gradient-to-r from-red-500 to-rose-500'}`}>
+ ? (eligibility.conditional 
+ ? 'bg-primary text-primary-foreground' 
+ : 'bg-primary text-primary-foreground')
+ : 'bg-primary text-primary-foreground'}`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 text-white">
+                <div className="flex items-center gap-3">
                   {eligibility.eligible ? (
                     eligibility.conditional ? (
                       <AlertCircle className="w-6 h-6" />
@@ -157,10 +157,10 @@ export function HealthModule({ language, user, onNavigate }: {
                           : (language === 'fr' ? '✅ Admissible' : '✅ Eligible'))
                         : (language === 'fr' ? '❌ Non admissible' : '❌ Not eligible')}
                     </h3>
-                    <p className="text-white/90 text-sm">{language === 'fr' ? eligibility.planName : eligibility.planNameEn}</p>
+                    <p className="/90 text-sm">{language === 'fr' ? eligibility.planName : eligibility.planNameEn}</p>
                   </div>
                 </div>
-                <Badge className="bg-white/20 text-white text-sm px-3 py-1">
+                <Badge className="bg-white/20 text-sm px-3 py-1">
                   {language === 'fr' ? eligibility.waitPeriod : eligibility.waitPeriodEn}
                 </Badge>
               </div>
@@ -169,7 +169,7 @@ export function HealthModule({ language, user, onNavigate }: {
             <CardContent className="p-6 space-y-6">
               {/* Status & Province Info */}
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-blue-100 text-blue-800">
+                <Badge className="bg-muted text-foreground">
                   {user?.immigrationStatus === 'PERMANENT_RESIDENT' && (language === 'fr' ? '🛡️ Résident Permanent' : '🛡️ Permanent Resident')}
                   {user?.immigrationStatus === 'FOREIGN_STUDENT' && (language === 'fr' ? '🎓 Étudiant' : '🎓 Student')}
                   {user?.immigrationStatus === 'OPEN_WORK_PERMIT' && (language === 'fr' ? '💼 Permis Ouvert' : '💼 Open Permit')}
@@ -184,7 +184,7 @@ export function HealthModule({ language, user, onNavigate }: {
                 {user?.immigrationStatus === 'FOREIGN_STUDENT' && user?.countryOfOrigin && (() => {
                   const country = countries.find(c => c.code === user.countryOfOrigin)
                   return (
-                    <Badge className={`${country?.quebecAgreement ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                    <Badge className={`${country?.quebecAgreement ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'}`}>
                       {country?.flag} {language === 'fr' ? country?.name : (country?.nameEn || country?.name)}
                       {country?.quebecAgreement && ' 🏥'}
                     </Badge>
@@ -194,8 +194,8 @@ export function HealthModule({ language, user, onNavigate }: {
 
               {/* Special Note */}
               {eligibility.specialNote && (
-                <div className={`p-4 rounded-xl ${eligibility.eligible ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800'}`}>
-                  <p className={`text-sm font-medium ${eligibility.eligible ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`}>
+                <div className={`p-4 rounded-xl ${eligibility.eligible ? 'bg-muted bg-muted border border-border border-border' : 'bg-destructive/10 bg-destructive/10 border border-destructive/40 border-destructive/40'}`}>
+                  <p className={`text-sm font-medium ${eligibility.eligible ? 'text-foreground text-foreground' : 'text-destructive text-destructive'}`}>
                     {language === 'fr' ? eligibility.specialNote : eligibility.specialNoteEn}
                   </p>
                 </div>
@@ -204,17 +204,17 @@ export function HealthModule({ language, user, onNavigate }: {
               {/* Conditions */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <ListChecks className="w-5 h-5 text-blue-500" />
+                  <ListChecks className="w-5 h-5 text-foreground" />
                   {language === 'fr' ? '📋 Conditions d\'admissibilité' : '📋 Eligibility Conditions'}
                 </h4>
                 <div className="space-y-2">
                   {(language === 'fr' ? eligibility.conditions : eligibility.conditionsEn).map((condition, i) => (
                     <div key={i} className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                        condition.startsWith('✅') ? 'bg-green-100 text-green-600' : 
-                        condition.startsWith('❌') ? 'bg-red-100 text-red-600' : 
-                        'bg-blue-100 text-blue-600'
-                      }`}>
+ condition.startsWith('✅') ? 'bg-muted text-foreground' : 
+ condition.startsWith('❌') ? 'bg-destructive/10 text-destructive' : 
+ 'bg-muted text-foreground'
+ }`}>
                         {condition.startsWith('✅') ? '✓' : condition.startsWith('❌') ? '!' : '•'}
                       </div>
                       <span className="text-sm">{condition}</span>
@@ -227,7 +227,7 @@ export function HealthModule({ language, user, onNavigate }: {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-purple-500" />
+                    <FileText className="w-5 h-5 text-foreground" />
                     {language === 'fr' ? '📄 Documents requis' : '📄 Required Documents'}
                   </h4>
                   <Button variant="ghost" size="sm" onClick={() => setShowAllDocuments(!showAllDocuments)}>
@@ -241,15 +241,15 @@ export function HealthModule({ language, user, onNavigate }: {
                   {eligibility.documents.slice(0, showAllDocuments ? undefined : 4).map((doc, i) => (
                     <div key={i} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        doc.required ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
-                      }`}>
+ doc.required ? 'bg-destructive/10 text-destructive' : 'bg-gray-100 text-gray-500'
+ }`}>
                         {doc.required ? '!' : '?'}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm">{language === 'fr' ? doc.name : doc.nameEn}</span>
                           {doc.required && (
-                            <Badge className="text-xs bg-red-100 text-red-700">{language === 'fr' ? 'Obligatoire' : 'Required'}</Badge>
+                            <Badge className="text-xs bg-destructive/10 text-destructive">{language === 'fr' ? 'Obligatoire' : 'Required'}</Badge>
                           )}
                         </div>
                         {(doc.notes || doc.notesEn) && (
@@ -267,7 +267,7 @@ export function HealthModule({ language, user, onNavigate }: {
               <div className="flex flex-col sm:flex-row gap-3">
                 {eligibility.applyUrl && eligibility.applyUrl !== '#' && (
                   <Button 
-                    className="flex-1 py-6 text-lg font-semibold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
+                    className="flex-1 py-6 text-lg font-semibold bg-primary text-primary-foreground shadow-none"
                     onClick={() => window.open(eligibility.applyUrl, '_blank')}
                   >
                     <ExternalLink className="w-5 h-5 mr-2" />
@@ -288,13 +288,13 @@ export function HealthModule({ language, user, onNavigate }: {
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-0 shadow-lg bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+          <Card className="border border-border shadow-none bg-muted bg-muted border-border border-border">
             <CardContent className="p-6 text-center">
-              <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-              <h3 className="font-bold text-lg text-amber-800 dark:text-amber-200">
+              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="font-bold text-lg text-muted-foreground text-muted-foreground">
                 {language === 'fr' ? '⚠️ Informations manquantes' : '⚠️ Missing Information'}
               </h3>
-              <p className="text-amber-700 dark:text-amber-300 mt-2">
+              <p className="text-muted-foreground text-muted-foreground mt-2">
                 {language === 'fr' 
                   ? 'Complétez votre profil avec votre statut d\'immigration et votre province pour connaître votre admissibilité.'
                   : 'Complete your profile with your immigration status and province to check your eligibility.'}
@@ -311,11 +311,11 @@ export function HealthModule({ language, user, onNavigate }: {
         )}
 
         {/* Private Insurance */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '🛡️ Assurance privée (période d\'attente)' : '🛡️ Private Insurance (Waiting Period)'}
             </CardTitle>
@@ -326,16 +326,16 @@ export function HealthModule({ language, user, onNavigate }: {
           <CardContent>
             <div className="grid sm:grid-cols-3 gap-4">
               {[
-                { name: 'Manulife', coverage: language === 'fr' ? 'Visite médicale, médicaments' : 'Doctor visits, medication', price: '~$150/mois', color: 'from-blue-400 to-blue-600' },
-                { name: 'Sun Life', coverage: language === 'fr' ? 'Complète nouveaux arrivants' : 'Complete newcomer coverage', price: '~$200/mois', color: 'from-amber-400 to-amber-600' },
-                { name: 'GMS', coverage: language === 'fr' ? 'Couverture de base' : 'Basic coverage', price: '~$100/mois', color: 'from-green-400 to-green-600' },
+                { name: 'Manulife', coverage: language === 'fr' ? 'Visite médicale, médicaments' : 'Doctor visits, medication', price: '~$150/mois', color: ' ' },
+                { name: 'Sun Life', coverage: language === 'fr' ? 'Complète nouveaux arrivants' : 'Complete newcomer coverage', price: '~$200/mois', color: ' ' },
+                { name: 'GMS', coverage: language === 'fr' ? 'Couverture de base' : 'Basic coverage', price: '~$100/mois', color: ' ' },
               ].map((ins, i) => (
-                <Card key={i} className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                  <div className={`h-2 bg-gradient-to-r ${ins.color}`} />
+                <Card key={i} className="overflow-hidden hover:shadow-none transition-all duration-300 cursor-pointer group">
+                  <div className={`h-2 bg-muted ${ins.color}`} />
                   <CardContent className="p-5">
                     <h4 className="font-bold text-lg">{ins.name}</h4>
                     <p className="text-sm text-gray-500 mt-2">{ins.coverage}</p>
-                    <p className="text-green-600 font-bold mt-3">{ins.price}</p>
+                    <p className="text-foreground font-bold mt-3">{ins.price}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -344,11 +344,11 @@ export function HealthModule({ language, user, onNavigate }: {
         </Card>
 
         {/* Clinic Directory */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? '📍 Trouver une clinique' : '📍 Find a Clinic'}
             </CardTitle>
@@ -423,9 +423,9 @@ export function HealthModule({ language, user, onNavigate }: {
 
             {/* Province Info Banner */}
             {user?.province && (
-              <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                <MapPin className="w-4 h-4 text-blue-500" />
-                <span className="text-sm text-blue-700 dark:text-blue-300">
+              <div className="flex items-center gap-2 p-3 bg-muted bg-muted rounded-lg border border-border border-border">
+                <MapPin className="w-4 h-4 text-foreground" />
+                <span className="text-sm text-foreground text-foreground">
                   {language === 'fr' 
                     ? `Recherche dans la province: ${provinces.find(p => p.code === user.province)?.name}`
                     : `Searching in: ${provinces.find(p => p.code === user.province)?.nameEn}`}
@@ -486,11 +486,11 @@ export function HealthModule({ language, user, onNavigate }: {
 
                 const getTypeColor = (type: string) => {
                   switch (type) {
-                    case 'WALK_IN': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                    case 'CLSC': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                    case 'HOSPITAL': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                    case 'PRIVATE': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                    case 'COMMUNITY': return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
+                    case 'WALK_IN': return 'bg-muted text-foreground bg-muted text-foreground'
+                    case 'CLSC': return 'bg-muted text-foreground bg-muted text-foreground'
+                    case 'HOSPITAL': return 'bg-destructive/10 text-destructive bg-destructive/10 text-destructive'
+                    case 'PRIVATE': return 'bg-muted text-foreground bg-muted text-foreground'
+                    case 'COMMUNITY': return 'bg-muted text-muted-foreground bg-muted text-muted-foreground'
                     default: return 'bg-gray-100 text-gray-800'
                   }
                 }
@@ -513,7 +513,7 @@ export function HealthModule({ language, user, onNavigate }: {
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{language === 'fr' ? clinic.name : (clinic.nameEn || clinic.name)}</p>
                           {clinic.distance === 0 && (
-                            <Badge className="bg-green-500 text-white text-xs">
+                            <Badge className="bg-muted text-xs">
                               {language === 'fr' ? 'Le plus proche' : 'Closest'}
                             </Badge>
                           )}

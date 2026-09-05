@@ -25,16 +25,16 @@ export function HousingModule({ language, user }: {
   const housingRatio = (totalHousingCost / monthlyIncome) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-white dark:from-purple-950/20 dark:to-gray-900">
+    <div className="min-h-screen bg-muted to-white">
       <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-200 dark:shadow-purple-900/30">
-              <Building className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-none shadow-purple-200 dark:shadow-purple-900/30">
+              <Building className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:">
                 {t('modules.housing.title', language)}
               </h1>
               <p className="text-gray-500 dark:text-gray-400">{t('modules.housing.description', language)}</p>
@@ -45,21 +45,21 @@ export function HousingModule({ language, user }: {
           <div className="flex gap-3">
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Coût total' : 'Total Cost'}</p>
-              <p className="font-bold text-purple-600">${totalHousingCost}</p>
+              <p className="font-bold text-foreground">${totalHousingCost}</p>
             </div>
             <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <p className="text-xs text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable'}</p>
-              <p className="font-bold text-green-600">${disposableIncome}</p>
+              <p className="font-bold text-foreground">${disposableIncome}</p>
             </div>
           </div>
         </div>
 
         {/* Budget Calculator */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <Calculator className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <Calculator className="w-4 h-4 text-foreground text-foreground" />
               </div>
               {language === 'fr' ? 'Calculateur de Budget Logement' : 'Housing Budget Calculator'}
             </CardTitle>
@@ -97,38 +97,38 @@ export function HousingModule({ language, user }: {
               
               {/* Results */}
               <div className="space-y-4">
-                <div className="p-5 bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 rounded-xl">
+                <div className="p-5 bg-muted rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                      <Home className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                      <Home className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">{language === 'fr' ? 'Coût total logement' : 'Total Housing Cost'}</p>
-                      <p className="text-4xl font-bold text-purple-600">${totalHousingCost}</p>
+                      <p className="text-4xl font-bold text-foreground">${totalHousingCost}</p>
                       <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois' : 'per month'}</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className={`p-5 rounded-xl transition-all duration-300 ${
-                  housingRatio > 30 
-                    ? 'bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20' 
-                    : housingRatio > 25 
-                    ? 'bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20'
-                    : 'bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20'
-                }`}>
+ housingRatio > 30 
+ ? 'bg-muted ' 
+ : housingRatio > 25 
+ ? 'bg-muted '
+ : 'bg-muted '
+ }`}>
                   <div className="flex items-center gap-3">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      housingRatio > 30 ? 'bg-red-500' : housingRatio > 25 ? 'bg-amber-500' : 'bg-green-500'
-                    }`}>
-                      <Percent className="w-6 h-6 text-white" />
+ housingRatio > 30 ? 'bg-destructive/10' : housingRatio > 25 ? 'bg-muted' : 'bg-muted'
+ }`}>
+                      <Percent className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">{language === 'fr' ? 'Ratio logement/revenu' : 'Housing/Income Ratio'}</p>
-                      <p className={`text-4xl font-bold ${housingRatio > 30 ? 'text-red-600' : housingRatio > 25 ? 'text-amber-600' : 'text-green-600'}`}>
+                      <p className={`text-4xl font-bold ${housingRatio > 30 ? 'text-destructive' : housingRatio > 25 ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {housingRatio.toFixed(1)}%
                       </p>
-                      <p className={`text-sm font-medium ${housingRatio > 30 ? 'text-red-600' : housingRatio > 25 ? 'text-amber-600' : 'text-green-600'}`}>
+                      <p className={`text-sm font-medium ${housingRatio > 30 ? 'text-destructive' : housingRatio > 25 ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {housingRatio > 30 
                           ? (language === 'fr' ? '⚠️ Trop élevé (>30%)' : '⚠️ Too high (>30%)')
                           : housingRatio > 25
@@ -139,14 +139,14 @@ export function HousingModule({ language, user }: {
                   </div>
                 </div>
                 
-                <div className="p-5 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 rounded-xl">
+                <div className="p-5 bg-muted rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                      <PiggyBank className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                      <PiggyBank className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">{language === 'fr' ? 'Revenu disponible' : 'Disposable Income'}</p>
-                      <p className="text-4xl font-bold text-blue-600">${disposableIncome}</p>
+                      <p className="text-4xl font-bold text-foreground">${disposableIncome}</p>
                       <p className="text-sm text-gray-500">{language === 'fr' ? 'par mois après logement' : 'per month after housing'}</p>
                     </div>
                   </div>
@@ -157,11 +157,11 @@ export function HousingModule({ language, user }: {
         </Card>
 
         {/* Tenant Rights by Province - Comprehensive */}
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border shadow-none bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <div className="w-8 h-8 bg-muted bg-muted rounded-lg flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-muted-foreground text-muted-foreground" />
               </div>
               {language === 'fr' ? 'Droits des locataires par province' : 'Tenant Rights by Province'}
             </CardTitle>
@@ -175,7 +175,7 @@ export function HousingModule({ language, user }: {
             <div className="space-y-4">
               {/* Ontario */}
               <Card className={`overflow-hidden ${user?.province === 'ON' ? 'ring-2 ring-blue-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-blue-400 to-blue-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -190,7 +190,7 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Dépôt de garantie' : 'Security Deposit'}</p>
-                          <p className="font-medium text-green-600">{language === 'fr' ? '❌ Illégal (interdit)' : '❌ Illegal (prohibited)'}</p>
+                          <p className="font-medium text-foreground">{language === 'fr' ? '❌ Illégal (interdit)' : '❌ Illegal (prohibited)'}</p>
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Préavis (locataire)' : 'Notice (tenant)'}</p>
@@ -198,16 +198,16 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
-                          <p className="font-medium text-blue-600">2.5%</p>
+                          <p className="font-medium text-foreground">2.5%</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www.sjto.gov.on.ca/ltb/" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.sjto.gov.on.ca/ltb/" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         LTB Official
                       </a>
-                      <a href="https://www.ontario.ca/page/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.ontario.ca/page/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         Ontario.ca
                       </a>
@@ -218,7 +218,7 @@ export function HousingModule({ language, user }: {
 
               {/* Québec */}
               <Card className={`overflow-hidden ${user?.province === 'QC' ? 'ring-2 ring-purple-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-purple-400 to-purple-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -241,16 +241,16 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Raisonnable (doit être justifiée)' : 'Reasonable (must be justified)'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Raisonnable (doit être justifiée)' : 'Reasonable (must be justified)'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://tal.gouv.qc.ca/" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-600 hover:underline flex items-center gap-1">
+                      <a href="https://tal.gouv.qc.ca/" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         TAL Official
                       </a>
-                      <a href="https://tal.gouv.qc.ca/fr/etre-locataire/loyer-et-augmentation" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-600 hover:underline flex items-center gap-1">
+                      <a href="https://tal.gouv.qc.ca/fr/etre-locataire/loyer-et-augmentation" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         {language === 'fr' ? 'Calcul augmentation' : 'Increase calculator'}
                       </a>
@@ -261,7 +261,7 @@ export function HousingModule({ language, user }: {
 
               {/* Colombie-Britannique */}
               <Card className={`overflow-hidden ${user?.province === 'BC' ? 'ring-2 ring-green-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-green-400 to-green-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -284,16 +284,16 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation max (2024)' : 'Max increase (2024)'}</p>
-                          <p className="font-medium text-blue-600">3.5%</p>
+                          <p className="font-medium text-foreground">3.5%</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies" target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline flex items-center gap-1">
+                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         BC Gov RTB
                       </a>
-                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline flex items-center gap-1">
+                      <a href="https://www2.gov.bc.ca/gov/content/housing-tenancy/residential-tenancies/rent-increases" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         {language === 'fr' ? 'Règles augmentation' : 'Increase rules'}
                       </a>
@@ -304,7 +304,7 @@ export function HousingModule({ language, user }: {
 
               {/* Alberta */}
               <Card className={`overflow-hidden ${user?.province === 'AB' ? 'ring-2 ring-amber-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-amber-400 to-amber-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -327,16 +327,16 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 3 mois préavis' : 'No cap, 3 months notice'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 3 mois préavis' : 'No cap, 3 months notice'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www.alberta.ca/rtdrs.aspx" target="_blank" rel="noopener noreferrer" className="text-xs text-amber-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.alberta.ca/rtdrs.aspx" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         RTDRS Alberta
                       </a>
-                      <a href="https://www.alberta.ca/landlord-tenants" target="_blank" rel="noopener noreferrer" className="text-xs text-amber-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.alberta.ca/landlord-tenants" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         Alberta.ca
                       </a>
@@ -347,7 +347,7 @@ export function HousingModule({ language, user }: {
 
               {/* Manitoba */}
               <Card className={`overflow-hidden ${user?.province === 'MB' ? 'ring-2 ring-sky-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-sky-400 to-sky-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -370,7 +370,7 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-blue-600">{language === 'fr' ? 'Limitée par guideline annuel' : 'Limited by annual guideline'}</p>
+                          <p className="font-medium text-foreground">{language === 'fr' ? 'Limitée par guideline annuel' : 'Limited by annual guideline'}</p>
                         </div>
                       </div>
                     </div>
@@ -386,7 +386,7 @@ export function HousingModule({ language, user }: {
 
               {/* Saskatchewan */}
               <Card className={`overflow-hidden ${user?.province === 'SK' ? 'ring-2 ring-emerald-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -409,12 +409,12 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 6 mois entre augmentations' : 'No cap, 6 months between increases'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 6 mois entre augmentations' : 'No cap, 6 months between increases'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www.saskatchewan.ca/business/housing-development-construction-and-property-management/renting-property/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.saskatchewan.ca/business/housing-development-construction-and-property-management/renting-property/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         SK Gov
                       </a>
@@ -425,7 +425,7 @@ export function HousingModule({ language, user }: {
 
               {/* Nouvelle-Écosse */}
               <Card className={`overflow-hidden ${user?.province === 'NS' ? 'ring-2 ring-indigo-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-indigo-400 to-indigo-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -448,12 +448,12 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 4 mois préavis' : 'No cap, 4 months notice'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 4 mois préavis' : 'No cap, 4 months notice'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://novascotia.ca/sns/access/landlords-tenants.asp" target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                      <a href="https://novascotia.ca/sns/access/landlords-tenants.asp" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         NS Gov
                       </a>
@@ -464,7 +464,7 @@ export function HousingModule({ language, user }: {
 
               {/* Nouveau-Brunswick */}
               <Card className={`overflow-hidden ${user?.province === 'NB' ? 'ring-2 border-rose-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-rose-400 to-rose-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -487,7 +487,7 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond, 6 mois préavis' : 'No cap, 6 months notice'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond, 6 mois préavis' : 'No cap, 6 months notice'}</p>
                         </div>
                       </div>
                     </div>
@@ -503,7 +503,7 @@ export function HousingModule({ language, user }: {
 
               {/* Île-du-Prince-Édouard */}
               <Card className={`overflow-hidden ${user?.province === 'PE' ? 'ring-2 ring-teal-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-teal-400 to-teal-600" />
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -526,16 +526,16 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-blue-600">{language === 'fr' ? 'Doit être approuvée par IRAC' : 'Must be approved by IRAC'}</p>
+                          <p className="font-medium text-foreground">{language === 'fr' ? 'Doit être approuvée par IRAC' : 'Must be approved by IRAC'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www.princeedwardisland.ca/en/topic/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-teal-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.princeedwardisland.ca/en/topic/landlord-and-tenant" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         PEI Gov
                       </a>
-                      <a href="https://irac.pe.ca/rental" target="_blank" rel="noopener noreferrer" className="text-xs text-teal-600 hover:underline flex items-center gap-1">
+                      <a href="https://irac.pe.ca/rental" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         IRAC Rental
                       </a>
@@ -545,8 +545,8 @@ export function HousingModule({ language, user }: {
               </Card>
 
               {/* Terre-Neuve-et-Labrador */}
-              <Card className={`overflow-hidden ${user?.province === 'NL' ? 'ring-2 border-cyan-500' : ''}`}>
-                <div className="h-1 bg-gradient-to-r from-cyan-400 to-cyan-600" />
+              <Card className={`overflow-hidden ${user?.province === 'NL' ? 'ring-2 border-border' : ''}`}>
+                <div className="h-1 bg-primary text-primary-foreground" />
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                     <div className="flex-1">
@@ -569,12 +569,12 @@ export function HousingModule({ language, user }: {
                         </div>
                         <div>
                           <p className="text-gray-500">{language === 'fr' ? 'Augmentation' : 'Rent Increase'}</p>
-                          <p className="font-medium text-amber-600">{language === 'fr' ? 'Aucun plafond' : 'No cap'}</p>
+                          <p className="font-medium text-muted-foreground">{language === 'fr' ? 'Aucun plafond' : 'No cap'}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <a href="https://www.gov.nl.ca/servicenl/landlord/" target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-600 hover:underline flex items-center gap-1">
+                      <a href="https://www.gov.nl.ca/servicenl/landlord/" target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
                         NL Gov
                       </a>
@@ -585,8 +585,8 @@ export function HousingModule({ language, user }: {
             </div>
 
             {/* Important Notice */}
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-800">
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+            <div className="mt-4 p-4 bg-muted bg-muted rounded-xl border border-border border-border">
+              <p className="text-sm text-foreground text-foreground">
                 <strong>{language === 'fr' ? '⚠️ Important:' : '⚠️ Important:'}</strong> {language === 'fr' 
                   ? 'Ces informations sont fournies à titre indicatif. Pour les informations les plus récentes, consultez toujours les sites officiels provinciaux. Les règles peuvent changer.'
                   : 'This information is provided for guidance only. Always check official provincial websites for the most current information. Rules may change.'}
@@ -602,18 +602,18 @@ export function HousingModule({ language, user }: {
               icon: FileText, 
               title: language === 'fr' ? 'Candidature locataire' : 'Tenant Application', 
               desc: language === 'fr' ? 'Sans historique de crédit' : 'Without credit history',
-              color: 'text-blue-500',
-              bg: 'bg-blue-50 dark:bg-blue-950'
+              color: 'text-foreground',
+              bg: 'bg-muted bg-muted'
             },
             { 
               icon: FileText, 
               title: language === 'fr' ? 'Lettre de garant' : 'Guarantor Letter', 
               desc: language === 'fr' ? 'Pour les nouveaux arrivants' : 'For newcomers',
-              color: 'text-purple-500',
-              bg: 'bg-purple-50 dark:bg-purple-950'
+              color: 'text-foreground',
+              bg: 'bg-muted bg-muted'
             },
           ].map((item, i) => (
-            <Card key={i} className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 group">
+            <Card key={i} className="cursor-pointer hover:shadow-none transition-all duration-300 border border-border group">
               <CardContent className={`p-5 ${item.bg} rounded-lg`}>
                 <item.icon className={`w-10 h-10 ${item.color} mb-3 group-hover:scale-110 transition-transform`} />
                 <h3 className="font-semibold">{item.title}</h3>
