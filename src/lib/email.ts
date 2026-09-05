@@ -1,27 +1,40 @@
-// Envoi email via Resend (REST, aucune dépendance). S'active dès que RESEND_API_KEY est posée.
-// FROM doit être un domaine vérifié dans Resend (sinon envoi refusé — piège classique).
+// Envoi email via Brevo (API v3, REST, aucune dépendance). S'active dès que BREVO_API_KEY est posée.
+// EMAIL_FROM = "Nom <email@domaine>" ; l'expéditeur doit être un domaine/sender vérifié dans Brevo.
 
-const RESEND_KEY = process.env.RESEND_API_KEY
-const FROM = process.env.EMAIL_FROM || 'NouveauCap <onboarding@resend.dev>'
+const BREVO_KEY = process.env.BREVO_API_KEY
+const EMAIL_FROM = process.env.EMAIL_FROM || 'NouveauCap <bonjour@nouveau-cap.vercel.app>'
 
-export const emailEnabled = !!RESEND_KEY
+export const emailEnabled = !!BREVO_KEY
+
+// Parse "Nom <email>" → { name, email } ; tolère un email brut
+function parseFrom(from: string): { name: string; email: string } {
+  const m = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/)
+  if (m) return { name: m[1] || 'NouveauCap', email: m[2].trim() }
+  return { name: 'NouveauCap', email: from.trim() }
+}
 
 export async function sendEmail(args: { to: string; subject: string; html: string }): Promise<boolean> {
-  if (!RESEND_KEY) {
-    console.log('[email] désactivé (pas de RESEND_API_KEY) — non envoyé:', args.subject)
+  if (!BREVO_KEY) {
+    console.log('[email] désactivé (pas de BREVO_API_KEY) — non envoyé:', args.subject)
     return false
   }
   try {
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${RESEND_KEY}`,
+        'api-key': BREVO_KEY,
         'Content-Type': 'application/json',
+        accept: 'application/json',
       },
-      body: JSON.stringify({ from: FROM, to: args.to, subject: args.subject, html: args.html }),
+      body: JSON.stringify({
+        sender: parseFrom(EMAIL_FROM),
+        to: [{ email: args.to }],
+        subject: args.subject,
+        htmlContent: args.html,
+      }),
     })
     if (!res.ok) {
-      console.error('[email] échec Resend', res.status, await res.text())
+      console.error('[email] échec Brevo', res.status, await res.text())
       return false
     }
     return true
