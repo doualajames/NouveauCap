@@ -57,7 +57,7 @@ export default function LandingPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/app"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-7 py-4 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[hsl(var(--foreground))] px-7 py-4 text-base font-semibold text-[hsl(var(--background))] transition-opacity hover:opacity-90"
               >
                 Créer mon parcours gratuit <ArrowRight className="h-4 w-4" />
               </Link>
@@ -88,7 +88,7 @@ export default function LandingPage() {
                 { t: 'Faire reconnaître ses diplômes', urgent: false },
               ].map((x, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <span className={`flex h-5 w-5 flex-none items-center justify-center rounded ${x.done ? 'bg-primary text-primary-foreground' : x.urgent ? 'border-2 border-destructive' : 'border-2 border-foreground/60'}`}>
+                  <span className={`flex h-5 w-5 flex-none items-center justify-center rounded ${x.done ? 'bg-[hsl(var(--foreground))] text-[hsl(var(--background))]' : x.urgent ? 'border-2 border-destructive' : 'border-2 border-foreground/60'}`}>
                     {x.done ? '✓' : ''}
                   </span>
                   <span className={x.done ? 'text-muted-foreground line-through' : 'font-medium'}>{x.t}</span>
@@ -173,11 +173,11 @@ export default function LandingPage() {
       </section>
 
       {/* Capture email — éditorial, pas de dégradé rouge */}
-      <section className="border-t border-foreground/80 bg-primary text-primary-foreground">
+      <section className="border-t border-foreground/80 bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
         <div className="mx-auto max-w-3xl px-6 py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/60">Gratuit, par courriel</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(var(--background)/0.6)]">Gratuit, par courriel</p>
           <h2 className="mt-3 text-3xl font-bold">Le guide des 90 premiers jours</h2>
-          <p className="mt-3 text-primary-foreground/70">
+          <p className="mt-3 text-[hsl(var(--background)/0.7)]">
             La checklist essentielle de vos trois premiers mois au Canada, dans votre boîte mail.
           </p>
           <div className="mt-8">
