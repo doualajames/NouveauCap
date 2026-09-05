@@ -184,7 +184,7 @@ export function OnboardingFlow() {
   const StepIcon = stepIcons[currentStep - 1]
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+    <div className="min-h-screen flex flex-col bg-muted p-4">
       {/* Header */}
       <div className="max-w-2xl mx-auto w-full mb-6">
         <div className="flex items-center justify-between mb-2">
@@ -200,8 +200,8 @@ export function OnboardingFlow() {
       <Card className="max-w-2xl mx-auto w-full flex-1 flex flex-col">
         <CardHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-              <StepIcon className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 bg-destructive/10 bg-destructive/10 rounded-full flex items-center justify-center">
+              <StepIcon className="w-5 h-5 text-destructive" />
             </div>
             <div>
               <CardTitle>{t(`onboarding.steps.${['immigration', 'province', 'arrival', 'professional', 'preferences', 'family', 'goals'][currentStep - 1]}.title`)}</CardTitle>
@@ -224,17 +224,17 @@ export function OnboardingFlow() {
                     key={status}
                     htmlFor={status}
                     className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                      localData.immigrationStatus === status 
-                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                    }`}
+ localData.immigrationStatus === status 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                   >
                     <RadioGroupItem value={status} id={status} className="sr-only" />
                     <div className="flex-1">
                       <p className="font-medium">{t(`onboarding.immigrationStatus.${status.toLowerCase()}`)}</p>
                     </div>
                     {localData.immigrationStatus === status && (
-                      <Check className="w-5 h-5 text-red-600" />
+                      <Check className="w-5 h-5 text-destructive" />
                     )}
                   </Label>
                 ))}
@@ -255,10 +255,10 @@ export function OnboardingFlow() {
                     key={province}
                     htmlFor={province}
                     className={`flex items-center justify-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                      localData.province === province 
-                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                    }`}
+ localData.province === province 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                   >
                     <RadioGroupItem value={province} id={province} className="sr-only" />
                     <div className="text-center">
@@ -332,10 +332,10 @@ export function OnboardingFlow() {
                       key={sector.key}
                       htmlFor={sector.key}
                       className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors text-sm ${
-                        localData.professionalSector === sector.key 
-                          ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
+ localData.professionalSector === sector.key 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                     >
                       <RadioGroupItem value={sector.key} id={sector.key} className="sr-only" />
                       <span>{language === 'fr' ? sector.fr : sector.en}</span>
@@ -370,10 +370,10 @@ export function OnboardingFlow() {
                   <Label
                     htmlFor="lang-fr"
                     className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                      localData.preferredLanguage === 'fr' 
-                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                    }`}
+ localData.preferredLanguage === 'fr' 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                   >
                     <RadioGroupItem value="fr" id="lang-fr" className="sr-only" />
                     <span className="font-medium">Français</span>
@@ -381,10 +381,10 @@ export function OnboardingFlow() {
                   <Label
                     htmlFor="lang-en"
                     className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                      localData.preferredLanguage === 'en' 
-                        ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                    }`}
+ localData.preferredLanguage === 'en' 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                   >
                     <RadioGroupItem value="en" id="lang-en" className="sr-only" />
                     <span className="font-medium">English</span>
@@ -435,10 +435,10 @@ export function OnboardingFlow() {
                       key={status}
                       htmlFor={status}
                       className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                        localData.familyStatus === status 
-                          ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
+ localData.familyStatus === status 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                     >
                       <RadioGroupItem value={status} id={status} className="sr-only" />
                       <p className="font-medium">{t(`onboarding.familyStatus.${status.toLowerCase()}`)}</p>
@@ -477,10 +477,10 @@ export function OnboardingFlow() {
                       key={goal.key}
                       htmlFor={goal.key}
                       className={`flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                        localData.primaryGoal === goal.key 
-                          ? 'border-red-500 bg-red-50 dark:bg-red-950/30' 
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
+ localData.primaryGoal === goal.key 
+ ? 'border-destructive/40 bg-destructive/10 bg-destructive/10' 
+ : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+ }`}
                     >
                       <RadioGroupItem value={goal.key} id={goal.key} className="sr-only" />
                       <p className="font-medium">{language === 'fr' ? goal.fr : goal.en}</p>
@@ -506,7 +506,7 @@ export function OnboardingFlow() {
             <Button
               onClick={handleComplete}
               disabled={isLoading}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive/10 bg-destructive/10"
             >
               {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               <Check className="w-4 h-4 mr-2" />
@@ -516,7 +516,7 @@ export function OnboardingFlow() {
             <Button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive/10 bg-destructive/10"
             >
               {t('onboarding.next')}
               <ChevronRight className="w-4 h-4 ml-2" />

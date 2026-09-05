@@ -22,22 +22,22 @@ interface NavItem {
 }
 
 const mainNavigation: NavItem[] = [
-  { id: 'dashboard', label: 'Tableau de bord', labelEn: 'Dashboard', icon: Home, gradient: 'from-blue-500 to-cyan-500' },
-  { id: 'tasks', label: 'Mes tâches', labelEn: 'My Tasks', icon: FileText, gradient: 'from-violet-500 to-purple-500' },
-  { id: 'immigration', label: 'Immigration', labelEn: 'Immigration', icon: Plane, gradient: 'from-purple-500 to-pink-500', badge: 2 },
-  { id: 'emploi', label: 'Emploi', labelEn: 'Employment', icon: Briefcase, gradient: 'from-green-500 to-emerald-500' },
-  { id: 'sante', label: 'Santé', labelEn: 'Health', icon: Heart, gradient: 'from-red-500 to-rose-500' },
-  { id: 'finance', label: 'Finance', labelEn: 'Finance', icon: Wallet, gradient: 'from-amber-500 to-orange-500' },
-  { id: 'logement', label: 'Logement', labelEn: 'Housing', icon: Building, gradient: 'from-teal-500 to-cyan-500' },
-  { id: 'communaute', label: 'Communauté', labelEn: 'Community', icon: Users, gradient: 'from-indigo-500 to-violet-500' },
+  { id: 'dashboard', label: 'Tableau de bord', labelEn: 'Dashboard', icon: Home, gradient: ' ' },
+  { id: 'tasks', label: 'Mes tâches', labelEn: 'My Tasks', icon: FileText, gradient: ' ' },
+  { id: 'immigration', label: 'Immigration', labelEn: 'Immigration', icon: Plane, gradient: ' ', badge: 2 },
+  { id: 'emploi', label: 'Emploi', labelEn: 'Employment', icon: Briefcase, gradient: ' ' },
+  { id: 'sante', label: 'Santé', labelEn: 'Health', icon: Heart, gradient: ' ' },
+  { id: 'finance', label: 'Finance', labelEn: 'Finance', icon: Wallet, gradient: ' ' },
+  { id: 'logement', label: 'Logement', labelEn: 'Housing', icon: Building, gradient: ' ' },
+  { id: 'communaute', label: 'Communauté', labelEn: 'Community', icon: Users, gradient: ' ' },
 ]
 
 const toolsNavigation: NavItem[] = [
-  { id: 'citizenship', label: 'Test citoyenneté', labelEn: 'Citizenship Test', icon: BookOpen, gradient: 'from-rose-500 to-red-500' },
-  { id: 'clinics', label: 'Cliniques', labelEn: 'Clinics', icon: Stethoscope, gradient: 'from-emerald-500 to-green-500' },
-  { id: 'jobs', label: 'Emplois demandés', labelEn: 'In-Demand Jobs', icon: Building2, gradient: 'from-sky-500 to-blue-500' },
-  { id: 'calculator', label: 'Calculatrice', labelEn: 'Calculator', icon: Calculator, gradient: 'from-orange-500 to-amber-500' },
-  { id: 'ai-assistant', label: 'Assistant IA', labelEn: 'AI Assistant', icon: Brain, gradient: 'from-fuchsia-500 to-pink-500' },
+  { id: 'citizenship', label: 'Test citoyenneté', labelEn: 'Citizenship Test', icon: BookOpen, gradient: ' ' },
+  { id: 'clinics', label: 'Cliniques', labelEn: 'Clinics', icon: Stethoscope, gradient: ' ' },
+  { id: 'jobs', label: 'Emplois demandés', labelEn: 'In-Demand Jobs', icon: Building2, gradient: ' ' },
+  { id: 'calculator', label: 'Calculatrice', labelEn: 'Calculator', icon: Calculator, gradient: ' ' },
+  { id: 'ai-assistant', label: 'Assistant IA', labelEn: 'AI Assistant', icon: Brain, gradient: ' ' },
 ]
 
 interface SidebarProps {
@@ -69,13 +69,12 @@ export function Sidebar({
     )}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 
-                        flex items-center justify-center shadow-lg shadow-red-500/30 shrink-0">
-          <MapPin className="h-6 w-6 text-white" />
+        <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-none shadow-red-500/30 shrink-0">
+          <MapPin className="h-6 w-6" />
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
-            <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-primary text-primary-foreground bg-clip-text text-transparent">
               NouveauCap
             </span>
             <p className="text-xs text-gray-500 truncate">Votre guide au Canada</p>
@@ -135,16 +134,15 @@ export function Sidebar({
 
       {/* Premium Banner */}
       {!collapsed && !isPremium && (
-        <div className="mx-3 mb-3 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 
-                        border border-amber-200">
+        <div className="mx-3 mb-3 p-4 rounded-xl bg-muted border border-border">
           <div className="flex items-center gap-2 mb-2">
-            <Crown className="h-5 w-5 text-amber-500" />
-            <span className="font-semibold text-amber-900">Passez Premium</span>
+            <Crown className="h-5 w-5 text-muted-foreground" />
+            <span className="font-semibold text-muted-foreground">Passez Premium</span>
           </div>
-          <p className="text-xs text-amber-700 mb-3">
+          <p className="text-xs text-muted-foreground mb-3">
             Accédez à tous les outils et support prioritaire
           </p>
-          <Button size="sm" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+          <Button size="sm" className="w-full bg-primary text-primary-foreground">
             Découvrir
           </Button>
         </div>
@@ -156,7 +154,7 @@ export function Sidebar({
           "flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors",
           collapsed && "justify-center"
         )}>
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shrink-0 flex items-center justify-center text-white font-semibold">
+          <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground shrink-0 flex items-center justify-center font-semibold">
             {userProfile?.name?.charAt(0) || 'U'}
           </div>
           {!collapsed && (
@@ -164,7 +162,7 @@ export function Sidebar({
               <p className="text-sm font-medium text-gray-900 truncate">{userProfile?.name || 'Utilisateur'}</p>
               <div className="flex items-center gap-1">
                 <span className="text-xs text-gray-500 truncate">{userProfile?.status || 'Résident'}</span>
-                {isPremium && <Crown className="h-3 w-3 text-amber-500" />}
+                {isPremium && <Crown className="h-3 w-3 text-muted-foreground" />}
               </div>
             </div>
           )}
@@ -196,7 +194,7 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
         "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
         "hover:bg-gray-50",
         active && [
-          "bg-gradient-to-r from-gray-50 to-white",
+          "bg-muted  to-white",
           "shadow-sm border border-gray-100",
         ],
         collapsed && "justify-center px-2"
@@ -205,12 +203,12 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
       <div className={cn(
         "relative shrink-0 rounded-lg p-2 transition-all duration-200",
         active 
-          ? `bg-gradient-to-br ${item.gradient} text-white shadow-lg`
+          ? `bg-muted ${item.gradient}  shadow-none`
           : "bg-gray-100 text-gray-600"
       )}>
         <Icon className="h-5 w-5" />
         {item.badge && !active && (
-          <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive/10 text-[10px] font-bold flex items-center justify-center">
             {item.badge}
           </span>
         )}
@@ -225,7 +223,7 @@ function NavItem({ item, active, collapsed, onClick }: NavItemProps) {
             {item.label}
           </span>
           {item.badge && active && (
-            <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-semibold">
+            <span className="px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-semibold">
               {item.badge}
             </span>
           )}
@@ -245,8 +243,7 @@ export function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
   const mobileItems = mainNavigation.slice(0, 4)
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl 
-                    border-t border-gray-200 px-2 py-2 lg:hidden safe-bottom shadow-lg shadow-gray-200/50">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-200 px-2 py-2 lg:hidden safe-bottom shadow-none shadow-gray-200/50">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {mobileItems.map((item) => (
           <button
@@ -255,13 +252,13 @@ export function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
             className={cn(
               "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
               activeSection === item.id 
-                ? "text-red-600" 
+                ? "text-destructive" 
                 : "text-gray-500"
             )}
           >
             <div className={cn(
               "p-1.5 rounded-lg transition-all",
-              activeSection === item.id && `bg-gradient-to-br ${item.gradient} text-white shadow-md`
+              activeSection === item.id && `bg-muted ${item.gradient}  shadow-none`
             )}>
               <item.icon className="h-5 w-5" />
             </div>

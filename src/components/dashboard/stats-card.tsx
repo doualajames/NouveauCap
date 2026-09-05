@@ -26,14 +26,14 @@ export function StatsCard({
   return (
     <div className={cn(
       "relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-xl",
-      "border border-white/20 shadow-xl shadow-gray-200/50",
-      "p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl",
+      "border border-white/20 shadow-none shadow-gray-200/50",
+      "p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-none",
       className
     )}>
       {/* Gradient Background Decoration */}
       <div className={cn(
         "absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-20 blur-2xl",
-        `bg-gradient-to-br ${color}`
+        `bg-muted ${color}`
       )} />
       
       <div className="relative flex items-start justify-between">
@@ -43,7 +43,7 @@ export function StatsCard({
           {trend !== undefined && (
             <p className={cn(
               "mt-2 flex items-center text-sm",
-              trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-gray-500'
+              trend > 0 ? 'text-foreground' : trend < 0 ? 'text-destructive' : 'text-gray-500'
             )}>
               {trend > 0 ? (
                 <TrendingUp className="mr-1 h-4 w-4" />
@@ -55,8 +55,8 @@ export function StatsCard({
           )}
         </div>
         <div className={cn(
-          "rounded-xl p-3 text-white shadow-lg",
-          `bg-gradient-to-br ${color}`
+          "rounded-xl p-3  shadow-none",
+          `bg-muted ${color}`
         )}>
           <Icon className="h-6 w-6" />
         </div>
@@ -90,27 +90,27 @@ export function FeatureCard({
         "group relative overflow-hidden rounded-2xl bg-white p-6",
         "border border-gray-100 cursor-pointer",
         "transition-all duration-300",
-        "hover:border-gray-200 hover:shadow-xl hover:shadow-gray-200/50",
+        "hover:border-gray-200 hover:shadow-none hover:shadow-gray-200/50",
         "hover:-translate-y-1"
       )}
     >
       {/* Animated Background Gradient */}
       <div className={cn(
         "absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-5",
-        `bg-gradient-to-br ${color}`
+        `bg-muted ${color}`
       )} />
       
       {/* Icon Container */}
       <div className={cn(
-        "mb-4 inline-flex rounded-xl p-3 text-white shadow-lg",
+        "mb-4 inline-flex rounded-xl p-3  shadow-none",
         "transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3",
-        `bg-gradient-to-br ${color}`
+        `bg-muted ${color}`
       )}>
         <Icon className="h-6 w-6" />
       </div>
       
       {badge && (
-        <span className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-semibold">
+        <span className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-semibold">
           {badge}
         </span>
       )}
@@ -198,7 +198,7 @@ export function TaskCard({
   return (
     <div className={cn(
       "group relative flex items-center gap-4 rounded-xl bg-white p-4",
-      "border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200",
+      "border border-gray-100 shadow-sm hover:shadow-none hover:border-gray-200",
       "transition-all duration-200",
       completed && "opacity-60"
     )}>
@@ -209,12 +209,12 @@ export function TaskCard({
           "relative flex h-6 w-6 items-center justify-center rounded-full",
           "border-2 transition-all shrink-0",
           completed 
-            ? "border-green-500 bg-green-500" 
-            : "border-gray-300 hover:border-red-500 hover:bg-red-50"
+            ? "border-border bg-muted" 
+            : "border-gray-300 border-destructive/40 bg-destructive/10"
         )}
       >
         {completed && (
-          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         )}
@@ -236,8 +236,8 @@ export function TaskCard({
       {/* Badge priority */}
       <span className={cn(
         "px-2.5 py-1 rounded-full text-xs font-medium shrink-0",
-        priority === 'HIGH' && "bg-red-100 text-red-700",
-        priority === 'MEDIUM' && "bg-amber-100 text-amber-700",
+        priority === 'HIGH' && "bg-destructive/10 text-destructive",
+        priority === 'MEDIUM' && "bg-muted text-muted-foreground",
         priority === 'LOW' && "bg-gray-100 text-gray-700"
       )}>
         {priority === 'HIGH' ? 'Urgent' : priority === 'MEDIUM' ? 'Normal' : 'Faible'}

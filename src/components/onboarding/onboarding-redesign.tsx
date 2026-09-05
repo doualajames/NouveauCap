@@ -100,28 +100,28 @@ const immigrationStatuses = [
     label: 'Résident permanent',
     description: 'Vous avez le statut de résident permanent du Canada',
     icon: Shield,
-    color: 'text-green-600 bg-green-100'
+    color: 'text-foreground bg-muted'
   },
   { 
     value: 'FOREIGN_STUDENT', 
     label: 'Étudiant étranger',
     description: 'Vous étudiez au Canada avec un permis d\'études',
     icon: GraduationCap,
-    color: 'text-blue-600 bg-blue-100'
+    color: 'text-foreground bg-muted'
   },
   { 
     value: 'OPEN_WORK_PERMIT', 
     label: 'Permis de travail ouvert',
     description: 'Vous pouvez travailler pour n\'importe quel employeur',
     icon: Briefcase,
-    color: 'text-purple-600 bg-purple-100'
+    color: 'text-foreground bg-muted'
   },
   { 
     value: 'CLOSED_WORK_PERMIT', 
     label: 'Permis de travail fermé',
     description: 'Vous travaillez pour un employeur spécifique',
     icon: Building2,
-    color: 'text-amber-600 bg-amber-100'
+    color: 'text-muted-foreground bg-muted'
   },
 ]
 
@@ -187,14 +187,14 @@ export function OnboardingFlow({ onComplete, language = 'fr' }: OnboardingFlowPr
   const progress = ((currentStep + 1) / onboardingSteps.length) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
+    <div className="min-h-screen bg-muted via-white flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md">
-                <MapPin className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none">
+                <MapPin className="w-5 h-5" />
               </div>
               <div>
                 <h1 className="font-bold text-lg gradient-text">NouveauCap</h1>
@@ -221,7 +221,7 @@ export function OnboardingFlow({ onComplete, language = 'fr' }: OnboardingFlowPr
 
       {/* Content */}
       <main className="flex-1 flex items-start justify-center p-4 pt-8">
-        <Card className="w-full max-w-2xl border-0 shadow-xl animate-scale-in">
+        <Card className="w-full max-w-2xl border border-border shadow-none animate-scale-in">
           <CardContent className="p-8">
             {currentStep === 0 && (
               <PersonalInfoStep data={data} updateData={updateData} language={language} />
@@ -448,8 +448,8 @@ function LocationStep({
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <MapPin className="w-8 h-8 text-green-600" />
+        <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <MapPin className="w-8 h-8 text-foreground" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900">
           {t('Où résidez-vous?', 'Where do you live?')}
@@ -484,8 +484,8 @@ function LocationStep({
       />
 
       {data.province && (
-        <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 animate-slide-up">
-          <p className="text-sm text-blue-700">
+        <div className="p-4 bg-muted rounded-xl border border-border animate-slide-up">
+          <p className="text-sm text-foreground">
             <Sparkles className="w-4 h-4 inline mr-1" />
             {t(
               `Nous personnaliserons votre expérience pour ${provinces.find(p => p.value === data.province)?.label}`,
@@ -512,8 +512,8 @@ function EmploymentStep({
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Briefcase className="w-8 h-8 text-amber-600" />
+        <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Briefcase className="w-8 h-8 text-muted-foreground" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900">
           {t('Votre parcours professionnel', 'Your professional journey')}
@@ -577,7 +577,7 @@ function EmploymentStep({
               className={cn(
                 'px-4 py-2 rounded-xl text-sm font-medium transition-all',
                 data.languages?.includes(lang)
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-primary-500 '
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               )}
             >
@@ -604,7 +604,7 @@ function GoalsStep({
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Sparkles className="w-8 h-8 text-primary-600" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900">
@@ -642,7 +642,7 @@ function GoalsStep({
               <div className="flex items-center gap-3">
                 <div className={cn(
                   'w-10 h-10 rounded-lg flex items-center justify-center',
-                  isSelected ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-500'
+                  isSelected ? 'bg-primary-500 ' : 'bg-gray-100 text-gray-500'
                 )}>
                   <Icon className="w-5 h-5" />
                 </div>
@@ -658,7 +658,7 @@ function GoalsStep({
         })}
       </div>
 
-      <div className="mt-8 p-4 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl border border-primary-100">
+      <div className="mt-8 p-4 bg-muted rounded-xl border border-primary-100">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-primary-500 mt-0.5" />
           <div>

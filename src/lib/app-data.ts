@@ -17,10 +17,10 @@ export const provinces: { code: Province; name: string; nameEn: string }[] = [
 ]
 
 export const immigrationStatuses = [
-  { code: 'PERMANENT_RESIDENT', icon: Shield, color: 'bg-green-500' },
-  { code: 'FOREIGN_STUDENT', icon: GraduationCap, color: 'bg-blue-500' },
-  { code: 'OPEN_WORK_PERMIT', icon: Briefcase, color: 'bg-purple-500' },
-  { code: 'CLOSED_WORK_PERMIT', icon: Building2, color: 'bg-orange-500' },
+  { code: 'PERMANENT_RESIDENT', icon: Shield, color: 'bg-muted' },
+  { code: 'FOREIGN_STUDENT', icon: GraduationCap, color: 'bg-muted' },
+  { code: 'OPEN_WORK_PERMIT', icon: Briefcase, color: 'bg-muted' },
+  { code: 'CLOSED_WORK_PERMIT', icon: Building2, color: 'bg-muted' },
 ]
 
 export const sectors = [
@@ -400,13 +400,13 @@ export const inDemandJobsByProvince: Record<Province, InDemandJob[]> = {
 
 
 export const modules = [
-  { id: 'province', icon: MapPin, color: 'text-cyan-500', bgColor: 'bg-cyan-50 dark:bg-cyan-950' },
-  { id: 'immigration', icon: Shield, color: 'text-green-500', bgColor: 'bg-green-50 dark:bg-green-950' },
-  { id: 'employment', icon: Briefcase, color: 'text-blue-500', bgColor: 'bg-blue-50 dark:bg-blue-950' },
-  { id: 'housing', icon: Building, color: 'text-purple-500', bgColor: 'bg-purple-50 dark:bg-purple-950' },
-  { id: 'finance', icon: Wallet, color: 'text-amber-500', bgColor: 'bg-amber-50 dark:bg-amber-950' },
-  { id: 'health', icon: Heart, color: 'text-red-500', bgColor: 'bg-red-50 dark:bg-red-950' },
-  { id: 'community', icon: Users, color: 'text-indigo-500', bgColor: 'bg-indigo-50 dark:bg-indigo-950' },
+  { id: 'province', icon: MapPin, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
+  { id: 'immigration', icon: Shield, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
+  { id: 'employment', icon: Briefcase, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
+  { id: 'housing', icon: Building, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
+  { id: 'finance', icon: Wallet, color: 'text-muted-foreground', bgColor: 'bg-muted bg-muted' },
+  { id: 'health', icon: Heart, color: 'text-destructive', bgColor: 'bg-destructive/10 bg-destructive/10' },
+  { id: 'community', icon: Users, color: 'text-foreground', bgColor: 'bg-muted bg-muted' },
   { id: 'admin', icon: Settings, color: 'text-gray-500', bgColor: 'bg-gray-50 dark:bg-gray-950' },
 ]
 

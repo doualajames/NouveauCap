@@ -161,8 +161,8 @@ export function Sidebar({
       {/* Logo */}
       <div className="flex items-center h-16 px-4 border-b border-gray-100">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md">
-            <MapPin className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-none">
+            <MapPin className="w-5 h-5" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
@@ -205,7 +205,7 @@ export function Sidebar({
                 >
                   <div className={cn(
                     'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                    itemIsActive ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-500'
+                    itemIsActive ? 'bg-primary-500 ' : 'bg-gray-100 text-gray-500'
                   )}>
                     <Icon className="w-4 h-4" />
                   </div>
@@ -267,7 +267,7 @@ export function Sidebar({
         )}>
           <Avatar className="w-9 h-9 border-2 border-white shadow-sm">
             <AvatarImage src={user?.avatar} />
-            <AvatarFallback className="bg-gradient-to-br from-primary-400 to-secondary-400 text-white text-sm font-medium">
+            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
               {user?.name?.charAt(0) || 'U'}
             </AvatarFallback>
           </Avatar>
@@ -310,7 +310,7 @@ export function Header({
             <input
               type="text"
               placeholder={t('Rechercher...', 'Search...')}
-              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all"
             />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -334,12 +334,12 @@ export function Header({
           {/* Notifications */}
           <button className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive/10 rounded-full" />
           </button>
 
           {/* Subscription Badge */}
           {user?.subscription === 'premium' && (
-            <Badge className="bg-gradient-to-r from-amber-400 to-amber-500 text-white border-0">
+            <Badge className="bg-primary text-primary-foreground border border-border">
               <Crown className="w-3 h-3 mr-1" />
               Premium
             </Badge>
@@ -351,7 +351,7 @@ export function Header({
               <button className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
                 <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                   <AvatarImage src={user?.avatar} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary-400 to-secondary-400 text-white text-sm font-medium">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                     {user?.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
@@ -379,7 +379,7 @@ export function Header({
                 {t('Abonnement', 'Subscription')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onLogout} className="text-red-600">
+              <DropdownMenuItem onClick={onLogout} className="text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
                 {t('Déconnexion', 'Logout')}
               </DropdownMenuItem>

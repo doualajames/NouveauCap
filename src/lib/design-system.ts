@@ -301,24 +301,24 @@ export const componentStyles = {
       xl: 'text-lg px-6 py-3.5 rounded-xl',
     },
     variants: {
-      primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 shadow-md hover:shadow-lg',
-      secondary: 'bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500',
+      primary: 'bg-primary-500  hover:bg-primary-600 focus:ring-primary-500 shadow-none hover:shadow-none',
+      secondary: 'bg-secondary-500  hover:bg-secondary-600 focus:ring-secondary-500',
       outline: 'border-2 border-primary-500 text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
       ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-      danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
-      success: 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500',
+      danger: 'bg-destructive/10  bg-destructive/10 focus:ring-red-500',
+      success: 'bg-muted  bg-muted focus:ring-green-500',
     },
   },
   
   // Cards
   card: {
     base: 'bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden',
-    hover: 'transition-all duration-300 hover:shadow-lg hover:-translate-y-1',
+    hover: 'transition-all duration-300 hover:shadow-none hover:-translate-y-1',
     variants: {
       default: '',
-      elevated: 'shadow-md',
+      elevated: 'shadow-none',
       bordered: 'border-2',
-      gradient: 'bg-gradient-to-br from-white to-gray-50',
+      gradient: 'bg-muted from-white ',
     },
   },
   
@@ -327,8 +327,8 @@ export const componentStyles = {
     base: 'w-full px-4 py-3 text-base border border-gray-200 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
     states: {
       default: 'bg-white',
-      error: 'border-red-500 focus:ring-red-500',
-      success: 'border-green-500 focus:ring-green-500',
+      error: 'border-destructive/40 focus:ring-red-500',
+      success: 'border-border focus:ring-green-500',
       disabled: 'bg-gray-100 cursor-not-allowed',
     },
   },
@@ -339,10 +339,10 @@ export const componentStyles = {
     variants: {
       default: 'bg-gray-100 text-gray-700',
       primary: 'bg-primary-100 text-primary-700',
-      success: 'bg-green-100 text-green-700',
-      warning: 'bg-amber-100 text-amber-700',
-      danger: 'bg-red-100 text-red-700',
-      info: 'bg-blue-100 text-blue-700',
+      success: 'bg-muted text-foreground',
+      warning: 'bg-muted text-muted-foreground',
+      danger: 'bg-destructive/10 text-destructive',
+      info: 'bg-muted text-foreground',
     },
   },
   
@@ -394,9 +394,9 @@ export const twClasses = {
   // Effets
   effects: {
     glass: 'bg-white/80 backdrop-blur-lg',
-    gradient: 'bg-gradient-to-r from-primary-500 to-secondary-500',
-    gradientText: 'bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent',
-    shadowHover: 'transition-shadow duration-300 hover:shadow-xl',
+    gradient: 'bg-primary text-primary-foreground',
+    gradientText: 'bg-primary text-primary-foreground bg-clip-text text-transparent',
+    shadowHover: 'transition-shadow duration-300 hover:shadow-none',
   },
   
   // Animations
@@ -412,7 +412,7 @@ export const twClasses = {
 // ==================== ACCESSIBILITÉ ====================
 export const a11y = {
   // Screen reader only
-  srOnly: 'sr-only absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0',
+  srOnly: 'sr-only absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border border-border',
   
   // Focus visible
   focusVisible: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
