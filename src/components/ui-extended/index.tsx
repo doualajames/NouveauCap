@@ -15,11 +15,11 @@ const moduleCardVariants = cva(
     variants: {
       variant: {
         default: 'border-gray-100',
-        elevated: 'border-0 shadow-lg',
-        gradient: 'border-0 bg-gradient-to-br from-white to-gray-50',
+        elevated: 'border border-border shadow-none',
+        gradient: 'border border-border bg-muted from-white ',
       },
       interactive: {
-        true: 'cursor-pointer hover:shadow-xl hover:-translate-y-1',
+        true: 'cursor-pointer hover:shadow-none hover:-translate-y-1',
         false: '',
       },
     },
@@ -55,27 +55,27 @@ export function ModuleCard({
   ...props
 }: ModuleCardProps) {
   const colorClasses = {
-    primary: 'from-primary-500 to-primary-600',
-    secondary: 'from-secondary-500 to-secondary-600',
-    accent: 'from-green-500 to-green-600',
-    warning: 'from-amber-500 to-amber-600',
-    danger: 'from-red-500 to-red-600',
-    success: 'from-emerald-500 to-emerald-600',
+    primary: ' ',
+    secondary: ' ',
+    accent: ' ',
+    warning: ' ',
+    danger: ' ',
+    success: ' ',
   }
 
   const iconBgClasses = {
     primary: 'bg-primary-100 text-primary-600',
     secondary: 'bg-secondary-100 text-secondary-600',
-    accent: 'bg-green-100 text-green-600',
-    warning: 'bg-amber-100 text-amber-600',
-    danger: 'bg-red-100 text-red-600',
-    success: 'bg-emerald-100 text-emerald-600',
+    accent: 'bg-muted text-foreground',
+    warning: 'bg-muted text-muted-foreground',
+    danger: 'bg-destructive/10 text-destructive',
+    success: 'bg-muted text-foreground',
   }
 
   return (
     <div className={cn(moduleCardVariants({ variant, interactive }), className)} {...props}>
       {/* Top accent line */}
-      <div className={cn('absolute top-0 left-0 right-0 h-1 bg-gradient-to-r', colorClasses[color])} />
+      <div className={cn('absolute top-0 left-0 right-0 h-1 bg-muted', colorClasses[color])} />
 
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -98,10 +98,10 @@ export function ModuleCard({
               'px-2.5 py-1 text-xs font-semibold rounded-full',
               color === 'primary' && 'bg-primary-100 text-primary-700',
               color === 'secondary' && 'bg-secondary-100 text-secondary-700',
-              color === 'accent' && 'bg-green-100 text-green-700',
-              color === 'warning' && 'bg-amber-100 text-amber-700',
-              color === 'danger' && 'bg-red-100 text-red-700',
-              color === 'success' && 'bg-emerald-100 text-emerald-700',
+              color === 'accent' && 'bg-muted text-foreground',
+              color === 'warning' && 'bg-muted text-muted-foreground',
+              color === 'danger' && 'bg-destructive/10 text-destructive',
+              color === 'success' && 'bg-muted text-foreground',
             )}>
               {badge}
             </span>
@@ -150,10 +150,10 @@ export function StatCard({
   const iconBgClasses = {
     primary: 'bg-primary-100 text-primary-600',
     secondary: 'bg-secondary-100 text-secondary-600',
-    accent: 'bg-green-100 text-green-600',
-    warning: 'bg-amber-100 text-amber-600',
-    danger: 'bg-red-100 text-red-600',
-    success: 'bg-emerald-100 text-emerald-600',
+    accent: 'bg-muted text-foreground',
+    warning: 'bg-muted text-muted-foreground',
+    danger: 'bg-destructive/10 text-destructive',
+    success: 'bg-muted text-foreground',
   }
 
   return (
@@ -165,7 +165,7 @@ export function StatCard({
           {change && (
             <div className={cn(
               'flex items-center gap-1 mt-2 text-sm font-medium',
-              change.type === 'increase' ? 'text-green-600' : 'text-red-600'
+              change.type === 'increase' ? 'text-foreground' : 'text-destructive'
             )}>
               {change.type === 'increase' ? '↑' : '↓'} {Math.abs(change.value)}%
               <span className="text-gray-400 font-normal">vs. mois dernier</span>
@@ -195,8 +195,8 @@ const actionButtonVariants = cva(
         secondary: 'btn-secondary',
         outline: 'btn-outline',
         ghost: 'btn-ghost',
-        danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 rounded-xl shadow-md hover:shadow-lg',
-        success: 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500 rounded-xl shadow-md hover:shadow-lg',
+        danger: 'bg-destructive/10  bg-destructive/10 focus:ring-red-500 rounded-xl shadow-none hover:shadow-none',
+        success: 'bg-muted  bg-muted focus:ring-green-500 rounded-xl shadow-none hover:shadow-none',
       },
       size: {
         sm: 'text-sm px-4 py-2 rounded-lg',
@@ -276,7 +276,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         {label && (
           <label htmlFor={id} className="text-sm font-medium text-gray-700">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <div className="relative">
@@ -292,8 +292,8 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               'form-input',
               LeftIcon && 'pl-10',
               (RightIcon || rightElement) && 'pr-10',
-              error && 'border-red-500 focus:ring-red-500',
-              success && 'border-green-500 focus:ring-green-500',
+              error && 'border-destructive/40 focus:ring-red-500',
+              success && 'border-border focus:ring-green-500',
               className
             )}
             {...props}
@@ -310,12 +310,12 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           )}
         </div>
         {error && (
-          <p className="text-sm text-red-500 flex items-center gap-1">
+          <p className="text-sm text-destructive flex items-center gap-1">
             <span>⚠</span> {error}
           </p>
         )}
         {success && (
-          <p className="text-sm text-green-500 flex items-center gap-1">
+          <p className="text-sm text-foreground flex items-center gap-1">
             <span>✓</span> {success}
           </p>
         )}
@@ -348,7 +348,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
         {label && (
           <label htmlFor={id} className="text-sm font-medium text-gray-700">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <select
@@ -356,7 +356,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
           ref={ref}
           className={cn(
             'form-input appearance-none bg-[url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3e%3cpath stroke=%27%236b7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e")] bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-no-repeat pr-10',
-            error && 'border-red-500 focus:ring-red-500',
+            error && 'border-destructive/40 focus:ring-red-500',
             className
           )}
           {...props}
@@ -373,7 +373,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
           ))}
         </select>
         {error && (
-          <p className="text-sm text-red-500 flex items-center gap-1">
+          <p className="text-sm text-destructive flex items-center gap-1">
             <span>⚠</span> {error}
           </p>
         )}
@@ -470,7 +470,7 @@ export function ProgressSteps({ steps, currentStep, className }: ProgressStepsPr
               <span
                 className={cn(
                   'mt-2 text-xs font-medium',
-                  isCompleted && 'text-green-600',
+                  isCompleted && 'text-foreground',
                   isCurrent && 'text-primary-600',
                   isPending && 'text-gray-400'
                 )}
@@ -482,7 +482,7 @@ export function ProgressSteps({ steps, currentStep, className }: ProgressStepsPr
               <div
                 className={cn(
                   'flex-1 h-0.5 mx-2',
-                  isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                  isCompleted ? 'bg-muted' : 'bg-gray-200'
                 )}
               />
             )}
@@ -568,11 +568,11 @@ export function FeatureCard({ icon: Icon, title, description, color = 'primary',
   const colorClasses = {
     primary: 'bg-primary-100 text-primary-600',
     secondary: 'bg-secondary-100 text-secondary-600',
-    accent: 'bg-green-100 text-green-600',
+    accent: 'bg-muted text-foreground',
   }
 
   return (
-    <div className={cn('p-6 bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300', className)} {...props}>
+    <div className={cn('p-6 bg-white rounded-2xl border border-gray-100 hover:shadow-none transition-all duration-300', className)} {...props}>
       <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center mb-4', colorClasses[color])}>
         <Icon className="w-6 h-6" />
       </div>
