@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
-const VALID_SOURCES = ['landing', 'simulateur-crs', 'quiz-citoyennete', 'pack-atterrissage']
+const VALID_SOURCES = ['landing', 'simulateur-crs', 'quiz-citoyennete', 'pack-atterrissage', 'guides']
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 // POST /api/leads — capture email publique (sans compte)
